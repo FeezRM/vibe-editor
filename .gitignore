@@ -1,0 +1,15 @@
+# Cloned engines — reinstall or update with scripts/setup-macos.sh | setup-windows.ps1
+vendor/
+
+# Machine-specific MCP registration, written by the setup scripts
+.mcp.json
+.mcp.json.bak
+
+# Build artifacts
+node_modules/
+projects/*/renders/
+exports/*
+!exports/.gitkeep
+
+# macOS
+.DS_Store

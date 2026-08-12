@@ -29,13 +29,13 @@ render command to paste. Don't pretend a render happened.
 
 ## 1. Project layout
 
-One folder per reel, under `motion-system/projects/`:
+One folder per reel, under the repo's `projects/`:
 
 ```
 projects/<slug>/
 ├── hyperframes.json          created by `hyperframes init`
 ├── meta.json
-├── tokens.css                copied from skill-src/reference/tokens.css, accent set
+├── tokens.css                copied from templates/base/tokens.css, accent set
 ├── index.html                the composition (or a router for several)
 ├── compositions/
 │   ├── 01-hook-slam.html
@@ -49,9 +49,9 @@ projects/<slug>/
 Scaffold:
 
 ```bash
-cd "motion-system/projects"
+cd projects
 npx hyperframes init <slug> --example blank --non-interactive
-cp ../skill-src/reference/tokens.css <slug>/tokens.css
+cp ../templates/base/tokens.css <slug>/tokens.css
 ```
 
 Then edit `tokens.css` to set `--accent` for this project and nothing else.
@@ -225,7 +225,22 @@ V4  captions
 A1  voice   A2  music   A3  SFX
 ```
 
-### In Premiere
+### In Premiere — over MCP
+
+When the `premiere-pro` MCP server is connected, the handoff is a tool call, not a drag:
+
+1. `verify_premiere_connection`, then `get_sequence_settings` — **render at the sequence
+   fps**, not at whatever the composition happened to default to.
+2. `import_media` each file in `renders/` (or `import_folder` for the lot).
+3. `add_track` / `list_sequence_tracks` to make sure `V3` exists, then place each clip at
+   its `IMPORT.md` cue. Two graphics that overlap in time need two tracks.
+4. `export_frame` at each cue to confirm the graphic actually landed on the right frame.
+   This is the only honest check — the tool returning success is not one.
+
+Screen-blend clips still need the blend mode set by hand in Effect Controls; there is no
+blend-mode tool. Prefer alpha MOV when that matters.
+
+### In Premiere — by hand
 
 1. Sequence: **1080×1920, 30fps** (or 24 — match what the compositions were rendered at;
    a mismatch is what makes graphics stutter).
