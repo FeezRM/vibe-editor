@@ -172,7 +172,7 @@ driving, because they're the two biggest problems in his current reels:
 
 ## Reference board
 
-`motion-system/reference-board/index.html` — the visual guide: annotated frames from
-@devinjatho's archived carousels, a teardown of Feez's own reel with what's working and
-what isn't, the palette and type specs rendered live, and all 13 blocks drawn to spec.
-Open it when a written rule needs a picture.
+A visual guide exists outside this repo — annotated frames, a teardown of Feez's own reel,
+the palette and type specs rendered live, and all 13 blocks drawn to spec. It is **not
+shipped here.** Everything load-bearing is written down in `reference/`; work from those
+files and don't go looking for a board that isn't in the project.

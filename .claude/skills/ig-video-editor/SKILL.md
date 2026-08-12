@@ -1,13 +1,15 @@
 ---
 name: ig-video-editor
-description: "Edits short-form video (Instagram Reels, TikTok, YouTube Shorts) into retention-optimized, premium-looking cuts using an MCP-connected timeline editor (Palmier Pro by default). Built on the 'Dynamic Minimalism + Devin Jatho' editing style and Feez's Content Alchemy / Cave brand: silence-removal jump cuts, slow zoom 'pulses', clean word-by-word captions, cinematic/memetic B-roll, and subtle premium sound design. Works blueprint-first — produces a timestamped, shot-by-shot edit plan the user approves, then executes it on the timeline via the editor's MCP. Use this skill whenever the user wants to: edit a reel or video, cut down raw footage, turn a talking-head recording into a finished reel, add captions, add B-roll, tighten pacing, do silence removal, design sound, restyle an edit, clip a long video into shorts, or get a shot-by-shot edit plan / EDL. Triggers: edit my reel, edit this video, cut this footage, make this a reel, add captions, add b-roll, polish this video, edit my talking head, edit my Cave footage, speed up this edit, clip this long video, edit plan, blueprint this edit, Palmier, finish this video."
+description: "Edits short-form video (Instagram Reels, TikTok, YouTube Shorts) into retention-optimized, premium-looking cuts by driving Adobe Premiere Pro over MCP. Built on the 'Dynamic Minimalism + Devin Jatho' editing style and Feez's Content Alchemy / Cave brand: silence-removal jump cuts, slow zoom 'pulses', clean word-by-word captions, cinematic/memetic B-roll, and subtle premium sound design. Works blueprint-first — produces a timestamped, shot-by-shot edit plan the user approves, then executes it on the Premiere Pro timeline via MCP. Use this skill whenever the user wants to: edit a reel or video, cut down raw footage, turn a talking-head recording into a finished reel, add captions, add B-roll, tighten pacing, do silence removal, design sound, restyle an edit, clip a long video into shorts, or get a shot-by-shot edit plan / EDL. Triggers: edit my reel, edit this video, cut this footage, make this a reel, add captions, add b-roll, polish this video, edit my talking head, edit my Cave footage, speed up this edit, clip this long video, edit plan, blueprint this edit, premiere, premiere pro, finish this video."
 ---
 
 # IG Video Editor — Dynamic Minimalism Method
 
-Turn raw footage into retention-optimized short-form video that looks **premium, not hype-y** — and do it fast. This skill encodes the modern viral editing meta (Dynamic Minimalism + the Devin Jatho style) tuned to Feez's Cave brand, and drives an MCP-connected timeline editor (Palmier Pro) to actually build the cut.
+Turn raw footage into retention-optimized short-form video that looks **premium, not hype-y** — and do it fast. This skill encodes the modern viral editing meta (Dynamic Minimalism + the Devin Jatho style) tuned to Feez's Cave brand, and drives **Adobe Premiere Pro over MCP** to actually build the cut.
 
-The output is not vague advice. It is a **timestamped edit blueprint** (every cut, caption, zoom, B-roll cue, and SFX) that the user approves, then this skill **executes it on the timeline** via the editor's MCP tools.
+The output is not vague advice. It is a **timestamped edit blueprint** (every cut, caption, zoom, B-roll cue, and SFX) that the user approves, then this skill **executes it on the Premiere timeline** via the MCP bridge's tools.
+
+Motion graphics are **not** built here. Anything designed — a counter, a meter, a stat card, kinetic titles, an end card — belongs to the `ig-motion-graphics` skill, which builds it as a HyperFrames composition and renders an alpha `.mov` this skill imports and places. Cue both off the same timecodes.
 
 > North star: every second earns the next second. Target 70%+ watch-through. If a frame isn't holding attention, it gets cut, zoomed, or covered.
 
@@ -15,10 +17,10 @@ The output is not vague advice. It is a **timestamped edit blueprint** (every cu
 
 ## Default Mode: Blueprint → Approve → Execute
 
-1. **Ingest** — load the footage, the script (if any), the goal, and the brand context. **Transcribe first** (Palmier `inspect_media`, or a Whisper/Scribe pass for accuracy), then check the transcript actually contains what the chosen format needs: a tier list needs the *rankings*, a listicle needs the *items*, a "3 reasons" needs the *three*. If the footage is just raw takes without that structure (common — e.g. someone naming items but never ranking them), **get the missing pieces from the user before blueprinting** rather than inventing them.
+1. **Ingest** — load the footage, the script (if any), the goal, and the brand context. **Transcribe first** (`npx hyperframes transcribe <file>`, or a Whisper/Scribe pass for accuracy — Premiere's MCP has no transcription tool), then check the transcript actually contains what the chosen format needs: a tier list needs the *rankings*, a listicle needs the *items*, a "3 reasons" needs the *three*. If the footage is just raw takes without that structure (common — e.g. someone naming items but never ranking them), **get the missing pieces from the user before blueprinting** rather than inventing them.
 2. **Blueprint** — write the shot-by-shot edit plan (the deliverable below). This is where the craft lives.
 3. **Approve** — show the blueprint, take edits. Cheap to change here, expensive to change on the timeline.
-4. **Execute** — build it on the Palmier timeline via MCP, pass by pass.
+4. **Execute** — build it on the Premiere Pro timeline via MCP, pass by pass.
 5. **QA** — run the retention checklist, fix, export 9:16.
 
 **Fast mode:** if the user says "just do it" / "fast" / "don't overthink it," collapse to a condensed one-line-per-beat blueprint and go straight to execute. Quality bar stays the same; the approval step shrinks.
@@ -111,7 +113,8 @@ GLOBAL:
 - Captions: [font], white + [emphasis style], safe-zone centered-lower
 - Music: [track/vibe], ducked -18dB under voice, out under hook
 - Grade: Cave look — deep contrast, cool shadows
-- B-roll to generate: [list of prompts for Palmier, if any]
+- B-roll to source or generate: [screen recordings to capture, prompts for media-use, if any]
+- Graphics to build: [one line per HyperFrames composition + its cue timecode]
 ```
 
 Keep beats short — if a row covers more than ~4 seconds of static A-roll, split it; the frame should change.
@@ -126,7 +129,8 @@ Keep beats short — if a row covers more than ~4 seconds of static A-roll, spli
 - **Animation:** word-by-word pop or tight 2–4 word phrase reveals, synced to speech. Smooth, fast, no bounce/spin.
 - **Placement & safe zone (hard rule):** keep ALL text and graphic overlays inside the IG safe zone — vertically **centerY ~0.13–0.77** (clear of the top status row and the bottom caption/handle/audio strip), centered horizontally and clear of the **right-side button rail** (avoid centerX > ~0.85). Captions sit lower-middle (~0.62); tier/badge stamps just below (~0.72, never past 0.77). Hook text sits higher (~0.14) but still inside the band.
 - **Don't cover the face:** icons, badges, logos and B-roll stickers go ABOVE the head (~centerY 0.22–0.26) or off to a clear side — never parked over the speaker's eyes/mouth. Graphic up top, captions in the lower third, face visible in between.
-- **Sizing reality:** text is very easy to oversize — on a tall canvas `fontSize` renders large. Start small (Palmier: ~44 caption, ~60 hook title, ~78 stamp) and only grow if it reads too small; verify with `inspect_timeline` before moving on.
+- **Where captions get built:** two paths, pick one per project and stay on it. **(a) HyperFrames** — a caption composition rendered to alpha `.mov` and imported to V4. Better typography, exact word timing, deterministic. Use it for anything styled. **(b) Premiere natively** — `create_caption_track` for a straight subtitle read, `add_text_overlay` for one-off titles. Faster, plainer, and edited in the app afterwards. Never mix both in one video.
+- **Sizing reality:** text is very easy to oversize on a 1080×1920 canvas. Build the caption at its real pixel size in the composition and verify with `hyperframes snapshot` before rendering the set. If you're using Premiere text, place one throwaway clip, `export_frame` it, read the real size, then delete it — there is no live size preview over MCP.
 - **Pace match:** caption rhythm follows the cut rhythm — when speech speeds up, captions speed up.
 - **Hook text:** oversized, first 3 seconds, the one moment that breaks the minimal rule.
 
@@ -136,7 +140,7 @@ Keep beats short — if a row covers more than ~4 seconds of static A-roll, spli
 
 - **Purpose-first:** every insert either (a) covers a jump cut or (b) shows the concept (a number, a tool, a result, a place). If it does neither, cut it.
 - **On-brand sources:** screen recordings, whiteboard, dashboards/analytics, code, the product. Generated cinematic B-roll for abstract concepts.
-- **Generating in Palmier:** use the timeline's generation models (e.g. Seedance/Kling/Nano Banana Pro) with first/last-frame and reference-image control for consistency. Write prompts that match the **Cave grade** (dark, moody, filmic, cool shadows) so generated shots cut seamlessly against A-roll. **Generation costs credits** — batch the prompts, generate only what the blueprint calls for, and prefer real screen-recordings/stock when they're just as strong.
+- **Sourcing it:** Premiere's MCP imports, it does not generate. Real screen recordings, whiteboard, and dashboard captures are first choice and usually stronger anyway. For abstract concepts, generate through the `media-use` skill (image/video models, background removal, LUTs), write the file to `projects/<slug>/assets/`, then `import_media` it. Match the **Cave grade** in the prompt (dark, moody, filmic, cool shadows) so generated shots cut seamlessly against A-roll. Generation costs credits — batch it, and generate only what the blueprint calls for.
 - **Timing:** 0.8–2s per insert, cut on the beat, never lingering past the point it makes.
 - **No clip-art / no flying emojis.**
 
@@ -151,42 +155,72 @@ Keep beats short — if a row covers more than ~4 seconds of static A-roll, spli
 
 ---
 
-## Execution via the MCP Editor (Palmier Pro)
+## Execution in Premiere Pro (over MCP)
 
-Palmier Pro is a macOS, Premiere-style timeline editor that exposes an **MCP server**; the agent sees full project context and edits the timeline directly.
+The `premiere-pro` MCP server drives a **real, local Premiere Pro** through a CEP bridge panel. There is no sandbox and no undo stack the agent controls — every call lands on the user's open project. Work deliberately.
 
-**Before executing:**
+**Before executing, in this order:**
 
-1. **Confirm the editor's MCP is connected** and **list its available tools** — use the actual tool names the connected server exposes. Do **not** assume tool names; read them from the live MCP. (If it isn't connected, point the user to the app's *Help → MCP Instructions* for one-click setup, and in the meantime deliver the blueprint + an NLE-importable plan.)
-2. **Map blueprint → tool calls.** Capabilities to expect: import footage, trim/split/reorder/adjust clips, generate image/video/audio onto the timeline, rerun/tweak generated clips by prompt, add captions, find key moments in long footage, and upscale. (There is **no** export tool — see point 5.)
-3. **Build in the 3-pass order** (spine → retention layer → polish). Verify the project state between passes rather than firing everything blind.
-4. **Be credit-aware:** editing is free; **generative AI features cost credits.** Read `canGenerate` from `get_timeline` first — if `false`, the user isn't signed in/subscribed and **every `generate_*` / `upscale` call silently fails.** Don't propose AI b-roll/music/SFX in that case; generate icons & graphics with **codex** instead (see below).
-5. **Export:** there is **no export MCP tool.** Build and QA the whole timeline over MCP, then tell the user to render manually in the app (**File → Export → 9:16 MP4 / H.264**). Don't claim the video is "exported" — it isn't until they do this.
+1. **`verify_premiere_connection`.** Read-only. It returns the Premiere build, the open project, and the active sequence. If it fails, the bridge isn't running — Premiere open → project open → *Window → Extensions → MCP Bridge (CEP)* → Temp Directory matches `PREMIERE_TEMP_DIR` → *Start Bridge*. Don't try to edit around a dead bridge; fix it or hand over the blueprint.
+2. **Attach the `premiere://config/get_instructions` resource** before any project-modifying work. It carries the server's own operating guidance and overrides guesses made here.
+3. **List the live tool set.** ~283 tools ship, and the catalog moves. Use the names the connected server actually exposes; the ones referenced below are stable but verify rather than assume.
+4. **Confirm the sequence.** `get_active_sequence` / `list_sequences`, and `get_sequence_settings` for fps and frame size. **Every graphic must be rendered at the sequence fps** — a mismatch is what makes overlays stutter. `create_sequence` at 1080×1920 if there isn't a vertical one.
+5. **Build in the 3-pass order** (spine → retention layer → polish), verifying between passes rather than firing everything blind.
 
-If the connected editor is something other than Palmier, the blueprint is tool-agnostic — discover that editor's MCP tools and map the same beats.
+### Blueprint → tools
 
-### Palmier MCP — hard-won gotchas (read before executing)
+| Blueprint row | Tools |
+|---|---|
+| Import footage / assets | `import_media`, `import_folder` |
+| Find cuts in a long take | `detect_scene_edits` |
+| Silence removal, jump cuts | `razor_timeline_at_time`, `split_clip`, `remove_from_timeline`, `move_clip` |
+| Trim to the frame | `trim_clip`, `set_clip_properties` |
+| Talking head + separate mic | `link_audio_video` before cutting |
+| Zoom pulse / push-in | `add_keyframe` on scale/position, `get_keyframes` to verify |
+| Speed ramps, freeze | `speed_change` |
+| B-roll and graphic overlays | `import_media`, then place on the overlay track |
+| Transitions | `add_transition`, `add_transition_to_clip`, `batch_add_transitions` |
+| Look and grade | `color_correct`, `apply_effect` (use the `Black & White` effect for mono — don't fake it with saturation) |
+| Captions | `create_caption_track`, `add_text_overlay`, `read_sequence_captions` |
+| Sound | `adjust_audio_levels`, `apply_audio_effect`, `add_audio_keyframes` for ducking |
+| Beat / cue marking | `add_marker`, `set_playhead_position` |
+| Frame check | `export_frame` |
+| Export | `validate_project_for_export`, then `export_sequence` (or `export_as_fcp_xml` / `export_aaf` to hand off) |
 
-These cost real iteration. Internalize them so you don't relearn them live.
+### Premiere MCP — read before executing
 
-- **Text size is `fontSize`, and it's scaled HEAVILY on a tall (e.g. 2160×3840) canvas.** Ignore the docs' "1080p" numbers. Working values: **~62 = caption/label, ~98 = title, ~115 = big tier stamp.** Start there, then verify.
-- **`transform` width/height CROP the text, they do not scale it to fit.** A too-small box silently slices text into slivers with no error. Rule: control size with `fontSize`; give a **generous** width/height box so nothing clips. Passing *only* `centerX/centerY` (no width/height) balloons text to fill the frame. There is no size preview — add a throwaway test clip, `inspect_timeline` one frame, read the real size, then delete it.
-- **Simultaneous overlays must each be on a different track.** Two clips at the same start frame on one track → the second **silently overwrites/destroys the first** (matches the UI's drag-to-overwrite; invisible over MCP). This is also why deleting a "missing" clip errors — it was already clobbered.
-- **Auto-created track order/indices are unpredictable** and shift when empty tracks get pruned. Don't address tracks by index across calls; separate elements *spatially* (different `centerY`) so layer order stops mattering.
-- **Cutting unlinked A/V** (talking head + separate lav/DJI mic that aren't link-grouped): split **both** clips at the **same timeline frames, in descending order** (the original id stays as the left piece, so you can keep splitting it and capture each new right-piece id), `remove_clips` the gaps, then `move_clips` both tracks by the **same delta** to compact. Trims report in **timeline frames**, not source frames — even when source fps ≠ project fps.
-- **Square images need an aspect-correct box:** `height_frac = width_frac × (canvasWidth / canvasHeight)` (e.g. ×0.5625 on 2160×3840), or they stretch.
-- **Verify between passes, don't fire blind:** `inspect_media` with `startSeconds/endSeconds` + `wordTimestamps` confirms a cut lands on the right words and isn't sliced mid-word; `inspect_timeline` (single frame, or a range with `maxFrames`) confirms the *composite* — text size, position, layer order, icon placement.
-- **Card "pops" / reveals need `set_keyframes` per clip** (scale/opacity). Budget for that work, or accept hard cuts on the beat as the fallback.
+- **It edits the live project. There is no dry run.** Before a destructive pass (razoring, ripple-style removal, replacing clips), say what you're about to do and how many operations it is. If the user has unsaved manual work, have them save first — your calls and their Cmd-Z share one history.
+- **Track convention, bottom to top:** `V1` A-roll · `V2` B-roll / proof panels / full-frame cards · `V3` motion-graphic overlays (alpha) · `V4` captions · `A1` voice · `A2` music · `A3` SFX. Create tracks with `add_track` before placing, and confirm with `list_sequence_tracks` — never assume an index exists.
+- **Two clips can't share a start frame on one track.** Simultaneous overlays each need their own track, or the later placement overwrites the earlier one.
+- **Cutting unlinked A/V** (camera audio + a separate lav/DJI mic): `link_audio_video` first so one razor moves both. If they can't be linked, razor **both** at the *same* timeline frames and shift both by the *same* delta — otherwise the audio drifts and you won't see it until export.
+- **Timecodes are timeline frames, not source frames.** They diverge whenever source fps ≠ sequence fps. Read positions back with `get_clip_properties` / `get_clip_at_position` instead of computing them.
+- **Verify with pixels, not with faith.** `export_frame` at a cue timecode is the only honest check that a graphic landed where the blueprint says. Do it at the hook, at every graphic cue, and at the end card.
+- **Premiere generates nothing.** No transcription, no image/video/music generation. Transcribe with `hyperframes transcribe` or Whisper; generate assets via the `media-use` skill; write them to disk, then `import_media`.
+- **`import_ae_comps` is not advertised** and `.aep` imports can wedge the bridge. Don't reach for After Effects round-trips.
+- **When something fails twice the same way, run the panel's Run Diagnostics** rather than retrying a third time. Report what it says instead of guessing.
 
-### Generating graphics with codex (when Palmier can't, or for crisp icons/text-art)
+### Motion graphics handoff (HyperFrames → Premiere)
 
-`canGenerate:false`, or you need transparent icons/logos/tier-badges? Use the **codex CLI** (logged in via ChatGPT, has a built-in imagegen skill that outputs transparent PNGs):
+Anything designed is built by `ig-motion-graphics` as a HyperFrames composition, one file per graphic, and rendered to `projects/<slug>/renders/`:
 
+```bash
+npx hyperframes lint projects/<slug>
+npx hyperframes render projects/<slug> -c compositions/03-counter.html \
+  --format mov --resolution portrait --fps <sequence fps> --quality high \
+  -o renders/03-counter.mov
 ```
-codex exec --cd <project_dir> --dangerously-bypass-approvals-and-sandbox "<prompt: cohesive SET, transparent bg, save each to ./assets/icons/<name>.png>" </dev/null
-```
 
-The `</dev/null` is **required** when backgrounding — otherwise codex hangs waiting on stdin. Ask for a *cohesive set* (same render style, lighting, transparent alpha) in one call so the icons match. Then `import_media` (path) each PNG and place with an aspect-correct transform.
+`--format mov` carries a real alpha channel and imports into Premiere with transparency intact. Then `import_media` the file and place it on `V3` at the cue timecode from `renders/IMPORT.md` — **snap the head to the frame the keyword lands on**, not the start of the sentence.
+
+Light-on-transparent graphics with no dark plate (a bare counter, a hairline rail) can render as `mp4` on pure black and sit on the timeline with a **Screen** blend instead — smaller, faster, and lossless for this palette.
+
+**Never scale, reposition, or add effects to a rendered graphic in Premiere.** It was composed at full frame for a reason. If it's in the wrong place, fix the composition and re-render.
+
+### Export
+
+`validate_project_for_export` first — it catches missing media and offline clips before a long render. Then `export_sequence` to H.264, 1080×1920, VBR 2-pass, ~12 Mbps, AAC 320kbps, into `exports/`.
+
+Only call it exported once the tool has returned successfully **and** the file exists on disk. If the export tool fails, say so and hand the user *File → Export → Media* — don't report a render that didn't happen.
 
 ---
 
@@ -202,7 +236,8 @@ The `</dev/null` is **required** when backgrounding — otherwise codex hangs wa
 - [ ] **Payoff:** held, not resolved early?
 - [ ] **CTA:** clean, single, on-brand (comment trigger / DM word)?
 - [ ] **Look:** premium, not hype-y? Would this read as high-ticket, not "guru"?
-- [ ] **Export (manual handoff):** no MCP export tool — confirm 9:16, safe zones respected, audio levels consistent, then have the user render via *File → Export → 9:16 MP4 / H.264*.
+- [ ] **Frames checked:** `export_frame` at the hook and at every graphic cue — did each one land where the blueprint says?
+- [ ] **Export:** `validate_project_for_export` clean, 9:16 confirmed, safe zones respected, audio levels consistent, then `export_sequence` to `exports/`.
 
 ---
 
