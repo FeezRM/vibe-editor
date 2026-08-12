@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="tokens.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); }
+      .index { padding: 240px 96px; display: flex; flex-direction: column; gap: 28px; }
+      .row { display: flex; align-items: baseline; gap: 28px; }
+      .n { font-family: var(--font-mono); font-size: 30px; color: var(--accent); }
+      .t { font-size: 46px; font-weight: 800; letter-spacing: var(--track-display); color: var(--ink); }
+    </style>
+  </head>
+  <body>
+    <!--
+      THE TERMINAL, IN MOTION - base project. This index is only a contact sheet.
+      Render the real graphics one at a time:
+
+        npx hyperframes render . -c compositions/01-hook-slam.html \
+          --format mp4 --resolution portrait --fps 30 --quality high \
+          -o renders/01-hook-slam.mp4
+
+        npx hyperframes render . -c compositions/02-meter.html \
+          --format mov --resolution portrait --fps 30 --quality high \
+          --variables '{"label":"REVENUE PER REEL","value":2997,"max":5000,"prefix":"$"}' \
+          -o renders/02-meter.mov
+
+      Overlays render --format mov (alpha). Full-frame cards render --format mp4.
+      Spec: ../../skill-src/reference/MOTION-LANGUAGE.md
+    -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="4"
+         data-width="1080" data-height="1920" data-fps="30" data-track-index="0">
+      <div class="index">
+        <p class="label">THE TERMINAL, IN MOTION</p>
+        <div class="row"><span class="n">01</span><span class="t">hook slam</span></div>
+        <div class="row"><span class="n">02</span><span class="t">the meter</span></div>
+        <div class="row"><span class="n">03</span><span class="t">the counter</span></div>
+        <div class="row"><span class="n">04</span><span class="t">the chip</span></div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.from(".label", { y: 24, opacity: 0, duration: 0.34, ease: "power4.out" }, 0.12);
+      tl.from(".row", { y: 30, opacity: 0, duration: 0.34, ease: "power4.out", stagger: 0.08 }, 0.24);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
