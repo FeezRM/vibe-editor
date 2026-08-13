@@ -94,7 +94,9 @@ Write-Ok "git $((git --version) -replace 'git version ', '')"
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     throw 'Node.js 22+ is required. Install it from https://nodejs.org or: winget install OpenJS.NodeJS.LTS'
 }
-$nodeMajor = [int](node -p 'process.versions.node.split(".")[0]')
+# Parsed from `node -v` rather than `node -p '...'`: PowerShell strips the inner
+# quotes of an inline script before node.exe ever sees them.
+$nodeMajor = [int](((node -v) -replace '^v', '') -split '\.')[0]
 if ($nodeMajor -lt 22) {
     throw "Node.js 22+ is required (HyperFrames needs 22, Premiere MCP needs 20). Found $(node -v)."
 }
@@ -124,25 +126,41 @@ New-Item -ItemType Directory -Force -Path $vendorDir | Out-Null
 
 # ----------------------------------------------------------------- clone ----
 
+# git writes progress to stderr even when it succeeds. Under Windows PowerShell
+# 5.1 that becomes a terminating NativeCommandError while ErrorActionPreference
+# is 'Stop', so quiet git down and judge it by its exit code alone.
+function Invoke-Git {
+    # Takes one array so that git's own flags (-C, --depth) are never mistaken
+    # for parameters of this function.
+    param([string[]] $Arguments)
+
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        & git @Arguments 2>&1 | Out-Null
+        return ($LASTEXITCODE -eq 0)
+    } finally {
+        $ErrorActionPreference = $previous
+    }
+}
+
 function Sync-Repo {
     param([string] $Directory, [string] $Repo, [string] $Name)
 
     if (Test-Path (Join-Path $Directory '.git')) {
         Write-Ok "$Name already cloned - updating"
         # A failed update is not fatal: the existing clone still works.
-        git -C $Directory fetch --depth 1 origin HEAD *>$null
-        if ($LASTEXITCODE -eq 0) {
-            git -C $Directory reset --hard FETCH_HEAD *>$null
-        }
-        if ($LASTEXITCODE -eq 0) {
-            Write-Ok "$Name at $(git -C $Directory rev-parse --short HEAD)"
+        $updated = (Invoke-Git @('-C', $Directory, 'fetch', '--depth', '1', 'origin', 'HEAD')) -and
+                   (Invoke-Git @('-C', $Directory, 'reset', '--hard', 'FETCH_HEAD'))
+        $head = (git -C $Directory rev-parse --short HEAD)
+        if ($updated) {
+            Write-Ok "$Name at $head"
         } else {
-            Write-Warn "Could not update $Name - keeping the existing clone at $(git -C $Directory rev-parse --short HEAD)"
+            Write-Warn "Could not update $Name - keeping the existing clone at $head"
         }
     } else {
         if (Test-Path $Directory) { Remove-Item -Recurse -Force $Directory }
-        git clone --depth 1 $Repo $Directory *>$null
-        if ($LASTEXITCODE -ne 0) { throw "Failed to clone $Repo" }
+        if (-not (Invoke-Git @('clone', '--depth', '1', $Repo, $Directory))) { throw "Failed to clone $Repo" }
         Write-Ok "$Name cloned to vendor\$(Split-Path -Leaf $Directory)"
     }
 }
