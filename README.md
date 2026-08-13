@@ -189,36 +189,83 @@ Natural language in, tool calls out:
 
 > *"Validate the sequence and export 9:16 H.264 to exports/."*
 
-## The house style
+## Make it yours
 
-This repo ships with an opinionated design system for short-form vertical video. It's
-**optional** — delete `.claude/skills/` and you have a clean, style-agnostic vibe editor —
-but if you keep it, two skills load automatically whenever an agent runs here:
+The repo ships with one opinionated house style. **You are not stuck with it, and you
+should never have to edit a skill to change it.** Two files own everything:
+
+```bash
+node scripts/brand.mjs init      # wizard: colours, fonts, skin, fps
+```
+
+That writes `brand/brand.json` and compiles `brand/tokens.css`. Then open
+`brand/BRAND.md` and write your rules in plain English.
+
+| File | Holds | Format |
+|---|---|---|
+| **`brand/brand.json`** | palette, fonts, canvas, fps, texture, density, export | JSON, schema-backed |
+| **`brand/BRAND.md`** | voice, subject matter, banned visuals, CTA, sound taste | free text |
+
+**Every skill reads both before it plans or builds anything**, and the precedence is
+explicit:
+
+```
+repo defaults  →  brand/  →  the project's own tokens.css / MOTION-PLAN.md  →  what you say in chat
+```
+
+Change your accent once in `brand.json`, run `node scripts/brand.mjs build`, and every
+future project picks it up. `brand/tokens.css` is **generated** — never hand-edit it. It's
+built by substituting your values into the skin stylesheet, so the design system stays in
+one place and your fork only carries the diff.
+
+```bash
+node scripts/brand.mjs show      # resolved config + contrast readout
+node scripts/brand.mjs check     # validate without writing
+node scripts/brand.mjs build     # brand.json -> tokens.css
+```
+
+`check` and `build` also warn you about the things that quietly ruin a render: pure-black
+grounds, ink/ground contrast below 7:1, an accent that vanishes over dark footage, a font
+stack with no fallback, and captions parked in the bottom third.
+
+Omit `accentHi`, `accentLo`, `groundLift`, or `ink2` and they're derived from your accent
+and ground automatically. Most people only ever set three colours.
+
+## The house style (the default)
+
+Seven skills load automatically whenever an agent runs here — one per step of the editing
+process, plus an orchestrator:
 
 | Skill | Owns |
 |---|---|
-| **`ig-video-editor`** | The cut — silence removal, shot scale, pacing, B-roll, captions, sound design. Produces the edit blueprint. |
-| **`ig-motion-graphics`** | The look — *"The Terminal, in motion"*: 1080×1920, near-black `#0F0F10`, off-white `#F0EEE8`, one declared accent. 13 named graphic blocks, 7 reveal verbs. Produces the motion plan. |
+| **`ig-reel`** | Orchestrator. The edit blueprint, the sequence, the track layout. Dispatches the rest. |
+| **`ig-cut`** | Step 1 — silence and filler. The spine. |
+| **`ig-captions`** | Step 2 — word-accurate captions, banded at 45–60% of frame. |
+| **`ig-sound`** | Steps 3 + 5 — music bed, ducking, SFX. One mix. |
+| **`ig-show`** | Step 4 — **the motion graphics.** 20 named blocks, two skins. The one that matters most. |
+| **`ig-pacing`** | Step 6 — pattern interrupts, zoom pulses, shot scale. |
+| **`ig-delivery`** | QA and export. |
 
-Both cue off the same timecodes, so the cut and the graphics stay in sync.
-
-The system in five lines:
+The system in six lines:
 
 1. **Graphics are instrumentation, not decoration.** Every graphic answers *what does this
-   measure or prove?* Meters, counters, deltas, curves, diffs, terminal logs, receipts —
-   never swooshes, highlight blobs, or emoji.
+   measure, prove, or compare?* Dials, counters, deltas, curves, ledgers, diffs — never
+   swooshes, highlight blobs, or emoji. Lines that prove nothing get **no graphic at all.**
 2. **One accent per project.** Max two accent elements per frame.
 3. **Entrances 0.28–0.42s. Hold ≥0.8s. No exits — the cut is the exit.**
-   Never bounce, elastic, back, or linear.
-4. **≤8 graphics per 30s reel**, one every 3–5s, exactly one in the first three seconds.
-5. **Zero UI chrome.** No counters, no watermark, no follow banner.
+   Never bounce, elastic, or back.
+4. **≤8 graphics per 30s reel**, one every 3–5s, exactly one in the first three seconds —
+   but something changes on screen every **1–2s**, mostly on the caption layer.
+5. **Texture is mandatory.** Grain, vignette, feathered edges, and a ~15fps stutter on
+   mechanical motion. Perfectly smooth, perfectly flat output is what reads AI-generated.
+6. **Zero UI chrome.** No counters, no watermark, no follow banner.
 
-Full spec in [`.claude/skills/ig-motion-graphics/reference/`](.claude/skills/ig-motion-graphics/reference/) —
-the motion language, the block catalog, the intake questions, and the render pipeline.
-`templates/base/` is a lint-clean HyperFrames starter with four working blocks.
+Full spec in [`.claude/skills/ig-show/reference/`](.claude/skills/ig-show/reference/) —
+`DEVICES.md` (spoken idea → visual device), `BLOCKS.md`, `MOTION-LANGUAGE.md`,
+`TEXTURE.md`, `PIPELINE.md`. `templates/base/` is a lint-clean HyperFrames starter.
 
-To bring your own style instead: replace these two skills with your own, or drop them and
-let the agent work from your prompts alone.
+To bring your own system entirely: rewrite `brand/BRAND.md`, or delete `.claude/skills/`
+and let the agent work from your prompts alone.
 
 ## Repository layout
 
@@ -227,10 +274,19 @@ vibe-editor/
 ├── scripts/
 │   ├── setup-macos.sh              one-shot install / update (macOS)
 │   └── setup-windows.ps1           one-shot install / update (Windows)
+├── brand/                          YOUR customisation — edit these two, rebuild
+│   ├── brand.json                  palette, fonts, canvas, density  (schema-backed)
+│   ├── BRAND.md                    voice, banned visuals, CTA       (free text)
+│   └── tokens.css                  GENERATED — never hand-edit
 ├── .claude/skills/
-│   ├── ig-video-editor/            the cut — blueprint, pacing, captions, sound
-│   └── ig-motion-graphics/         the look — motion language, 13 blocks, pipeline
-│       └── reference/              MOTION-LANGUAGE · BLOCKS · INTAKE · PIPELINE · tokens.css
+│   ├── ig-reel/                    orchestrator — blueprint, tracks, dispatch
+│   ├── ig-cut/                     step 1 — silence and filler
+│   ├── ig-captions/                step 2 — captions
+│   ├── ig-sound/                   steps 3+5 — music and SFX
+│   ├── ig-show/                    step 4 — the motion graphics
+│   │   └── reference/              DEVICES · BLOCKS · MOTION-LANGUAGE · TEXTURE · PIPELINE · INTAKE · tokens-*.css
+│   ├── ig-pacing/                  step 6 — pattern interrupts
+│   └── ig-delivery/                QA and export
 ├── templates/base/                 lint-clean HyperFrames starter, 4 working blocks
 ├── projects/                       one folder per video (compositions + renders)
 ├── exports/                        finished masters out of Premiere
@@ -238,7 +294,8 @@ vibe-editor/
 │   ├── hyperframes/
 │   └── adobe-premiere-pro-mcp/
 ├── .mcp.json                       generated: registers the premiere-pro MCP server
-└── ig-motion-graphics.skill        the motion-graphics skill, packaged for distribution
+├── scripts/brand.mjs               the brand generator (init / build / show / check)
+└── ig-show.skill                  the motion-graphics skill, packaged for distribution
 ```
 
 ## Requirements
@@ -290,7 +347,7 @@ reason. Fix the composition and re-render — twenty seconds of render beats a g
 eight pixels off the shared axis.
 
 More failure modes, with causes and fixes, in
-[`PIPELINE.md`](.claude/skills/ig-motion-graphics/reference/PIPELINE.md#6-common-failures-and-what-they-actually-mean).
+[`PIPELINE.md`](.claude/skills/ig-show/reference/PIPELINE.md#7-common-failures).
 
 ## Built on
 

@@ -11,5 +11,14 @@ projects/*/renders/
 exports/*
 !exports/.gitkeep
 
+# Licensed font binaries — commercial EULAs forbid redistribution.
+# Each machine supplies its own copies into <project>/fonts/.
+# See .claude/skills/ig-show/reference/fonts.css
+**/fonts/*.otf
+**/fonts/*.ttf
+**/fonts/*.woff
+**/fonts/*.woff2
+!**/fonts/.gitkeep
+
 # macOS
 .DS_Store

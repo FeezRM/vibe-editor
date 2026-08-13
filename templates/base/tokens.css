@@ -1,37 +1,75 @@
 /* ============================================================
-   THE TERMINAL, IN MOTION — design tokens
-   Copy into every HyperFrames project. Change --accent only.
-   Spec: MOTION-LANGUAGE.md
+   GENERATED — do not edit.
+
+   Source : brand/brand.json  (edit that, then re-run)
+   Skin   : analog
+   Brand  : Default
+   Rebuild: node scripts/brand.mjs build
+
+   Copy this into a project as tokens.css. Free-text house rules that
+   are not values live in brand/BRAND.md and are read by the skills.
    ============================================================ */
 
+/* ============================================================
+   ANALOG SKIN — "the instrument"
+   The default skin. Vintage brass instrument on near-black:
+   engraved linework, bone/cream, one metallic accent, contour
+   texture. Dials, needles, tick scales, ledgers, plates.
 
-/* FONTS — do NOT add a Google Fonts <link> or @import. The HyperFrames compiler
-   embeds supported families automatically from the font-family declaration, and
-   `hyperframes lint` flags raw external font requests. Just name the family. */
+   Copy into a project as tokens.css. Change --accent only.
+   Licensed fonts must be installed on the render machine (see below).
+   Spec: MOTION-LANGUAGE.md   Texture recipes: TEXTURE.md
+   ============================================================ */
 
 :root {
-  /* ---- colour: the whole system is three roles ---- */
-  --ground:    #0F0F10;                      /* near-black. never #000 */
-  --ink:       #F0EEE8;                      /* warm off-white. never #FFF */
-  --accent:    #E8A03C;                      /* PER PROJECT. amber is only the default. */
+  /* ---- colour ------------------------------------------------
+     Near-monochrome + exactly one metal. Restraint is the whole
+     effect: the eye never referees between colours, so the one
+     accent reads as material (brass foil) rather than a UI choice. */
+
+  --ground: #0B0C0A;                    /* warm near-black. NEVER #000 — pure black reads flat/digital */
+  --ground-lift: #15140F;                    /* panels, plates, the lit centre of a vignette */
+  --ink: #EDE6D6;                    /* bone. NEVER #FFF */
+  --ink-2: #C9BFA8;                    /* parchment — secondary text, bound labels */
+
+  --accent: #C9A24B;                    /* PER PROJECT. brass is the default. */
+  --accent-hi: #F0D98C;                    /* specular. gradient stop only — never a fill on its own */
+  --accent-lo: #8A6A2A;                    /* edge darkening. gradient stop + 1px strokes */
 
   /* derived neutrals — do not invent others */
-  --ink-dim:   rgba(240, 238, 232, 0.55);
-  --ink-ghost: rgba(240, 238, 232, 0.18);
-  --plate:     rgba(15, 15, 16, 0.86);
-  --stroke:    rgba(240, 238, 232, 0.14);
+  --ink-dim: rgba(237, 230, 214, 0.55);  /* labels, secondary readouts */
+  --ink-ghost: rgba(237, 230, 214, 0.18);  /* rules, inactive ticks, grid */
+  --ink-trace: rgba(237, 230, 214, 0.08);  /* contour lines, guilloche */
+  --plate: rgba(11, 12, 10, 0.88);     /* the panel behind graphics */
+  --stroke: rgba(237, 230, 214, 0.14);  /* 1px panel borders */
 
-  /* signal colours — ONLY inside a data block where they carry meaning */
-  --sig-down:  #D9534F;                      /* diffs, drops. never styling. */
-  --sig-up:    #4FA36B;
+  /* signal colours — ONLY inside a data block where they carry
+     meaning (a diff, a delta, a crash). Never as styling. */
+  --sig-down: #5C1A1A;                    /* oxblood, not fire-engine red */
+  --sig-up: #1F3D2B;                    /* forest */
 
-  /* ---- type ---- */
-  --font-display: 'Inter Tight', 'Inter', 'Helvetica Now Display', -apple-system, sans-serif;
-  --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  /* metal ramp. 5 stops, specular OFF-CENTRE — real reflections
+     are directional. A flat hue + bevel is the #1 fake-3D tell. */
+  --metal: linear-gradient(115deg,
+            var(--accent-lo) 0%,
+            var(--accent)    25%,
+            var(--accent-hi) 45%,
+            var(--accent)    65%,
+            var(--accent-lo) 100%);
 
-  --track-display: -0.028em;                 /* the craft tell. exact. */
-  --track-caps:     0.085em;                 /* the other craft tell. exact. */
-  --track-caption: -0.020em;
+  /* ---- type --------------------------------------------------
+     Four faces, one job each. Never mix two inside one element.
+     See the FONTS note at the foot of this file. */
+
+  --font-display: 'TacticSans-UltIt', 'Anton', 'Impact', sans-serif;          /* headlines, hook slams */
+  --font-caption: 'Europa Grotesk SH', 'Archivo Black', sans-serif;     /* burnt-in spoken captions */
+  --font-engrave: 'Cinzel', 'Cormorant SC', 'Georgia', serif;                 /* radial numerals, instrument micro-labels */
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;            /* readouts, coordinates, timecode */
+
+  --track-display: -0.020em;                /* display italic caps; tight but not crushed */
+  --track-caps: 0.085em;                /* caps labels */
+  --track-engrave: 0.180em;                /* engraved micro-labels — wide is what reads "instrument" */
+  --track-caption: -0.015em;
 
   --lh-display: 0.94;
   --lh-body:    1.35;
@@ -40,51 +78,77 @@
   --w: 1080px;
   --h: 1920px;
 
-  --margin-x:   96px;                        /* the shared left axis. everything obeys it. */
-  --safe-top:   240px;                       /* IG chrome */
-  --safe-bottom: 420px;                      /* IG chrome */
-  --caption-top:  1180px;                    /* spoken-word caption band */
-  --caption-bottom: 1500px;
+  --margin-x: 96px;                      /* the shared left axis */
+  --safe-top: 240px;                     /* IG chrome */
+  --safe-bottom: 420px;                     /* IG chrome */
 
-  /* ---- docks (see MOTION-LANGUAGE §4) ---- */
+  /* Caption band — 45-60% of frame height. This is UNDER THE CHIN
+     with eyes on the upper third, and it is deliberately HIGHER
+     than the old 1180-1500 band. Two independent sources agree:
+     captions parked in the bottom third force the viewer to choose
+     between the face and the words. See MOTION-LANGUAGE §6. */
+  --caption-top: 864px;
+  --caption-bottom: 1152px;
+
+  /* ---- docks ---- */
   --dock-tl-x: 96px;   --dock-tl-y: 300px;
-  --dock-bl-x: 96px;   --dock-bl-y: 980px;
-  --dock-r-x:  620px;  --dock-r-y:  640px;
+  --dock-bl-x: 96px;   --dock-bl-y: 1260px;  /* below the caption band, not fighting it */
+  --dock-r-x:  620px;  --dock-r-y:  620px;
+  --dock-c-y:  760px;                        /* centred instrument (dial/compass) */
 
-  /* ---- motion ---- */
-  --t-enter:  0.34s;                         /* 0.28–0.42 */
+  /* ---- motion ------------------------------------------------
+     Entrances land fast then settle. Nothing bounces. */
+  --t-enter:  0.34s;                        /* 0.28-0.42 */
   --t-snap:   0.18s;
   --t-count:  0.90s;
-  --t-draw:   1.00s;
+  --t-draw:   1.20s;                        /* engraving draw-on is SLOW — that is the craft cue */
+  --t-sweep:  0.60s;                        /* needle throw, before the settle */
+  --t-settle: 0.35s;                        /* needle settle-back */
   --hold-min: 0.80s;
 
-  --radius-panel: 24px;
+  --radius-panel: 16px;                     /* tighter than digital — engraved plates are not app cards */
   --radius-chip:  20px;
+
+  /* ---- texture (see TEXTURE.md for the filters themselves) ---- */
+  --grain-opacity: 0.12;                 /* 0.08-0.15. above ~0.35 reads as an IG filter */
+  --vignette-drop: 0.1;                 /* 5-12% luminance falloff. felt, not seen */
+  --contour-opacity: 0.5;
+  --stutter-fps: 15;                   /* posterise-time. see MOTION-LANGUAGE §5 */
 }
 
 /* GSAP eases — reference, not CSS. Use these strings in tweens:
-   ENTER    "power4.out"
-   NUMBER   "power2.out"
-   SNAP     "expo.out"
-   AMBIENT  "sine.inOut"
-   BANNED   bounce / elastic / back / linear
+   ENTER    "power3.out"     fast arrival, long settle
+   NUMBER   "power2.out"     counters, meters
+   SNAP     "expo.out"       chips, stamps, single-frame lands
+   DRAW     "power2.inOut"   engraving stroke-dashoffset
+   SETTLE   "power1.inOut"   the needle coming back off its overshoot
+   AMBIENT  "sine.inOut"     breathing, drift
+   MACHINE  "none"           continuous ring rotation ONLY (linear reads as machine here)
+   BANNED   bounce / elastic / back
 */
 
 /* ============================================================
-   BASE — overlays are transparent; cards paint --ground
+   BASE
    ============================================================ */
 
 html, body {
   margin: 0;
   padding: 0;
-  background: transparent;                   /* OVERLAY default */
+  background: transparent;                  /* OVERLAY default */
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   font-family: var(--font-display);
 }
 
-/* add class="card" to the root div for a full-frame card */
-[data-composition-id].card { background: var(--ground); }
+/* class="card" on the root div for a full-frame cutaway.
+   The analog ground is a soft radial lift, not a flat fill —
+   flatness is the thing that reads cheap. */
+[data-composition-id].card {
+  background: radial-gradient(ellipse at 50% 42%,
+              var(--ground-lift) 0%,
+              var(--ground) 62%,
+              #070806 100%);
+}
 
 .scene-content {
   width: 100%;
@@ -93,7 +157,6 @@ html, body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  /* never position:absolute on a content container */
 }
 
 /* ============================================================
@@ -102,20 +165,32 @@ html, body {
 
 .display {
   font-family: var(--font-display);
-  font-weight: 900;
   font-size: 150px;
   letter-spacing: var(--track-display);
   line-height: var(--lh-display);
+  text-transform: uppercase;
   color: var(--ink);
   margin: 0;
-  max-width: 16ch;                           /* wrap, never <br> */
+  max-width: 14ch;                          /* wrap. never <br> in body copy */
 }
 .display--sm { font-size: 110px; }
 .display--lg { font-size: 190px; }
 
+/* engraved micro-label. the instrument-panel voice.
+   wide tracking is doing all the work here. */
+.engrave {
+  font-family: var(--font-engrave);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: var(--track-engrave);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0;
+}
+.engrave--lg { font-size: 34px; }
+
 .label {
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-caption);
   font-size: 26px;
   letter-spacing: var(--track-caps);
   text-transform: uppercase;
@@ -127,28 +202,47 @@ html, body {
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 96px;
-  font-variant-numeric: tabular-nums;        /* mandatory on live numbers */
-  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;       /* mandatory on every live number */
   color: var(--ink);
   margin: 0;
 }
 .readout--sm { font-size: 40px; font-weight: 500; }
 
-.caption {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 86px;
-  letter-spacing: var(--track-caption);
-  text-align: center;
+/* radial dial numerals — the compass face */
+.numeral {
+  font-family: var(--font-engrave);
+  font-size: 64px;
+  font-weight: 700;
+  fill: var(--ink);
   color: var(--ink);
-  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.40);   /* shadow, never stroke, never a box */
 }
 
-/* the one accent. max two per frame. */
+.caption {
+  font-family: var(--font-caption);
+  font-size: 82px;
+  letter-spacing: var(--track-caption);
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
+  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.42);   /* shadow. never a stroke, never a box */
+}
+
+/* THE accent. max two per frame. */
 .hot { color: var(--accent); }
 
-/* emphasis inside a sentence is WEIGHT, not colour */
-.strong { font-weight: 900; }
+/* Emphasis inside a caption is SCALE + COLOUR, not weight — the
+   caption face ships in one weight only. See MOTION-LANGUAGE §6. */
+.pop  { color: var(--accent); font-size: 1.14em; display: inline-block; }
+.pop--bad  { color: #A33; }                 /* semantic: marks the wrong way */
+.pop--good { color: #6A9E72; }              /* semantic: marks the right way */
+
+/* gold that reads as metal, not as a hue */
+.gold {
+  background: var(--metal);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
 /* ============================================================
    SURFACES
@@ -158,15 +252,32 @@ html, body {
   background: var(--plate);
   border: 1px solid var(--stroke);
   border-radius: var(--radius-panel);
-  /* no box-shadow, ever — the 1px stroke is the whole edge treatment */
+  /* no box-shadow, ever. the 1px stroke is the entire edge treatment. */
+}
+
+/* engraved plate — a hairline inner rule inset from the border,
+   the way a real instrument face is scored */
+.plate--engraved {
+  position: relative;
+  background: var(--plate);
+  border: 1px solid var(--accent-lo);
+  border-radius: var(--radius-panel);
+}
+.plate--engraved::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid var(--ink-trace);
+  border-radius: calc(var(--radius-panel) - 6px);
+  pointer-events: none;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  height: 40px;
-  padding: 0 18px;
+  height: 44px;
+  padding: 0 20px;
   background: var(--plate);
   border: 1px solid var(--stroke);
   border-radius: var(--radius-chip);
@@ -177,14 +288,15 @@ html, body {
 }
 .chip__dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
 
-/* scrim ONLY the graphic's own box, feathered. never the whole frame. */
+/* scrim ONLY the graphic's own box, feathered. never the frame.
+   a full-frame scrim kills the practical lighting in the shot. */
 .scrim {
   position: absolute;
   inset: -40px;
   background: radial-gradient(ellipse at center,
-              rgba(15,15,16,0.78) 0%,
-              rgba(15,15,16,0.55) 55%,
-              rgba(15,15,16,0) 100%);
+              rgba(11,12,10,0.80) 0%,
+              rgba(11,12,10,0.55) 55%,
+              rgba(11,12,10,0) 100%);
   pointer-events: none;
   z-index: -1;
 }
@@ -194,24 +306,68 @@ html, body {
   border-radius: var(--radius-panel);
   border: 1px solid var(--stroke);
   overflow: hidden;
-  filter: brightness(0.72) contrast(1.06);
+  filter: brightness(0.72) contrast(1.06) sepia(0.06);
 }
 
-/* meter */
-.meter__track {
-  width: 760px; height: 14px;
-  background: var(--ink-ghost);
-  border-radius: 2px;
-  overflow: hidden;
+/* ============================================================
+   INSTRUMENT PARTS
+   ============================================================ */
+
+/* tick scale — consistency is what makes it read as a real
+   instrument rather than decorative dashes. major every 5th. */
+.tick        { stroke: var(--ink-ghost); stroke-width: 1; }
+.tick--major { stroke: var(--ink);       stroke-width: 2; }
+.tick--live  { stroke: var(--accent);    stroke-width: 2; }
+
+/* engraved stroke — draw-on via stroke-dashoffset */
+.engraved-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
 }
-.meter__fill {
-  width: 100%; height: 100%;
-  background: var(--accent);                 /* hard edge. no gradient. */
-  transform-origin: left center;
-  transform: scaleX(0);
+.engraved-line--accent { stroke: var(--accent); }
+.engraved-line--ghost  { stroke: var(--ink-ghost); }
+
+/* needle. transform-origin is the pivot, always set explicitly. */
+.needle {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transform-origin: center center;
 }
+.needle__cap { fill: var(--accent-lo); }
+
+/* bezel ring */
+.bezel      { fill: none; stroke: var(--stroke); stroke-width: 1; }
+.bezel--gold{ fill: none; stroke: var(--accent); stroke-width: 2; }
 
 /* hairline rule */
-.rule { height: 1px; background: var(--ink-ghost); border: 0; margin: 0; }
-.rule--live { background: var(--ink); }
+.rule         { height: 1px; background: var(--ink-ghost); border: 0; margin: 0; }
+.rule--live   { background: var(--ink); }
 .rule--accent { background: var(--accent); }
+
+/* print registration offset — a duplicate linework layer nudged
+   1-2px and tinted. reads as mis-registered print plates. Use
+   INSTEAD of a drop shadow, never as well as one. */
+.misprint {
+  position: absolute;
+  inset: 0;
+  transform: translate(1.5px, 1px);
+  opacity: 0.15;
+  color: var(--sig-down);
+  pointer-events: none;
+}
+
+/* FONTS — the licensed faces must be INSTALLED ON THE RENDER MACHINE.
+   Do NOT write @font-face rules: HyperFrames injects its own deterministic
+   @font-face block, and a hand-authored one silently kills the entire
+   stylesheet (symptom: "Fonts: 0 loaded", everything renders as black
+   serif). Name the family and let system font resolution handle it.
+
+   Verified family strings — these are NOT guessable:
+     TacticSans-UltIt      display
+     Europa Grotesk SH     caption  (NOT "...SH Bol" — that is the GDI
+                                     name and Chrome will not match it)
+   Free fallbacks are declared in each stack, so a machine without the
+   licensed faces renders a degraded look rather than breaking. */
