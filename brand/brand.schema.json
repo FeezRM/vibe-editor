@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vibe Editor brand config",
+  "description": "Machine-readable house style. Free-text rules live in BRAND.md. Regenerate tokens with: node scripts/brand.mjs build",
+  "type": "object",
+  "required": ["skin", "palette", "fonts"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "type": "string", "description": "Brand or channel name. Cosmetic." },
+    "skin": {
+      "enum": ["analog", "digital"],
+      "description": "analog = warm brass instrument (default). digital = terminal readout."
+    },
+    "palette": {
+      "type": "object",
+      "required": ["ground", "ink", "accent"],
+      "description": "Three roles carry the system. Omit the derived keys and they are computed from the accent.",
+      "properties": {
+        "ground":     { "$ref": "#/$defs/hex", "description": "Near-black. Never pure #000." },
+        "groundLift": { "$ref": "#/$defs/hex", "description": "Optional. Derived from ground." },
+        "ink":        { "$ref": "#/$defs/hex", "description": "Off-white. Never pure #FFF." },
+        "ink2":       { "$ref": "#/$defs/hex", "description": "Optional. Derived from ink." },
+        "accent":     { "$ref": "#/$defs/hex", "description": "The ONE colour that marks what matters." },
+        "accentHi":   { "$ref": "#/$defs/hex", "description": "Optional specular. Derived from accent." },
+        "accentLo":   { "$ref": "#/$defs/hex", "description": "Optional edge darkening. Derived from accent." },
+        "signalDown": { "$ref": "#/$defs/hex", "description": "Meaning only — diffs, drops. Never styling." },
+        "signalUp":   { "$ref": "#/$defs/hex" }
+      },
+      "additionalProperties": false
+    },
+    "fonts": {
+      "type": "object",
+      "required": ["display", "caption", "engrave", "mono"],
+      "description": "First entry is preferred; the rest are fallbacks. Licensed faces must be INSTALLED on the render machine — never write @font-face.",
+      "properties": {
+        "display": { "$ref": "#/$defs/stack" },
+        "caption": { "$ref": "#/$defs/stack" },
+        "engrave": { "$ref": "#/$defs/stack" },
+        "mono":    { "$ref": "#/$defs/stack" }
+      },
+      "additionalProperties": false
+    },
+    "type": {
+      "type": "object",
+      "properties": {
+        "trackDisplay":      { "type": "string" },
+        "trackCaps":         { "type": "string" },
+        "trackEngrave":      { "type": "string", "description": "Wide tracking is what reads as engraved. ~0.180em." },
+        "trackCaption":      { "type": "string" },
+        "captionUppercase":  { "type": "boolean" },
+        "displayUppercase":  { "type": "boolean" }
+      }
+    },
+    "canvas": {
+      "type": "object",
+      "properties": {
+        "width":         { "type": "integer" },
+        "height":        { "type": "integer" },
+        "fps":           { "type": "integer", "description": "MUST match the Premiere sequence or overlays stutter." },
+        "marginX":       { "type": "integer" },
+        "safeTop":       { "type": "integer" },
+        "safeBottom":    { "type": "integer" },
+        "captionTop":    { "type": "integer", "description": "45-60% of height. Bottom-third captions fight the face." },
+        "captionBottom": { "type": "integer" }
+      }
+    },
+    "texture": {
+      "type": "object",
+      "description": "Zero texture is what makes a render look AI-generated.",
+      "properties": {
+        "grainOpacity":   { "type": "number", "minimum": 0, "maximum": 1 },
+        "vignetteDrop":   { "type": "number", "minimum": 0, "maximum": 1 },
+        "contourOpacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "stutterFps":     { "type": "number", "description": "0 disables. ~15 gives the hand-made judder." }
+      }
+    },
+    "density": {
+      "type": "object",
+      "properties": {
+        "maxGraphicsPer30s":         { "type": "integer" },
+        "graphicGapSeconds":         { "$ref": "#/$defs/range" },
+        "interruptIntervalSeconds":  { "$ref": "#/$defs/range" },
+        "maxStaticShotSeconds":      { "type": "number" },
+        "maxAccentElementsPerFrame": { "type": "integer" }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "properties": {
+        "preserveSpeakerGrammar":   { "type": "boolean", "description": "true = never 'correct' the speaker." },
+        "captionCase":              { "enum": ["upper", "lower", "sentence"] },
+        "maxWordsPerCaptionGroup":  { "type": "integer" },
+        "maxEmphasisWordsPerLine":  { "type": "integer" }
+      }
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "resolution":  { "type": "string" },
+        "codec":       { "type": "string" },
+        "bitrateMbps": { "type": "number" },
+        "audioKbps":   { "type": "number" },
+        "outputDir":   { "type": "string" }
+      }
+    },
+    "tracks": {
+      "type": "object",
+      "properties": {
+        "video": { "type": "array", "items": { "type": "string" } },
+        "audio": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "hex": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "stack": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "range": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+  }
+}

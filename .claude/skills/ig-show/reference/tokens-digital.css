@@ -1,0 +1,314 @@
+/* ============================================================
+   DIGITAL SKIN — "the terminal"
+   The alternate skin. Cold digital instrument: hard-edged meters,
+   monospace readouts, terminal logs, diffs. Same structure as the
+   analog skin — every variable and class name below is identical
+   to tokens-analog.css, so a composition built against one skin
+   renders correctly under the other.
+
+   Use for tooling, code, build-in-public, and data-heavy content.
+   For everything else the ANALOG skin is the default.
+
+   Copy into a project as tokens.css. Change --accent only.
+   Licensed fonts must be installed on the render machine.
+   ============================================================ */
+
+:root {
+  /* ---- colour ---- */
+  --ground:     #0F0F10;                    /* near-black. never #000 */
+  --ground-lift:#17171A;
+  --ink:        #F0EEE8;                    /* warm off-white. never #FFF */
+  --ink-2:      #A8A6A0;
+
+  --accent:     #E8A03C;                    /* PER PROJECT. amber is the default. */
+  --accent-hi:  #F5C27A;
+  --accent-lo:  #9A6A22;
+
+  --ink-dim:    rgba(240, 238, 232, 0.55);
+  --ink-ghost:  rgba(240, 238, 232, 0.18);
+  --ink-trace:  rgba(240, 238, 232, 0.07);
+  --plate:      rgba(15, 15, 16, 0.86);
+  --stroke:     rgba(240, 238, 232, 0.14);
+
+  --sig-down:   #D9534F;                    /* diffs and drops only. never styling. */
+  --sig-up:     #4FA36B;
+
+  /* the digital skin does NOT fake metal — a flat accent is correct
+     here. --metal resolves to a flat fill so shared blocks still work. */
+  --metal: linear-gradient(115deg, var(--accent) 0%, var(--accent) 100%);
+
+  /* ---- type ---- */
+  --font-display: 'TacticSans-UltIt', 'Inter Tight', 'Inter', sans-serif;
+  --font-caption: 'Europa Grotesk SH', 'Inter Tight', sans-serif;
+  --font-engrave: 'JetBrains Mono', 'SF Mono', Menlo, monospace;   /* digital "engraving" is monospace caps */
+  --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+  --track-display: -0.028em;
+  --track-caps:     0.085em;
+  --track-engrave:  0.120em;
+  --track-caption: -0.020em;
+
+  --lh-display: 0.94;
+  --lh-body:    1.35;
+
+  /* ---- canvas ---- */
+  --w: 1080px;
+  --h: 1920px;
+
+  --margin-x:    96px;
+  --safe-top:    240px;
+  --safe-bottom: 420px;
+  --caption-top:    864px;                  /* same corrected band as analog */
+  --caption-bottom: 1152px;
+
+  /* ---- docks ---- */
+  --dock-tl-x: 96px;   --dock-tl-y: 300px;
+  --dock-bl-x: 96px;   --dock-bl-y: 1260px;
+  --dock-r-x:  620px;  --dock-r-y:  620px;
+  --dock-c-y:  760px;
+
+  /* ---- motion ---- */
+  --t-enter:  0.34s;
+  --t-snap:   0.18s;
+  --t-count:  0.90s;
+  --t-draw:   1.00s;
+  --t-sweep:  0.50s;
+  --t-settle: 0.30s;
+  --hold-min: 0.80s;
+
+  --radius-panel: 24px;
+  --radius-chip:  20px;
+
+  /* ---- texture ----
+     Lighter than analog: the digital register wants clean, but not
+     STERILE. Zero texture is what makes a render look AI-generated. */
+  --grain-opacity:    0.07;
+  --vignette-drop:    0.06;
+  --contour-opacity:  0.00;                 /* no contour lines in the digital skin */
+  --stutter-fps:      0;                    /* 0 = disabled. digital holds smooth motion. */
+}
+
+/* GSAP eases — identical vocabulary to the analog skin:
+   ENTER "power4.out" · NUMBER "power2.out" · SNAP "expo.out"
+   DRAW "power2.inOut" · SETTLE "power1.inOut" · AMBIENT "sine.inOut"
+   BANNED bounce / elastic / back / linear
+*/
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-display);
+}
+
+[data-composition-id].card { background: var(--ground); }
+
+.scene-content {
+  width: 100%;
+  height: 100%;
+  padding: var(--safe-top) var(--margin-x) var(--safe-bottom);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   TYPE ROLES — same class names as analog
+   ============================================================ */
+
+.display {
+  font-family: var(--font-display);
+  font-size: 150px;
+  letter-spacing: var(--track-display);
+  line-height: var(--lh-display);
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+  max-width: 16ch;
+}
+.display--sm { font-size: 110px; }
+.display--lg { font-size: 190px; }
+
+.engrave {
+  font-family: var(--font-engrave);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: var(--track-engrave);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0;
+}
+.engrave--lg { font-size: 34px; }
+
+.label {
+  font-family: var(--font-caption);
+  font-size: 26px;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0;
+}
+
+.readout {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 96px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  margin: 0;
+}
+.readout--sm { font-size: 40px; font-weight: 500; }
+
+.numeral {
+  font-family: var(--font-mono);
+  font-size: 60px;
+  font-weight: 700;
+  fill: var(--ink);
+  color: var(--ink);
+}
+
+.caption {
+  font-family: var(--font-caption);
+  font-size: 82px;
+  letter-spacing: var(--track-caption);
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
+  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.40);
+}
+
+.hot { color: var(--accent); }
+
+.pop  { color: var(--accent); font-size: 1.14em; display: inline-block; }
+.pop--bad  { color: var(--sig-down); }
+.pop--good { color: var(--sig-up); }
+
+.gold { color: var(--accent); }             /* no metal ramp in the digital skin */
+
+/* ============================================================
+   SURFACES
+   ============================================================ */
+
+.plate {
+  background: var(--plate);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+}
+.plate--engraved {
+  position: relative;
+  background: var(--plate);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-panel);
+}
+.plate--engraved::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid var(--ink-trace);
+  border-radius: calc(var(--radius-panel) - 6px);
+  pointer-events: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  padding: 0 18px;
+  background: var(--plate);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-chip);
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.chip__dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+
+.scrim {
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(ellipse at center,
+              rgba(15,15,16,0.78) 0%,
+              rgba(15,15,16,0.55) 55%,
+              rgba(15,15,16,0) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.proof {
+  border-radius: var(--radius-panel);
+  border: 1px solid var(--stroke);
+  overflow: hidden;
+  filter: brightness(0.72) contrast(1.06);
+}
+
+/* ============================================================
+   INSTRUMENT PARTS — digital equivalents, same class names
+   ============================================================ */
+
+.tick        { stroke: var(--ink-ghost); stroke-width: 1; }
+.tick--major { stroke: var(--ink);       stroke-width: 2; }
+.tick--live  { stroke: var(--accent);    stroke-width: 2; }
+
+.engraved-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;                          /* digital linework is even-weight, not tapered */
+  stroke-linecap: butt;
+}
+.engraved-line--accent { stroke: var(--accent); }
+.engraved-line--ghost  { stroke: var(--ink-ghost); }
+
+.needle {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: butt;
+  transform-origin: center center;
+}
+.needle__cap { fill: var(--accent); }
+
+.bezel       { fill: none; stroke: var(--stroke); stroke-width: 1; }
+.bezel--gold { fill: none; stroke: var(--accent); stroke-width: 2; }
+
+.rule         { height: 1px; background: var(--ink-ghost); border: 0; margin: 0; }
+.rule--live   { background: var(--ink); }
+.rule--accent { background: var(--accent); }
+
+.misprint { display: none; }                /* no print-registration tell in the digital skin */
+
+/* ============================================================
+   DIGITAL-ONLY: the meter (analog uses THE DIAL instead)
+   ============================================================ */
+
+.meter__track {
+  width: 760px; height: 14px;
+  background: var(--ink-ghost);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.meter__fill {
+  width: 100%; height: 100%;
+  background: var(--accent);                /* hard edge. no gradient. */
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+/* FONTS — the licensed faces must be INSTALLED ON THE RENDER MACHINE.
+   Do NOT write @font-face rules: HyperFrames injects its own deterministic
+   @font-face block, and a hand-authored one silently kills the entire
+   stylesheet (symptom: "Fonts: 0 loaded", everything renders as black
+   serif). Name the family and let system font resolution handle it.
+
+   Verified family strings — these are NOT guessable:
+     TacticSans-UltIt      display
+     Europa Grotesk SH     caption  (NOT "...SH Bol" — that is the GDI
+                                     name and Chrome will not match it)
+   Free fallbacks are declared in each stack, so a machine without the
+   licensed faces renders a degraded look rather than breaking. */

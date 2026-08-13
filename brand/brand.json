@@ -1,0 +1,80 @@
+{
+  "$schema": "./brand.schema.json",
+
+  "name": "Default",
+  "skin": "analog",
+
+  "palette": {
+    "ground": "#0B0C0A",
+    "groundLift": "#15140F",
+    "ink": "#EDE6D6",
+    "ink2": "#C9BFA8",
+    "accent": "#C9A24B",
+    "accentHi": "#F0D98C",
+    "accentLo": "#8A6A2A",
+    "signalDown": "#5C1A1A",
+    "signalUp": "#1F3D2B"
+  },
+
+  "fonts": {
+    "display": ["TacticSans-UltIt", "Anton", "Impact", "sans-serif"],
+    "caption": ["Europa Grotesk SH", "Archivo Black", "sans-serif"],
+    "engrave": ["Cinzel", "Cormorant SC", "Georgia", "serif"],
+    "mono":    ["JetBrains Mono", "SF Mono", "Menlo", "monospace"]
+  },
+
+  "type": {
+    "trackDisplay": "-0.020em",
+    "trackCaps": "0.085em",
+    "trackEngrave": "0.180em",
+    "trackCaption": "-0.015em",
+    "captionUppercase": true,
+    "displayUppercase": true
+  },
+
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "marginX": 96,
+    "safeTop": 240,
+    "safeBottom": 420,
+    "captionTop": 864,
+    "captionBottom": 1152
+  },
+
+  "texture": {
+    "grainOpacity": 0.12,
+    "vignetteDrop": 0.10,
+    "contourOpacity": 0.50,
+    "stutterFps": 15
+  },
+
+  "density": {
+    "maxGraphicsPer30s": 8,
+    "graphicGapSeconds": [3, 5],
+    "interruptIntervalSeconds": [1, 2],
+    "maxStaticShotSeconds": 4,
+    "maxAccentElementsPerFrame": 2
+  },
+
+  "voice": {
+    "preserveSpeakerGrammar": true,
+    "captionCase": "upper",
+    "maxWordsPerCaptionGroup": 4,
+    "maxEmphasisWordsPerLine": 1
+  },
+
+  "export": {
+    "resolution": "1080x1920",
+    "codec": "H.264",
+    "bitrateMbps": 12,
+    "audioKbps": 320,
+    "outputDir": "exports/"
+  },
+
+  "tracks": {
+    "video": ["A-roll", "B-roll / cutaways", "primary graphics", "secondary graphics"],
+    "audio": ["voice", "voice alt", "SFX", "SFX", "music", "spare"]
+  }
+}

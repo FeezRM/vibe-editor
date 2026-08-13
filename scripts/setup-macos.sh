@@ -231,6 +231,21 @@ mkdir -p "$REPO_ROOT/projects" "$REPO_ROOT/exports"
 ok "projects/ and exports/ ready"
 ok "House-style skills live in .claude/skills/ and load automatically here"
 
+# ------------------------------------------------------------------ brand ----
+
+step "Building brand tokens"
+if [[ -f "$REPO_ROOT/brand/brand.json" ]]; then
+  if node "$REPO_ROOT/scripts/brand.mjs" build; then
+    ok "brand/tokens.css built from brand/brand.json"
+  else
+    warn "Brand build failed — fix brand/brand.json, then: node scripts/brand.mjs build"
+  fi
+  note "Make it yours:  node scripts/brand.mjs init   (colours, fonts, fps)"
+  note "Then edit brand/BRAND.md for voice, banned visuals, and CTA."
+else
+  warn "brand/brand.json missing — run: node scripts/brand.mjs init"
+fi
+
 # ---------------------------------------------------------------- doctor ----
 
 if [[ "$SKIP_DOCTOR" == false ]]; then
