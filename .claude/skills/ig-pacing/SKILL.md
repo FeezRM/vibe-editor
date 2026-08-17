@@ -36,7 +36,7 @@ The SOP says "something happening every 3-5 seconds." **That number is too slow 
 
 Measured from a real 40-second short's actual Premiere timeline: 7 video tracks + a dedicated caption track firing continuously, 40-60+ individual clip instances in 40 seconds, A-roll cut every ~3s with graphic tracks landing bursts every 1-3s on top. Measured independently from a primary-source 45-second short: a new graphic/caption/overlay change every **1-3 seconds**, longest static beat ~3-4s, essentially continuous visual/audio interrupt.
 
-**Working rule: something changes on screen or in the mix at least once every 1-2 seconds on average, and never let a beat run past ~3-4 seconds with nothing changing.** 3-5s was someone's guess; 1-2s is what fast edits actually measure at.
+**Working rule: something changes on screen or in the mix at least once every ~1.5 seconds on average, and never let a beat run past ~2 seconds with nothing changing.** 3-5s was someone's guess. Re-measured off the three reference reels: mean interval 1.4 / 1.5 / 1.5s, and the longest beat in any of them with nothing changing is ~2.0s — not 3-4s.
 
 ---
 
@@ -45,6 +45,19 @@ Measured from a real 40-second short's actual Premiere timeline: 7 video tracks 
 This is the finding that should shape how you spend the budget. In the primary-source short above, the camera **barely cut** — one near-static talking-head take, essentially locked off, for the whole 45 seconds. The fast feel came entirely from graphics and captions changing every 1-3 seconds on top of that one shot. Zoom/push simulated via scale, not a dolly.
 
 Implication: **the interrupt budget can be spent on the graphics layer instead of the footage layer.** A creator with one clean take and no B-roll can still cut fast — spend the budget on caption swaps, emphasis hits, and overlay changes instead of forcing hard cuts the footage doesn't support. Don't reach for a cut just because the SOP says "pattern interrupt" — check the graphics layer first.
+
+### The precondition this depends on
+
+Spending the budget on the graphics layer only works **if there is a graphics layer to
+spend it on.** Measured across the three references, a graphic is on screen **≥85% of
+runtime** (S1: 100%). A previous build of this repo left ~41% of the runtime graphic-free
+and then had nothing to interrupt with, which is exactly how a locked-off take with a
+theoretically-fine pacing plan came out feeling dead.
+
+**Before you audit gaps, check graphic presence.** If less than ~85% of the runtime has a
+graphic on screen, that is not a pacing problem you can fix here — kick it back to
+`ig-show` rather than papering over it with zoom pulses. A zoom pulse on a bare frame is
+not a pattern interrupt, it is a camera move.
 
 ---
 
@@ -74,7 +87,7 @@ Work down this list when auditing a gap. If a caption swap alone closes it, stop
 
 - Adjacent beats must differ in scale: **MED → CU → MED-WIDE → CU**, never the same size twice in a row.
 - An identical medium shot held 30+ seconds is a retention problem no graphic fixes — that's a footage problem, kick it back to the spine (ig-cut) or force a scale change via reframe/zoom, not just another caption.
-- **Longest permitted static beat is ~3-4 seconds.** Past that, something — cut, scale, graphic, or caption — must change, no exceptions.
+- **Longest permitted static beat is ~2 seconds.** That is the measured ceiling in all three references. Past it, something — cut, scale, graphic element, or caption — must change, no exceptions.
 - The hook (0-3s) is the densest region of the whole video; it should never sit still even for one beat.
 
 ---
@@ -84,11 +97,12 @@ Work down this list when auditing a gap. If a caption swap alone closes it, stop
 Run this on every edit before calling pacing done:
 
 1. `verify_premiere_connection` first — confirm the bridge is live before touching anything.
-2. Walk the timeline start to end. Log the timestamp of **every** on-screen or audible change: cut, caption swap, graphic in/out, zoom pulse, SFX hit, music beat.
-3. Find every gap in that log **longer than 3 seconds**.
-4. For each gap, prescribe the cheapest fix from the interrupt menu that closes it — usually a caption emphasis hit or a graphic already scheduled by another pass, not a new cut.
-5. Place the fix (`add_marker` to mark the cue point first if useful, then the actual tool), and confirm with `export_frame` at the cue timecode — verify the frame actually changed, don't take the call's success on faith.
-6. Re-walk the log after fixes land. No gap should remain over ~3-4s.
+2. **Measure graphic presence before anything else.** Sum the durations of every clip on the graphics tracks, take the union (overlaps count once), and divide by sequence duration. Below ~85%, stop and kick back to `ig-show` — the gap audit cannot fix an empty graphics layer.
+3. Walk the timeline start to end. Log the timestamp of **every** on-screen or audible change: cut, caption swap, graphic in/out, zoom pulse, SFX hit, music beat.
+4. Find every gap in that log **longer than 2 seconds**.
+5. For each gap, prescribe the cheapest fix from the interrupt menu that closes it — usually a caption emphasis hit or a graphic already scheduled by another pass, not a new cut.
+6. Place the fix (`add_marker` to mark the cue point first if useful, then the actual tool), and confirm with `export_frame` at the cue timecode — verify the frame actually changed, don't take the call's success on faith.
+7. Re-walk the log after fixes land. No gap should remain over ~2s.
 
 Report the audit as a short table: timestamp of gap start → gap length → interrupt applied → tool used. This is what "step 6 done" looks like — not a vague "pacing is good" claim.
 
@@ -104,6 +118,14 @@ Report the audit as a short table: timestamp of gap start → gap length → int
 | Cut in a transition on a hard cut | `add_transition`, `add_transition_to_clip`, `batch_add_transitions` |
 | Mark a gap or a cue point during audit | `add_marker` |
 | Verify a fix actually landed | `export_frame` |
+
+> ⚠️ **`export_frame` can report success and write nothing.** Pass **forward slashes** in
+> `outputPath` (backslashes get read as escapes and the path is silently mangled), and
+> **assert the file exists on disk** before believing the result — on this machine the
+> exporter is broken and returns `success: true` with no file. Fall back to an ffmpeg
+> composite over a real A-roll frame. See `ig-show/SKILL.md` for the full note and the
+> fallback command. A verification step that cannot fail is not a verification step.
+
 | Confirm bridge is live before starting | `verify_premiere_connection` |
 
 No other Premiere tools are needed for this step — captions, B-roll placement, and SFX levels belong to earlier passes; this step only times and fills the gaps between them.
@@ -115,14 +137,16 @@ No other Premiere tools are needed for this step — captions, B-roll placement,
 - Constant shake/spin/whip on every beat — reads cheap, not fast. Interrupts need a baseline of calm to interrupt against; if everything moves, nothing reads as a hit.
 - Zoom pulses stacked on top of each other or left running past the reset point.
 - Treating "pattern interrupt" as "must be a cut" — check the graphics layer before reaching for the razor.
-- Filling every single second — diminishing returns. A gap-audit that flags 1s as a violation is over-tuned; 1-4s is the working band, not a hard floor of zero stillness.
+- Filling every single second — diminishing returns. A gap-audit that flags 0.8s as a violation is over-tuned; ~1-2s is the working band, not a hard floor of zero stillness.
+- Running the gap audit at all on an edit whose graphics layer covers less than ~85% of runtime. Fix the graphics layer first; zoom pulses cannot substitute for it.
 
 ---
 
 ## QA checklist
 
 - [ ] Walked the full timeline and logged every visual/audio change with a timestamp.
-- [ ] No gap longer than ~3-4 seconds anywhere, hook (0-3s) included.
+- [ ] Graphic presence measured at ≥85% of runtime before the gap audit started.
+- [ ] No gap longer than ~2 seconds anywhere, hook (0-3s) included.
 - [ ] Each fix used the cheapest tool from the interrupt menu that closed the gap — not a reflex hard cut.
 - [ ] Adjacent shots differ in scale (MED/CU/MED-WIDE alternation) — no two same-size shots back to back.
 - [ ] Every zoom pulse is 2-4% over ~1.2s, resets to base, verified with `get_keyframes`.

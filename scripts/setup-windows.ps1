@@ -278,20 +278,24 @@ Write-Ok 'House-style skills live in .claude\skills\ and load automatically here
 
 # ------------------------------------------------------------------ brand ----
 
-Write-Step 'Building brand tokens'
-$brandCfg = Join-Path $repoRoot 'brand\brand.json'
-if (Test-Path $brandCfg) {
-    node (Join-Path $repoRoot 'scripts\brand.mjs') build | Out-Host
-    if ($LASTEXITCODE -eq 0) {
-        Write-Ok 'brand\tokens.css built from brand\brand.json'
-    } else {
-        Write-Warn 'Brand build failed - fix brand\brand.json, then: node scripts\brand.mjs build'
-    }
-    Write-Note 'Make it yours:  node scripts\brand.mjs init   (colours, fonts, fps)'
-    Write-Note 'Then edit brand\BRAND.md for voice, banned visuals, and CTA.'
-} else {
-    Write-Warn 'brand\brand.json missing - run: node scripts\brand.mjs init'
+Write-Step 'Setting up your brand'
+$brandScript = Join-Path $repoRoot 'scripts\brand.mjs'
+
+# Creates brand\brand.json and brand\BRAND.md if they are missing; existing files
+# are never touched, so this is safe on every re-run.
+node $brandScript scaffold | Out-Host
+if ($LASTEXITCODE -ne 0) {
+    Write-Warn 'Could not create brand\ - run it manually: node scripts\brand.mjs scaffold'
 }
+
+node $brandScript build | Out-Host
+if ($LASTEXITCODE -eq 0) {
+    Write-Ok 'brand\tokens.css built from brand\brand.json'
+} else {
+    Write-Warn 'Brand build failed - fix brand\brand.json, then: node scripts\brand.mjs build'
+}
+Write-Note 'Make it yours:  node scripts\brand.mjs init   (colours, fonts, fps)'
+Write-Note 'Then edit brand\BRAND.md for voice, banned visuals, and CTA.'
 
 # ---------------------------------------------------------------- doctor ----
 

@@ -1,229 +1,144 @@
-# DEVICES — spoken idea → visual device
+# DEVICES — spoken line → what goes on screen
 
-The lookup table. You have a line of script; you need to know what goes on screen.
-
-This is the practical core of the SHOW step. [BLOCKS.md](BLOCKS.md) says how each device
-is built; this file says **which one to reach for**, and it is organised by the *shape of
-the idea being spoken*, not by the shape of the graphic.
-
-Every mapping here was derived from observed work, not invented.
+The lookup that decides *what to build*. [BLOCKS.md](BLOCKS.md) says how to build it.
 
 ---
 
-## 0. The gate — before you pick anything
+## 0. The gate
 
-> **Graphics are reserved for concrete numbers, comparisons, and callouts.
-> Plain explanatory lines get NO graphic.**
+Before choosing anything, run the line through this in order:
 
-This is the discipline that separates the reference work from imitations of it. In the
-primary-source material, most runtime is unadorned talking head; graphics appear at
-"prove it," "compare it," and "here's the number" beats only. Scarcity is what makes each
-one land.
+```
+1. Does the line name a THING the viewer could recognise?
+      profile · story · DM · reel · comment · document · button · phone
+   -> SHOW THAT THING.  (blocks 01, 02, 05, 10, 13, 14)
 
-Two questions, in order:
+2. Does the line name a NUMBER, RANK, or CHANGE?
+      views · followers · %  · top 10% · 72 hours · before/after
+   -> DRAW THE MEASUREMENT.  (blocks 03, 04, 07, 08, 09)
 
-1. **What does this graphic measure, prove, or compare?** No answer → no graphic.
-   Recommend a cut, a push-in, or a caption emphasis instead.
-2. **Could a viewer with sound off understand the line from the graphic alone?**
-   No → the graphic is decoration, not instrumentation.
+3. Does the line contrast a BAD way against a GOOD way?
+   -> COLOUR WASH the pair, or COMPARISON if artefacts exist.  (11, 04)
 
-A graphic that exists to fill a static shot is the problem, not the fix. Fill it from
-`ig-pacing`'s cheap end of the interrupt menu instead.
-
----
-
-## 1. The map
-
-### Quantity — "a number worth staring at"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| "four million views" | Number counts up, unit label beneath | `THE COUNTER` |
-| "$85,730 in the account" | Counting figure on a plate with dashed chart axes behind it | `THE COUNTER` + plate |
-| "we're at 60% of the goal" | Value between two labelled bounds | `THE DIAL` (analog) / `THE METER` (digital) |
-| "seven categories" / "step three of five" | Ring divided into exactly N segments, one lit | `THE DIAL`, segmented |
-| "$2,997 a month" | Small corner tag, not shouted | `THE CHIP` |
-
-**Rules:** real numbers with real units — `4,000,000`, never `4M+`. If it's a projection
-or an average, the label says so. `tabular-nums` on every counting figure or the digits
-jitter. Segment count is computed from the number actually spoken (`360° / N`), never
-approximated.
-
-### Change — "before and after"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| "went from 7,000 to 1.2 million" | Two figures, strike on the old, count from old→new | `THE DELTA` |
-| "this used to cost $2,500" | Illustrated "before" scene + handwritten price annotation | `THE VIGNETTE` |
-| "it collapsed" | A drawn line strikes an object, which visibly cracks | `THE IMPACT` |
-| "growth over six months" | Line draws left→right, one marked point | `THE CURVE` |
-| "retention falls off a cliff" | Curve crashing 100%→0%, drop line at the cliff | `THE CURVE` |
-
-**Rule:** the after-value counts **from** the before-value, not from zero. Counting from
-zero throws away the comparison, which is the entire point of the beat.
-
-### Comparison — "theirs vs. ours"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| "this hook got 7K, this one got 1.2M" | Two cards side by side with view-count badges, the winner scaled up | `THE VERSUS` |
-| "most people write X, you should write Y" | Removed lines then added lines, code-review style | `THE DIFF` |
-| "the wrong way / the right way" | Same caption band, accent shifts oxblood → forest | caption `.pop--bad` / `.pop--good` |
-| "mine vs. the industry average" | Two stacked scales, the losing one left neutral | `THE DIAL`, dual |
-
-**Rule:** the loser is never red-and-angry — it sits neutral (`--ink-ghost`). Making the
-losing side ugly is editorialising; making it *quiet* is confident. Red is permitted only
-inside `THE DIFF`, where it carries an actual meaning.
-
-### Structure — "it's a system with parts"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| "there are four steps" | Indexed rows, active row walks down per spoken beat | `THE STACK` |
-| "let me define X" | Rule enters from off-frame, turns, terminates at a label | `THE RAIL` |
-| "here's the actual command" | Real terminal output typing on | `THE TERMINAL` |
-| "I printed boards to visualise this" | Genuinely analog — real paper, real marker, in shot | *(not a graphic — shoot it)* |
-
-**Rule:** `THE STACK` caps at 5 rows and 4 words per row. If it needs six, it's a carousel,
-not a reel. `THE TERMINAL` content must be **real** — fake terminal text is exactly the
-"posing as technical" failure the whole system exists to avoid.
-
-### Killing a claim — "that's wrong"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| "everyone says you need X" → "you don't" | Claim types on, a rule strikes it, replacement lands | `THE REDACTION` |
-| "you don't need to win every battle" | Hand-drawn squiggle "corrects" the phrase like a red pen | `THE ANNOTATION` |
-| "stop doing this" | Caption word turns oxblood as it's said | caption `.pop--bad` |
-
-**Rule:** the strike rule is `--ink`, not red. Killing a claim quietly is more confident
-than killing it loudly. **Never redact a named person.**
-
-### Proof — "here's the receipt"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| "look at the analytics" | Real screenshot, darkened to ~72%, corner brackets, source label | `THE PROOF PANEL` |
-| "I got this DM" | Same, with names and figures blurred | `THE PROOF PANEL` |
-| "4,912,004 views" as an aside | Quiet corner tag with the figure | `THE CHIP` |
-
-**Rule:** never at 100% brightness — a bright screenshot over a dark grade is the loudest
-amateur tell there is. Redact anything not yours to show with a 6px blur bar, never a
-black box: a black box looks like hiding, a blur looks like discretion.
-
-### Scale and overwhelm — "there's too much of it"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| "you've been scrolling for hours" | Full-frame mock feed grid of near-identical thumbnails | `THE MOCK UI` |
-| "everyone's searching for this" | Fake search bar with autocomplete typing out | `THE MOCK UI` |
-| "there are a hundred tools" | Dense grid, one cell lit, the rest ghosted | `THE MOCK UI` |
-
-**Rule:** mock UI is monochrome — black ground, bone text, ghost chrome. Only real
-thumbnail art may carry colour. A full-colour UI recreation reads as a screenshot you
-forgot to grade.
-
-### The hook — "one line, first three seconds"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| the opening assertion | One line, slams in a single frame, one word accented | `HOOK SLAM` |
-
-**Rule:** exactly one per reel, in the first 3 seconds, ≤7 words. Never combined with a
-counter, a dial, or a caption on the same frame. Nothing competes with the first line.
-
-### The ask — "do this"
-
-| Spoken shape | Device | Block |
-|---|---|---|
-| "comment WORD and I'll send it" | One instruction line, trigger word accented in quotes | `THE END CARD` |
-
-**Rule:** one CTA. Comment trigger *or* DM word, never both, never "link in bio" as well.
-On screen ≥1.8s or it isn't readable at scroll speed. **Zero UI chrome** — no handle, no
-logo, no follow banner, no arrows.
-
----
-
-## 2. The colour-coding technique
-
-Worth calling out separately because it is the highest-leverage trick in the corpus and
-costs almost nothing.
-
-Don't recolour words for decoration. **Let colour carry the argument:**
-
-- the bad example / the old way → oxblood (`.pop--bad`)
-- the good example / the new way → forest (`.pop--good`)
-- the live value / the one thing that matters → accent (`.pop`)
-
-Observed in the wild: "super easy" appears in red, then "mind-numbingly simple" appears
-in green, and the background glow shifts with it. The viewer understands which one is
-being endorsed before parsing the sentence.
-
-This also solves a practical constraint — the caption face ships in a single weight, so
-weight-based emphasis isn't available. Colour and scale do the job instead, and do it
-better.
-
----
-
-## 3. Match-cut chaining
-
-The hardest-to-fake, most premium-reading technique found in the research.
-
-Consecutive graphics are **parented so one's exit motion continues into the next's
-entrance.** The second element inherits the first's velocity and direction rather than
-starting from rest. The result reads as one continuous move through a scene instead of a
-sequence of independent pop-ins.
-
-```js
-// element B enters carrying A's motion, instead of from zero
-tl.to(a, { x: -180, opacity: 0, duration: 0.30, ease: "power2.in" }, 1.40)
-  .from(b, { x:  180, opacity: 0, duration: 0.34, ease: "power3.out" }, 1.46);
+4. None of the above?
+   -> Does an object from an EARLIER beat still belong on screen, dimmed?
+      Almost always yes. Keep it (.dim) rather than cutting to bare footage.
+   -> Only if genuinely not: NO NEW GRAPHIC. Let the caption and the cut carry it.
 ```
 
-The 60ms overlap is what sells it. Cut the overlap and you get two separate animations.
+> ⚠️ **Corrected.** This section previously claimed *"roughly 40% of runtime has no graphic
+> at all"* and told you step 4 fires often. **Measured, the figure is 0–15%** — S1 never
+> shows a bare talking head in its entire 45 seconds. That wrong number was the direct
+> cause of reels where the visuals were barely there. See `TEARDOWN.md §5` and
+> `analysis/DEEP-ANALYSIS.md §7.2`.
+
+Step 4 fires **rarely**. The graphic layer is the default state of the frame; bare footage
+is the exception you spend for emphasis. Target **≥85% graphic presence**.
+
+The way you hit that without inventing filler is **not** to build more cards. It is to keep
+one object alive across many beats and change one element of it per sentence — which is
+what all three references do. When step 3 returns nothing, the right answer is usually
+"the object from four seconds ago is still relevant, keep it and dim it", not "cut to a
+bare shot".
+
+> **The disqualifier still stands.** If the only thing you can think to put on screen is
+> the sentence itself in a nicer font — build nothing *new*. But that is an argument
+> against a bad graphic, not an argument for an empty frame.
 
 ---
 
-## 4. Overlay or cutaway?
+## 1. The table
 
-Two modes, and the research found both used deliberately:
+### Things the viewer can recognise
 
-| | **Overlay** (alpha `.mov`, sits over A-roll) | **Cutaway** (full-frame `.mp4`, replaces the shot) |
-|---|---|---|
-| Use for | chips, counters, dials, rails, annotations | hook slams, diffs, curves, terminals, mock UI, end cards |
-| The speaker | keeps talking underneath | is off screen |
-| Needs a scrim? | only its own box, feathered | no — the graphic supplies its own ground |
-| Risk | covering the face | breaking the connection with the speaker |
-
-**Default to overlay** for anything short and additive; **cut away** when the graphic *is*
-the beat. A cutaway held longer than ~3.5s starts to feel like a different video.
-
-**Never park a graphic over the face.** Overlays go above the head or below the caption
-band — never across the eyes or mouth.
-
----
-
-## 5. Density
-
-| Rule | Value |
+| The line says… | Put on screen |
 |---|---|
-| Graphics per 30s reel | ≤ 8 |
-| Gap between graphics | 3–5s |
-| In the first 3 seconds | exactly 1 |
-| Two overlays at once | never |
-| Longest cutaway | ~3.5s |
+| "your profile / your bio / your name / your pfp" | **APP SCREEN** — the profile, with that field lit |
+| "post a story" | **APP SCREEN** — a story frame |
+| "say something like…" / "write this" | **TYPE-IN** — the words typed into the real field |
+| "reply / comment / DM me X" | **THE INTERACTION** — the comment box, word typed |
+| "your highlights" | **APP SCREEN** — the highlight circles filling |
+| "pin your best videos" | **APP SCREEN** — the grid, pins landing on tiles |
+| "this video / this reel / that post" | **CONTENT + METRIC** — the actual reel with its count |
+| "scrolling / on your phone" | **PHONE IN HAND** |
+| "I made a document / template / guide" | **THE DOCUMENT** |
+| "hit follow" | **THE INTERACTION** — the button pressed |
 
-Note this is *graphics* density, not *interrupt* density. `ig-pacing` wants something
-changing every 1–2s — most of those changes are caption hits, SFX, and push-ins, which are
-cheap. Graphics are the expensive interrupt and stay rationed.
+### Numbers, ranks, change
+
+| The line says… | Put on screen |
+|---|---|
+| "top 10% / tier / level / rank" | **TIER STACK**, one layer per rank named |
+| "X views vs Y views" | **THE COMPARISON** |
+| "people drop off / nobody watches / retention" | **THE CHART** — retention curve with real axes |
+| "grew from A to B" | **THE CHART** (line) or **READOUT** counting A→B |
+| "in the next 72 hours" | **THE READOUT** — countdown |
+| "X% of people" | **TIER STACK** or a labelled bar — never a pie |
+| "write 5 different X" | five real X's, or the numbered list **only if** the items get named |
+
+### Bad vs good
+
+| The line says… | Put on screen |
+|---|---|
+| "don't say X, say Y" | **COLOUR WASH** red on X, green on Y, captions matching |
+| "most people do X, instead do Y" | **COMPARISON** if artefacts exist, else wash |
+| "this hook flopped, this one went viral" | **COMPARISON** with both view counts |
 
 ---
 
-## 6. Landing them
+## 2. Worked example — the line that broke the old system
 
-**Land the graphic on the word, not the sentence.** The entrance frame is the frame the
-spoken keyword hits. One frame late reads as lag.
+> *"Like I used to waste so much time on a video that people didn't even watch cuz the
+> hooks suck."*
 
-Cue every graphic off a timecode **and** a specific word — `00:00:12:18 · on "million"` —
-so `ig-sound` and `ig-pacing` can key off the same instant. Verify with `export_frame` at
-the cue; a tool returning success is not proof the graphic landed on the right frame.
+**What the old system built:** a dark plate reading `WHAT A WEAK HOOK DOES`, with a tiny
+unlabelled curve and the words `VIEWERS` and `TIME`, docked in a 320px strip at the bottom
+of frame.
+
+That is the caption again, plus a squiggle.
+
+**What the reference does with the same idea** (S3, 0–2s): a **retention curve on a large
+card at 57–75% of frame height**, y-axis `100% / 50% / 0%`, x-axis `00:00 → 01:10`, a red
+line falling off a cliff in the first two seconds and flat-lining — under a caption reading
+`STOP USING` in red above `HOOKS` in white, both at ~88px with a glow.
+
+The difference is not polish. The reference frame **states the claim** — *viewers leave in
+the first two seconds* — as a shape with units on it. The old frame stated nothing.
+
+**Rule extracted:** when the line is about people not watching, the graphic is a retention
+curve **with labelled axes**, big, directly under the caption.
+
+---
+
+## 3. Worked example — a hook
+
+> *"how do you know if your hook's actually good?"*
+
+**Wrong:** a dial labelled `BAD ← → GOOD` with a needle that never settles. Abstract; it
+measures nothing; the viewer cannot tell what it refers to.
+
+**Right:** two real hooks as **CONTENT + METRIC** cards — one that did 7K, one that did
+1.2M — same topic, both readable. The question answers itself.
+
+If no real examples exist, **ask the creator for two** rather than inventing an instrument.
+Getting two real screenshots is a two-minute favour and it is the difference between a reel
+that proves something and one that asserts it.
+
+---
+
+## 4. When the script does not name the specifics
+
+Common, and the correct response is **not** to invent a placeholder.
+
+The old system rendered "write 5 different hooks" as five empty numbered slots — a table
+with nothing in it, which shows the viewer nothing.
+
+Do one of:
+
+1. **Ask the creator** for the five hooks, the two screenshots, the real number. Cheap.
+2. **Use a block that does not need the specifics** — a colour wash, a tier stack, a chart
+   whose shape is the claim.
+3. **Build nothing** and let the caption carry the beat.
+
+Never ship a container with placeholder contents. An empty ledger communicates less than a
+plain talking-head frame, because it visibly promises information and then withholds it.

@@ -1,5 +1,32 @@
 # TEXTURE — why it looks hand-made instead of generated
 
+> ## ⚠️ Which of this applies to the VIRAL skin
+>
+> This file was written for the ANALOG instrument skin. Under the **viral** skin — the
+> default — the look is **clean and bright, not aged**, so most of it does not apply.
+>
+> | Technique | Viral skin |
+> |---|---|
+> | §0 the tells | **applies in full** — still the best list of what reads cheap |
+> | §1 grain | applies, but at **6%**, not 12% |
+> | §2 vignette | applies, and **stronger** — `--vignette-drop: 0.35`. The references are heavily vignetted |
+> | §3 feathered edges | applies to washes and glows; UI mockups keep **crisp** edges |
+> | §4 contour ground | **does not apply.** `--contour-opacity: 0` |
+> | §5 the stutter | **does not apply.** `--stutter-fps: 0`. This motion is smooth |
+> | §6 gold as metal | **does not apply.** Gold here is a flat `#FFC531` UI accent, not a 5-stop metal ramp |
+> | §7 print registration | does not apply |
+> | §8 chromatic aberration | rarely, on whip transitions only |
+> | §9 halftone | does not apply |
+> | §10 determinism | **applies in full** |
+> | §11 the stack | replaced — see below |
+>
+> **The viral texture stack, in order:** real UI detail (the gradient ring, tabular
+> numbers, correct greys) → glow on semantic colour → heavy vignette → 6% static grain.
+>
+> In this skin, *accuracy of the mockup* does the job that grain and contour do in the
+> analog skin. A profile mockup with the right avatar ring and the right iOS grey reads as
+> real; the same mockup with 12% grain and a contour field reads as a poster of a phone.
+
 The single question this file answers: **why does one motion graphic read as premium
 and another — same layout, same palette — read as AI slop?**
 

@@ -137,3 +137,14 @@ This skill is the last link in the chain — it consumes the work of `ig-cut` (s
 - Music/SFX levels, ducking, or timing wrong → **ig-sound**
 
 Fix it in the owning skill, then come back here and re-run the full checklist — don't spot-check just the one box that failed.
+
+---
+
+## Verifying with frames
+
+> ⚠️ **`export_frame` can report success and write nothing.** Pass **forward slashes** in
+> `outputPath` (backslashes get read as escapes and the path is silently mangled), and
+> **assert the file exists on disk** before believing the result — on this machine the
+> exporter is broken and returns `success: true` with no file. Fall back to an ffmpeg
+> composite over a real A-roll frame. See `ig-show/SKILL.md` for the full note and the
+> fallback command. A verification step that cannot fail is not a verification step.

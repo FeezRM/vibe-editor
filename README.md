@@ -16,6 +16,7 @@ ingest, cutting, captions, color, audio, and the export.
 ![Windows](https://img.shields.io/badge/Windows-supported-0078D4?style=flat-square&logo=windows&logoColor=white)
 ![Premiere Pro](https://img.shields.io/badge/Premiere%20Pro-2020%2B-9999FF?style=flat-square&logo=adobepremierepro&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-283%20tools-5fd3c6?style=flat-square)
+![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)
 
 [Quick start](#quick-start) ·
 [How it works](#how-it-works) ·
@@ -201,6 +202,13 @@ node scripts/brand.mjs init      # wizard: colours, fonts, skin, fps
 That writes `brand/brand.json` and compiles `brand/tokens.css`. Then open
 `brand/BRAND.md` and write your rules in plain English.
 
+The setup scripts already create `brand/` for you — if either file is missing they scaffold
+a blank one to fill in, and they never overwrite a file you've edited. To do it by hand:
+
+```bash
+node scripts/brand.mjs scaffold  # blank brand/brand.json + brand/BRAND.md
+```
+
 | File | Holds | Format |
 |---|---|---|
 | **`brand/brand.json`** | palette, fonts, canvas, fps, texture, density, export | JSON, schema-backed |
@@ -294,7 +302,7 @@ vibe-editor/
 │   ├── hyperframes/
 │   └── adobe-premiere-pro-mcp/
 ├── .mcp.json                       generated: registers the premiere-pro MCP server
-├── scripts/brand.mjs               the brand generator (init / build / show / check)
+├── scripts/brand.mjs               the brand generator (scaffold / init / build / show / check)
 └── ig-show.skill                  the motion-graphics skill, packaged for distribution
 ```
 
@@ -364,5 +372,22 @@ endorsed by, or sponsored by Adobe.
 
 ## License
 
-The engines above carry their own licenses. This repository has not declared one yet — add a
-`LICENSE` file before publishing if you intend others to use, fork, or contribute to it.
+Copyright © 2026 Faiz Kerawala. Licensed under the [GNU General Public License v3.0](LICENSE).
+
+This program is free software: you can redistribute it and/or modify it under the terms of
+the GPL as published by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. It is distributed **without any warranty** — without even
+the implied warranty of merchantability or fitness for a particular purpose. See the
+[LICENSE](LICENSE) for details.
+
+In practice: fork it, edit the skills, sell what you make with it. But if you **distribute** a
+modified version of the editor itself, that version has to ship its source under the GPL too.
+Reels you cut with it are your own work and carry no obligation — the license covers the tool,
+not its output.
+
+That scope is this repository: the skills, the brand layer, the scripts, and the templates.
+The engines in `vendor/` are cloned at their upstream versions and keep their own licenses
+(HyperFrames: Apache-2.0 · MCP Bridge for Premiere Pro: MIT) — both are one-way compatible
+with the GPL, and neither is redistributed here. The licensed typefaces aren't distributed
+here either; each machine supplies its own copies, and those EULAs are between you and their
+foundries.

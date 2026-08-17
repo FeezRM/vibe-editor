@@ -2,6 +2,7 @@
 /**
  * brand.mjs — the customisation layer.
  *
+ *   node scripts/brand.mjs scaffold create an empty brand/ to fill in (never overwrites)
  *   node scripts/brand.mjs init     interactive wizard -> brand/brand.json
  *   node scripts/brand.mjs build    brand.json -> brand/tokens.css
  *   node scripts/brand.mjs show     print the resolved config
@@ -28,6 +29,11 @@ const CONFIG = join(BRAND_DIR, "brand.json");
 const OUT = join(BRAND_DIR, "tokens.css");
 const SKIN = (s) =>
   join(ROOT, ".claude", "skills", "ig-show", "reference", `tokens-${s}.css`);
+
+/* viral is the default: it is the one derived by measurement from reels that
+   actually performed (see ig-show/reference/TEARDOWN.md). analog and digital
+   are kept for projects already built against them. */
+const SKINS = ["viral", "analog", "digital"];
 
 /* ------------------------------------------------------------------ output -- */
 const c = {
@@ -86,11 +92,190 @@ function shift(hex, amount) {
   );
 }
 
+/* ------------------------------------------------------------------ starter - */
+/* Everything `scaffold` writes lives here, so the command works even when brand/
+   does not exist at all (fresh clone with the folder deleted, or a fork that
+   gitignores it). Values are house defaults; the free text is deliberately blank
+   so nobody ships someone else's brand by accident. */
+
+const STARTER_CONFIG = {
+  name: "My Channel",
+  skin: "viral",
+  palette: {
+    ground: "#0A0A0B",
+    ink: "#FFFFFF",
+    accent: "#FFC531",
+    signalDown: "#EB0408",
+    signalUp: "#00E800",
+  },
+  fonts: {
+    display: ["Anton", "Archivo Black", "sans-serif"],
+    caption: ["Anton", "sans-serif"],
+    engrave: ["Inter", "sans-serif"],
+    mono: ["JetBrains Mono", "monospace"],
+  },
+  type: {
+    trackDisplay: "-0.010em",
+    trackCaps: "0.020em",
+    trackEngrave: "0.060em",
+    trackCaption: "-0.015em",
+    captionUppercase: true,
+    displayUppercase: true,
+  },
+  canvas: {
+    width: 1080,
+    height: 1920,
+    fps: 30,
+    marginX: 72,
+    safeTop: 240,
+    safeBottom: 420,
+    captionTop: 920,
+    captionBottom: 1130,
+  },
+  texture: { grainOpacity: 0.06, vignetteDrop: 0.35, contourOpacity: 0, stutterFps: 0 },
+  density: {
+    maxGraphicsPer30s: 12,
+    graphicGapSeconds: [2, 4],
+    interruptIntervalSeconds: [1, 2],
+    maxStaticShotSeconds: 3,
+    maxAccentElementsPerFrame: 3,
+  },
+  voice: {
+    preserveSpeakerGrammar: true,
+    captionCase: "upper",
+    maxWordsPerCaptionGroup: 4,
+    maxEmphasisWordsPerLine: 2,
+  },
+  export: {
+    resolution: "1080x1920",
+    codec: "H.264",
+    bitrateMbps: 20,
+    audioKbps: 320,
+    outputDir: "exports/",
+  },
+  tracks: {
+    video: ["A-roll", "B-roll / cutaways", "primary graphics", "secondary graphics"],
+    audio: ["voice", "voice alt", "SFX", "SFX", "music", "spare"],
+  },
+};
+
+const STARTER_BRAND_MD = `# BRAND — your custom instructions
+
+Free-text house rules for **your** channel. Every \`ig-*\` skill reads this file before it
+plans or builds anything, and **what you write here beats the repo defaults.**
+
+\`brand.json\` next door holds the machine-readable values (colours, fonts, numbers) that
+generate \`tokens.css\`. This file holds everything that isn't a number: voice, subject
+matter, what you refuse to put on screen, how you sign off.
+
+Every section below is empty on purpose — fill in the ones you care about and delete the
+rest. An empty section means "use the repo default." There is no schema here: write like
+you'd brief a human editor.
+
+---
+
+## Who this is for
+
+<!-- One or two lines. Who's on camera, what the channel is about, who watches it. -->
+
+---
+
+## Voice
+
+<!-- How the words should sound on screen. The single most-violated rule is transcribers
+     "correcting" a speaker into someone else. Say plainly what must be preserved.
+     e.g. "Captions are my exact words — keep the slang and the contractions." -->
+
+---
+
+## Subject matter
+
+<!-- What the content is actually about. This drives which graphics get chosen: the SHOW
+     step reaches for different devices for a money claim vs. a code demo. -->
+
+---
+
+## Banned on screen
+
+<!-- Hard "never do this" list, checked before render. Be specific — a vague ban is
+     unenforceable. e.g. "no emoji", "no luxury b-roll", "no bounce or elastic easing". -->
+
+---
+
+## Required on screen
+
+<!-- Anything that must appear. Most channels want nothing here — zero chrome is the
+     default and usually the right call. Leave empty unless you truly need it. -->
+
+---
+
+## The CTA
+
+<!-- How videos end. One CTA, always. -->
+
+---
+
+## Sound
+
+<!-- Music taste and SFX palette. Name real files if you have a library. -->
+
+---
+
+## Anything else
+
+<!-- Free space. Recurring notes, pet peeves, things you keep having to correct.
+     If you find yourself repeating a note to the agent, write it here instead. -->
+`;
+
+/**
+ * Create brand/ with a blank config to customise. Never overwrites: an existing
+ * brand.json or BRAND.md is left exactly as it is, so setup can run this on every
+ * invocation.
+ */
+async function scaffold({ quiet = false } = {}) {
+  if (!quiet) step("Preparing brand/");
+  await mkdir(BRAND_DIR, { recursive: true });
+
+  const created = [];
+  const kept = [];
+
+  if (existsSync(CONFIG)) {
+    kept.push("brand/brand.json");
+  } else {
+    // $schema only helps if the schema file is actually next door.
+    const config = existsSync(join(BRAND_DIR, "brand.schema.json"))
+      ? { $schema: "./brand.schema.json", ...STARTER_CONFIG }
+      : { ...STARTER_CONFIG };
+    await writeFile(CONFIG, JSON.stringify(config, null, 2) + "\n", "utf8");
+    created.push("brand/brand.json");
+  }
+
+  const brandMd = join(BRAND_DIR, "BRAND.md");
+  if (existsSync(brandMd)) {
+    kept.push("brand/BRAND.md");
+  } else {
+    await writeFile(brandMd, STARTER_BRAND_MD, "utf8");
+    created.push("brand/BRAND.md");
+  }
+
+  if (!quiet) {
+    created.forEach((f) => ok(`${f} created`));
+    kept.forEach((f) => note(`${f} already exists — left untouched`));
+    if (created.length) {
+      note("Fill it in:  node scripts/brand.mjs init   (colours, fonts, fps)");
+      note("Then write brand/BRAND.md — voice, banned visuals, CTA.");
+    }
+  }
+  return { created, kept };
+}
+
 /* ------------------------------------------------------------------- config - */
 async function load() {
   if (!existsSync(CONFIG)) {
     throw new Error(
-      `No brand config at brand/brand.json.\n       Run: node scripts/brand.mjs init`
+      `No brand config at brand/brand.json.\n` +
+        `       Run: node scripts/brand.mjs scaffold   (blank files to edit)\n` +
+        `       or:  node scripts/brand.mjs init       (interactive wizard)`
     );
   }
   let raw;
@@ -106,8 +291,8 @@ function validate(b) {
   const errors = [];
   const warnings = [];
 
-  if (!["analog", "digital"].includes(b.skin))
-    errors.push(`skin must be "analog" or "digital" (got ${JSON.stringify(b.skin)})`);
+  if (!SKINS.includes(b.skin))
+    errors.push(`skin must be one of ${SKINS.join(", ")} (got ${JSON.stringify(b.skin)})`);
 
   const p = b.palette ?? {};
   for (const key of ["ground", "ink", "accent"]) {
@@ -122,10 +307,15 @@ function validate(b) {
   if (errors.length) return { errors, warnings };
 
   // House rules, enforced as warnings so a fork can knowingly break them.
-  if (p.ground.toLowerCase() === "#000000")
-    warnings.push("palette.ground is pure black — it reads flat and digital. Prefer a warm near-black.");
-  if (p.ink.toLowerCase() === "#ffffff")
-    warnings.push("palette.ink is pure white — prefer a warm off-white.");
+  // The off-white/off-black rule belongs to the instrument skins. The viral
+  // skin impersonates real app UI, which uses pure white on near-black, so
+  // warning about it there would be wrong (see ig-show/reference/TEARDOWN.md §6).
+  if (b.skin !== "viral") {
+    if (p.ground.toLowerCase() === "#000000")
+      warnings.push("palette.ground is pure black — it reads flat and digital. Prefer a warm near-black.");
+    if (p.ink.toLowerCase() === "#ffffff")
+      warnings.push("palette.ink is pure white — prefer a warm off-white.");
+  }
 
   const inkOnGround = contrast(p.ink, p.ground);
   if (inkOnGround < 7)
@@ -337,13 +527,18 @@ async function init() {
     : null;
   if (base) warn("brand/brand.json exists — these answers will overwrite it.\n");
 
-  const d = base ?? JSON.parse(await readFile(join(BRAND_DIR, "brand.json"), "utf8"));
+  // No config yet: scaffold brand/ first so BRAND.md lands too, and answer from
+  // the starter rather than reading a file that isn't there.
+  if (!base) await scaffold({ quiet: true });
+  const d = base ?? resolveDefaults(STARTER_CONFIG);
 
   const name = await ask("Brand / channel name:", d.name ?? "My Channel");
 
   let skin = "";
-  while (!["analog", "digital"].includes(skin))
-    skin = (await ask("Skin — analog (warm instrument) or digital (terminal):", d.skin)).toLowerCase();
+  while (!SKINS.includes(skin))
+    skin = (await ask(
+      "Skin — viral (app UI + real metrics, the default), analog (warm instrument), digital (terminal):",
+      d.skin)).toLowerCase();
 
   console.log(`\n  ${c.dim("Palette — three roles carry the whole system.")}`);
   const ground = await askHex("Ground (near-black, never pure #000):", d.palette.ground);
@@ -432,6 +627,7 @@ async function show() {
 const cmd = process.argv[2] ?? "build";
 try {
   if (cmd === "init") await init();
+  else if (cmd === "scaffold") await scaffold();
   else if (cmd === "build") await build();
   else if (cmd === "show") await show();
   else if (cmd === "check") {
@@ -446,6 +642,7 @@ try {
     console.log(`
   usage: node scripts/brand.mjs <command>
 
+    scaffold create brand/ with blank files to customise (never overwrites)
     init     interactive wizard -> brand/brand.json + brand/tokens.css
     build    brand/brand.json  -> brand/tokens.css   (default)
     show     print the resolved config

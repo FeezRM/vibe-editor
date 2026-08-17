@@ -41,15 +41,19 @@ Values in `brand.json` are already compiled into `brand/tokens.css`; regenerate 
 | 1 | Remove whitespace + filler | **`ig-cut`** | strips dead air into a tight spine, ~3s average clips |
 | 2 | Captions | **`ig-captions`** | word-accurate, banded at 45–60% of frame, never bottom-third |
 | 3 | Background music | **`ig-sound`** | bed ducked ~-18dB, out under the hook |
-| 4 | **Show** | **`ig-show`** | the motion graphics — 20 blocks, two skins |
+| 4 | **Show** | **`ig-show`** | the motion graphics. **Plan every beat before building anything.** **Show the noun**: real app UI, real content with real metrics. **A graphic is on screen ≥85% of runtime** — usually one persistent object mutating, not many cards |
 | 5 | Sound effects | **`ig-sound`** | one SFX per visual event, never per word |
-| 6 | Pattern interrupts | **`ig-pacing`** | something changes every 1–2s |
+| 6 | Pattern interrupts | **`ig-pacing`** | something changes every ~1.5s; nothing static past ~2s |
 | — | QA + export | **`ig-delivery`** | 1080×1920, verified on disk |
 
 Steps 3 and 5 share one skill because they are one mix on the same tracks.
 
-**Step 4 is where the quality lives.** Steps 1, 2, and 6 are mechanical and largely
-solvable; the SHOW layer is what separates a competent edit from a premium one.
+**Step 4 is where the quality lives.** Steps 1, 2 and 6 are mechanical and largely
+solvable; the SHOW layer is what separates a competent edit from a premium one. Its one
+rule is **show the noun** — if the script names a thing, put that thing on screen; if it
+names a number, draw the real measurement. A graphic that could be replaced by its own
+caption fails the mute test and does not ship. Plan every beat before building anything.
+See `ig-show/reference/TEARDOWN.md`.
 
 ---
 
@@ -127,7 +131,7 @@ Every row is an executable instruction. Produce this before touching the timelin
 ```
 EDIT BLUEPRINT — [title]
 Source: [file] · in [Xs] → target out [Ys] · Ratio 9:16 · Sequence [fps]
-Goal: [views / leads / sales]      Graphics skin: ANALOG | DIGITAL
+Goal: [views / leads / sales]      Graphics skin: VIRAL (default)
 
 HOOK (0–3s)
 - A-roll: [source TC] | Scale: [wide/med/CU]
@@ -145,7 +149,7 @@ HOOK (0–3s)
 [CTA]    — [comment trigger / DM word], clean end card
 
 GLOBAL
-- Captions : Europa Grotesk SH, band y 864–1152, ≤4 words/group
+- Captions : Europa Grotesk SH 88px, ONE line, 2–4 words, block centre y ~50%, hard cut
 - Music    : [track] ducked -18dB, out under the hook
 - Grade    : deep contrast, cool shadows, controlled highlights
 - Graphics : [one line per composition + cue TC]  → ig-show writes the MOTION PLAN
@@ -191,7 +195,13 @@ cheapest interrupt that works. Zoom pulses and shot-scale alternation land here.
   sequence fps. Read positions back with `get_clip_properties` / `get_clip_at_position`
   rather than computing them.
 - **Verify with pixels, not faith.** `export_frame` at the hook, at every graphic cue, and
-  at the end card. A tool returning success is not proof.
+  at the end card. A tool returning success is not proof — and here that is literal:
+  `export_frame` returns `success: true` and writes **nothing** on this machine, and
+  mangles any `outputPath` containing backslashes. Pass forward slashes, `test -f` the
+  result, and fall back to an ffmpeg composite. See `ig-show/SKILL.md`.
+- **Measure, don't eyeball, anything with a number in its spec.** Caption geometry via
+  `python analysis/measure.py`. The last build passed a visual check with captions 35%
+  oversized.
 - **Premiere generates nothing.** No transcription, no image/video/music generation.
   Transcribe with `hyperframes transcribe`; generate assets via the `media-use` skill;
   write to `projects/<slug>/assets/`, then `import_media`.

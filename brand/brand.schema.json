@@ -7,6 +7,16 @@
   "properties": {
     "$schema": { "type": "string" },
     "name": { "type": "string", "description": "Brand or channel name. Cosmetic." },
+    "creator": {
+      "type": "object",
+      "description": "Who the reel belongs to. NOT cosmetic — every rebuilt app mockup (profile, comment sheet, follow card, reel cover) must carry this handle. Never a handle copied from a reference reel in samples/, which is a real person's account.",
+      "properties": {
+        "handle":      { "type": "string", "description": "Account handle, WITHOUT the leading @. Mockups add the @ where the real UI shows one." },
+        "displayName": { "type": "string", "description": "Optional. The name row in a profile mockup, if it differs from the handle." },
+        "avatar":      { "type": "string", "description": "Optional. Path to an avatar image, relative to the project's assets/." }
+      },
+      "additionalProperties": false
+    },
     "skin": {
       "enum": ["analog", "digital"],
       "description": "analog = warm brass instrument (default). digital = terminal readout."

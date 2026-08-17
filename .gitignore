@@ -1,15 +1,79 @@
+# ---------------------------------------------------------------------------
+# vibe-editor is the TOOL, not your footage.
+# Tracked: .claude/ skills, scripts/, templates/, README.md
+# Ignored: everything below — your Premiere project, reels, media, renders.
+# ---------------------------------------------------------------------------
+
+# --- Your brand -------------------------------------------------------------
+# Generated on setup by `node scripts/brand.mjs scaffold` then `build`, and then
+# customised per machine. brand.schema.json is the one hand-written file the
+# script never writes — it only reads it to decide whether to emit $schema.
+brand/*
+!brand/brand.schema.json
+
 # Cloned engines — reinstall or update with scripts/setup-macos.sh | setup-windows.ps1
 vendor/
+claude-video/
 
 # Machine-specific MCP registration, written by the setup scripts
 .mcp.json
 .mcp.json.bak
+.claude/settings.local.json
 
 # Build artifacts
 node_modules/
-projects/*/renders/
+
+# --- Your working reels -----------------------------------------------------
+# One folder per reel lives in projects/. They are yours, not the template's.
+projects/*
+!projects/.keep
+
+# Scratch analysis / frame checks / audit stills
+analysis/
+
+# --- Media in / media out ---------------------------------------------------
+samples/
+renders/*
+!renders/.gitkeep
 exports/*
 !exports/.gitkeep
+
+# --- Adobe Premiere Pro project + caches ------------------------------------
+*.prproj
+*.prproj.bak
+*.prin
+*.prlock
+*.prel
+*.psq
+*.epr
+Adobe Premiere Pro Auto-Save/
+Adobe Premiere Pro Audio Previews/
+Adobe Premiere Pro Video Previews/
+Adobe Premiere Pro Preview Files/
+Adobe Premiere Pro Captured Video/
+Adobe Premiere Pro Captured Audio/
+*.PRV/
+*.cfa
+*.pek
+*.ims
+
+# --- Loose media anywhere in the repo ---------------------------------------
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi
+*.wav
+*.aif
+*.aiff
+*.mp3
+*.m4a
+*.srt
+*.vtt
+
+# Loose screenshots dropped at the repo root
+/Screenshot*.png
+/screenshot*.png
 
 # Licensed font binaries — commercial EULAs forbid redistribution.
 # Each machine supplies its own copies into <project>/fonts/.
@@ -20,5 +84,7 @@ exports/*
 **/fonts/*.woff2
 !**/fonts/.gitkeep
 
-# macOS
+# --- OS cruft ---------------------------------------------------------------
 .DS_Store
+Thumbs.db
+desktop.ini

@@ -233,18 +233,20 @@ ok "House-style skills live in .claude/skills/ and load automatically here"
 
 # ------------------------------------------------------------------ brand ----
 
-step "Building brand tokens"
-if [[ -f "$REPO_ROOT/brand/brand.json" ]]; then
-  if node "$REPO_ROOT/scripts/brand.mjs" build; then
-    ok "brand/tokens.css built from brand/brand.json"
-  else
-    warn "Brand build failed — fix brand/brand.json, then: node scripts/brand.mjs build"
-  fi
-  note "Make it yours:  node scripts/brand.mjs init   (colours, fonts, fps)"
-  note "Then edit brand/BRAND.md for voice, banned visuals, and CTA."
+step "Setting up your brand"
+
+# Creates brand/brand.json and brand/BRAND.md if they are missing; existing files
+# are never touched, so this is safe on every re-run.
+node "$REPO_ROOT/scripts/brand.mjs" scaffold ||
+  warn "Could not create brand/ — run it manually: node scripts/brand.mjs scaffold"
+
+if node "$REPO_ROOT/scripts/brand.mjs" build; then
+  ok "brand/tokens.css built from brand/brand.json"
 else
-  warn "brand/brand.json missing — run: node scripts/brand.mjs init"
+  warn "Brand build failed — fix brand/brand.json, then: node scripts/brand.mjs build"
 fi
+note "Make it yours:  node scripts/brand.mjs init   (colours, fonts, fps)"
+note "Then edit brand/BRAND.md for voice, banned visuals, and CTA."
 
 # ---------------------------------------------------------------- doctor ----
 
