@@ -50,7 +50,7 @@ Every row is a real failure mode. The left column is what generated work does by
 |---|---|---|
 | Background | Purple→blue gradient blob, glassmorphism blur | Flat warm near-black, or a 5–8% radial lift. **Never a hue gradient as the ground.** |
 | Glow | Everything glows, 20–40px blur, screen blend | One hero glow at most. 2–6px radius, 10–20% opacity, warm not blue-white |
-| Type | Centred Montserrat/Poppins/Inter Bold, default tracking | Display face with deliberate optical tracking; engraved caps for micro-labels |
+| Type | Centred Montserrat/Poppins/Inter Bold, default tracking | Display face with deliberate optical tracking. (The old counter-move here was "engraved caps for micro-labels" — that is the retired analog skin and is **banned** under VIRAL by `MOTION-LANGUAGE.md` §8. Under VIRAL: `--font-ui` at real UI sizes inside mockups.) |
 | Easing | `elastic`, `back`, overshoot on everything | `power3.out` in, `power1.inOut` between, `steps()` for mechanical counts |
 | Simultaneity | Everything animates at once, same duration, same frame | 1–2 movers at a time, 60–120ms stagger, 300–800ms holds |
 | Colour | 3+ saturated hues, neon | Near-black + bone + **exactly one** metallic accent |

@@ -44,10 +44,15 @@ Then `get_sequence_settings` to confirm frame size and fps before touching the c
 
 - [ ] **Hook** — does the first frame + first line stop the scroll? Biggest text, hardest cut, zero dead air?
 - [ ] **Silence** — every breath, pause, and filler word gone? No dead air anywhere in the spine?
-- [ ] **Pacing** — something changes every **1–2s, measured** off the actual timeline (not the SOP's stated 3–5s — that figure is looser than what holds attention in practice)?
+- [ ] **Pacing** — something changes every **~1.5s on average, never past ~2s static**, measured off the actual timeline (the SOP's old "3–5s" was a guess and is superseded)?
 - [ ] **Shot scale** — do adjacent A-roll shots differ in scale (zoom pulse actually alternating, not two same-size cuts back to back)?
-- [ ] **Captions** — word-by-word, sitting in the **45–60% vertical band** of the frame (NOT the bottom third — too close to the IG UI), and the speaker's **exact words, uncorrected** (no grammar cleanup, no "fixed" slang)?
-- [ ] **Graphics** — does every graphic prove something (a number, a comparison, a result)? None decorative?
+- [ ] **Captions** — ONE line, 2–4 words, sitting in the band **y 920–1130** on 1080×1920 (NOT the bottom third — too close to the IG UI; the old "45–60%" / "y 864–1152" figures are superseded), hard cut, and the speaker's **exact words, uncorrected** (no grammar cleanup, no "fixed" slang)? Under SPLIT-STAGE there may be no captions at all — check that against the declared contract before flagging it.
+- [ ] **Graphics** — does every graphic prove something (a number, a comparison, a result)? None decorative, except the one permitted emotional beat?
+- [ ] **One object, not N cards** — is there a persistent object present ≥85% of runtime and changing state, or is this a sequence of unrelated cards? Read the timeline, not the plan.
+- [ ] **Motion floor** — `python analysis/motion-density.py projects/<slug>/compositions/*.html` passes on every scene?
+- [ ] **Contract held** — the declared frame contract is visible in the actual frames, and broken exactly once at the payoff?
+- [ ] **Compared against the corpus** — a composite over real A-roll was opened beside a still from `samples/`, and the three questions in `ig-show/reference/SAMPLES.md` answered honestly in `RESULT.md`?
+- [ ] **No placeholder survived** — no `[Name]` used as filler (a visible *template* is fine), no empty rows, no invented metric, no duplicate asset standing in for a comparison?
 - [ ] **Safe zones** — nothing sits in the IG UI zones at 1080×1920: top **240px**, bottom **420px**, sides **90px**?
 - [ ] **Music** — ducked under voice throughout, dropped out under the hook line?
 - [ ] **SFX** — mark visual events only, not on every word or beat?

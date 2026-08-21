@@ -28,13 +28,24 @@ node_modules/
 projects/*
 !projects/.keep
 
-# Scratch analysis / frame checks / audit stills
-analysis/
+# Scratch analysis / frame checks / audit stills.
+# The OUTPUTS are scratch. The three GENERIC measurement scripts are part of the
+# tool -- the skills call them as mandatory verification steps, so a clone
+# without them cannot run the pipeline. Anything else you drop in here (frame
+# compositors, preview builders) is per-project scratch carrying your own media
+# paths and clip tables: it stays ignored on purpose.
+analysis/*
+!analysis/measure.py
+!analysis/motion-density.py
+!analysis/build-captions.py
 
 # --- Media in / media out ---------------------------------------------------
-samples/
-renders/*
-!renders/.gitkeep
+# Reference reels are real creators' copyrighted work and are never redistributed.
+# The folder is a bring-your-own slot -- see samples/README.md.
+samples/*
+!samples/README.md
+# Rendered graphics live in projects/<slug>/renders/ and are ignored with it.
+renders/
 exports/*
 !exports/.gitkeep
 
@@ -77,7 +88,7 @@ Adobe Premiere Pro Captured Audio/
 
 # Licensed font binaries — commercial EULAs forbid redistribution.
 # Each machine supplies its own copies into <project>/fonts/.
-# See .claude/skills/ig-show/reference/fonts.css
+# See the font rules in .claude/skills/ig-show/reference/PIPELINE.md
 **/fonts/*.otf
 **/fonts/*.ttf
 **/fonts/*.woff

@@ -105,6 +105,12 @@ composition and silently fell back to a mid-weight grotesque, which killed the w
 The caption face is loaded from a local `@font-face` and is guaranteed. **Verify the face in
 a rendered frame** — a fallback is invisible in the markup and obvious in the pixels.
 
+> **This file is the authority; `tokens-viral.css` follows it.** `.hook__line` resolves to
+> `--font-caption`, not `--font-display`. Under the current `brand/brand.json` both stacks
+> lead with `Anton`, so the two render identically today — but a brand that sets a separate
+> display face would silently break the hook/caption relationship, which is the whole reason
+> for the rule.
+
 **The proportions are the whole trick.** Line 2 bigger than line 1, and a proof card that is
 *wide and short* rather than square. A tall card under the type reads as two competing
 objects; a wide short one reads as a base the type sits on.
@@ -209,7 +215,7 @@ rule, `check` passed, and it was **wrong**:
 
 ```
 STOP GUESSING          <- red, 96px, bloom
-YOUR HOOKS             <- white, 104px, bloom
+YOUR HOOKS             <- white, 118px, bloom
 
 ┌───────────────────────────────┐
 │   👁 ?      →     👁 52.9K    │   <- one wide short card

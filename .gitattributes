@@ -1,0 +1,21 @@
+# Normalise line endings so a Windows clone and a macOS clone produce identical
+# diffs. Without this, every file round-trips through core.autocrlf and shows up
+# as wholly rewritten in someone else's PR.
+* text=auto eol=lf
+
+# Shell scripts must keep LF or bash refuses to run them.
+*.sh   text eol=lf
+*.mjs  text eol=lf
+
+# PowerShell is fine either way; CRLF matches what Windows editors expect.
+*.ps1  text eol=crlf
+
+# Never touch binaries.
+*.png  binary
+*.jpg  binary
+*.otf  binary
+*.ttf  binary
+*.woff binary
+*.woff2 binary
+*.mp4  binary
+*.mov  binary

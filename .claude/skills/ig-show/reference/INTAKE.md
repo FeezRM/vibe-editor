@@ -3,6 +3,14 @@
 Turn a half-sentence request into a build spec in **one round of questions**, then produce
 a plan precise enough that building it is mechanical.
 
+> ⚠️ **Read `SKILL.md` §2 first.** This file used to be the *first* stop for anything the
+> brief did not answer, and that made asking the default. It is not: the **acquisition
+> ladder** in `SKILL.md` §2 is. Extract the frames, screenshot the real interface, look up
+> the real figure, generate the texture — *then* bring whatever is genuinely private here.
+>
+> Everything below applies to that residue only. The questions are good; they were just
+> being asked too early and about too much.
+
 ---
 
 ## The rule about asking
@@ -33,21 +41,29 @@ Real values, in the creator's voice. `4,000,000`, not "a big number". `$2,997/mo
 - **Overlay** — sits over the A-roll. The speaker keeps talking underneath.
 - **Cutaway** — the edit cuts to it. The speaker is off screen.
 
-Default overlay. Cut away only for `HOOK SLAM`, `DIFF`, `CURVE`, `TERMINAL`, `MOCK UI`,
-`LEDGER`, `IMPACT`, or `END CARD`. Table in [DEVICES.md §4](DEVICES.md).
+Default overlay. Under TWO-WORLDS the cutaway is a whole world, not a beat — see
+[FRAME-CONTRACTS.md](FRAME-CONTRACTS.md) §3. Current block names and their occupancy are in
+[BLOCKS.md](BLOCKS.md); the names once listed here (`HOOK SLAM`, `DIFF`, `CURVE`, `TERMINAL`,
+`LEDGER`, `IMPACT`, `END CARD`) are from the retired analog catalogue and no longer exist.
 
 ### Q4 — Where in the reel, and how long is the beat?
 A timecode **and** the specific word it lands on. This sets `data-duration` and the
 Premiere cue. "Somewhere in the middle" isn't an answer.
 
-### Q5 — Which skin?
-**ANALOG** unless the subject is literally computational (code, tooling, build-in-public,
-telemetry) — then **DIGITAL**. One skin per project, declared once, never mixed. Ask only
-if genuinely ambiguous; default to analog silently.
+### Q5 — Which frame contract?
+Replaces the old "which skin?" question — ANALOG and DIGITAL are retired and **VIRAL is the
+only skin.** What is genuinely open is the *spatial* architecture: SPLIT-STAGE,
+NESTED-SCALE, TWO-WORLDS or OBJECT-OVER-GROUND. See
+[FRAME-CONTRACTS.md](FRAME-CONTRACTS.md), which has a chooser at the bottom.
+
+Usually you should propose one rather than ask — the script implies it. Declare it in the
+MOTION PLAN either way; it determines how many scene files get written, so it cannot be
+decided later.
 
 ### Q6 — Accent colour for this project?
-The one genuinely open variable. Default `#C9A24B` brass (analog) / `#E8A03C` amber
-(digital). Ask once per project, write it into `tokens.css`, never ask again.
+The one genuinely open *visual* variable. Comes from `brand/brand.json` `palette.accent`
+(currently `#FFC531` gold). Ask only if this video needs to depart from the brand, and if it
+does, say so out loud rather than silently overriding.
 
 ### Q7 — Sequence fps?
 30 unless the Premiere sequence is 24. Ask once per project. Getting this wrong makes
@@ -115,17 +131,27 @@ Render       : npx hyperframes render . -c compositions/01-dial.html \
 
 ### Plan-level checks before showing it
 
-- [ ] Every graphic has a Q1 answer that isn't "it looks good there"
-- [ ] ≤8 graphics per 30s; gaps of 3–5s; exactly one in the first 3s
-- [ ] No two graphics overlap in time
+- [ ] **A frame contract is declared**, with the one break named
+- [ ] **The plan is 1–3 SCENES**, each naming its one persistent object — not a list of
+      graphics. If it reads as a list, it is a slideshow
+- [ ] **The Change column, read alone**, describes one object being worked on — not
+      "card in, card out"
+- [ ] **ONE OBJECT on screen ≥85% of runtime**, changing state every ~1.5s, nothing static
+      past ~2s *(supersedes the old "≤8 graphics per 30s, gaps of 3–5s", which was invented,
+      contradicted `TEARDOWN.md §5`, and produced the reel the user called "the visuals are
+      barely there")*
+- [ ] Every state change has a Q1 answer that isn't "it looks good there"
 - [ ] Every duration ≥ enter + 0.8s hold
-- [ ] No exit animations except the final element
+- [ ] No exits between scenes except the final element; **no exits at all inside a scene** —
+      elements persist, dim or desaturate
 - [ ] ≥3 distinct eases across the set; no bounce/elastic/back
 - [ ] Every cue is a timecode **and** a specific word
 - [ ] Blocks come from [BLOCKS.md](BLOCKS.md) — flag and justify any new one
-- [ ] Nothing sits in the caption band (864–1152) or the safe zones
+- [ ] Nothing sits in the caption band (**y 920–1130**) or the safe zones
 - [ ] ≤2 accent elements per graphic
-- [ ] Texture line present on every cutaway
+- [ ] **Caption mute windows written in** for the hook, for every content card carrying its
+      own copy, and for all of TWO-WORLDS' world 2
+- [ ] **Nothing on screen is a placeholder** — the acquisition ladder was worked first
 
 *Fast mode:* if the brief says "just do it," collapse to one line per graphic and go. The
 quality bar doesn't move; only the approval step shrinks.
@@ -135,7 +161,8 @@ quality bar doesn't move; only the approval step shrinks.
 ## After approval
 
 1. Scaffold ([PIPELINE.md §1](PIPELINE.md)); set the accent; **copy the font files in**.
-2. Build one composition per graphic. Hero frame in CSS first, then animate into it.
+2. Build **one composition per SCENE** (1-3 per video), not one per graphic. Lay the
+   finished object out in CSS first, set it to skeleton, then reveal into it. `SKILL.md` §4.
 3. `npx hyperframes lint .` after each one.
 4. `check` and `snapshot` the hero frames — **read them.** A fallback font is invisible to
    the linter and obvious in a snapshot.

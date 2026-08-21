@@ -100,6 +100,11 @@ function shift(hex, amount) {
 
 const STARTER_CONFIG = {
   name: "My Channel",
+  // NOT cosmetic. Every rebuilt app mockup — profile, comment sheet, follow
+  // card, reel cover — carries this handle. Left blank the skills have nothing
+  // to put in a mockup, and the one thing they must never do is borrow a handle
+  // out of samples/, which belongs to a real person.
+  creator: { handle: "" },
   skin: "viral",
   palette: {
     ground: "#0A0A0B",
@@ -339,6 +344,14 @@ function validate(b) {
       warnings.push(`fonts.${k} has no fallback — add a free family so renders degrade instead of breaking.`);
   }
 
+  const handle = (b.creator?.handle ?? "").trim();
+  if (!handle)
+    warnings.push(
+      "creator.handle is empty — every app mockup needs an account handle, and a blank one means the agent either invents one or borrows a real person's out of samples/."
+    );
+  else if (handle.startsWith("@"))
+    warnings.push('creator.handle should not include the leading @ — mockups add it where the real UI shows one.');
+
   const cv = b.canvas ?? {};
   if (cv.captionTop != null && cv.captionBottom != null && cv.height) {
     const lo = cv.captionTop / cv.height;
@@ -533,6 +546,10 @@ async function init() {
   const d = base ?? resolveDefaults(STARTER_CONFIG);
 
   const name = await ask("Brand / channel name:", d.name ?? "My Channel");
+  const handle = (await ask(
+    "Account handle, no @ (every app mockup carries it):",
+    d.creator?.handle || ""
+  )).replace(/^@/, "");
 
   let skin = "";
   while (!SKINS.includes(skin))
@@ -565,6 +582,7 @@ async function init() {
   const out = {
     ...d,
     name,
+    creator: { ...(d.creator ?? {}), handle },
     skin,
     palette: { ...d.palette, ground, ink, accent, groundLift: undefined, ink2: undefined, accentHi: undefined, accentLo: undefined },
     fonts: {
@@ -587,6 +605,9 @@ async function init() {
   ok("brand/tokens.css");
   warnings.forEach(warn);
 
+  if (!handle)
+    warn("no handle set — add creator.handle to brand/brand.json before building any mockup.");
+
   console.log(`
   ${c.bold("Done.")} Two more things worth doing:
 
@@ -606,6 +627,8 @@ async function show() {
   const { errors, warnings } = validate(b);
   step(`Brand: ${b.name ?? "unnamed"} (${b.skin} skin)`);
   console.log(`
+  handle   ${b.creator?.handle ? "@" + b.creator.handle : c.yellow("(not set — mockups have no account to show)")}
+
   ground   ${b.palette.ground}      ink      ${b.palette.ink}
   accent   ${b.palette.accent}      hi/lo    ${b.palette.accentHi} / ${b.palette.accentLo}
 

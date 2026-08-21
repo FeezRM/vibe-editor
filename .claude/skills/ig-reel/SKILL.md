@@ -39,7 +39,7 @@ Values in `brand.json` are already compiled into `brand/tokens.css`; regenerate 
 | # | Step | Skill | The one thing it does |
 |---|---|---|---|
 | 1 | Remove whitespace + filler | **`ig-cut`** | strips dead air into a tight spine, ~3s average clips |
-| 2 | Captions | **`ig-captions`** | word-accurate, banded at 45–60% of frame, never bottom-third |
+| 2 | Captions | **`ig-captions`** | word-accurate, banded at **y 920–1130** on 1080×1920, never bottom-third |
 | 3 | Background music | **`ig-sound`** | bed ducked ~-18dB, out under the hook |
 | 4 | **Show** | **`ig-show`** | the motion graphics. **Plan every beat before building anything.** **Show the noun**: real app UI, real content with real metrics. **A graphic is on screen ≥85% of runtime** — usually one persistent object mutating, not many cards |
 | 5 | Sound effects | **`ig-sound`** | one SFX per visual event, never per word |
@@ -132,6 +132,10 @@ Every row is an executable instruction. Produce this before touching the timelin
 EDIT BLUEPRINT — [title]
 Source: [file] · in [Xs] → target out [Ys] · Ratio 9:16 · Sequence [fps]
 Goal: [views / leads / sales]      Graphics skin: VIRAL (default)
+CONTRACT: [SPLIT-STAGE | NESTED-SCALE | TWO-WORLDS | OBJECT-OVER-GROUND]
+  owns the frame: [..]  ·  A-roll does: [..]  ·  captions: [yes / none / muted in world 2]
+  broken once at: [TC + what changes]
+SCENES: [1-3] — [name each, and the one persistent object it carries]
 
 HOOK (0–3s)
 - A-roll: [source TC] | Scale: [wide/med/CU]
@@ -152,12 +156,21 @@ GLOBAL
 - Captions : Europa Grotesk SH 88px, ONE line, 2–4 words, block centre y ~50%, hard cut
 - Music    : [track] ducked -18dB, out under the hook
 - Grade    : deep contrast, cool shadows, controlled highlights
-- Graphics : [one line per composition + cue TC]  → ig-show writes the MOTION PLAN
+- Graphics : [one line per SCENE + the beats it spans]  → ig-show writes the MOTION PLAN
+             NOT one line per graphic — a video is 1-3 scenes, each one persistent
+             object through a labelled state machine. See ig-show/reference/
+             FRAME-CONTRACTS.md and SAMPLES.md.
 - B-roll   : [screen recordings to capture / assets to generate]
 ```
 
 Keep beats short. If a row covers more than ~4 seconds of static A-roll, split it — the
 frame should change.
+
+**The Change column is the test.** Read every beat's change in isolation, ignoring the copy.
+If the sequence reads "card in, card out, card in, card out", the blueprint is a slideshow
+and no amount of craft in `ig-show` will rescue it. It should read like one object being
+worked on: "skeleton", "avatar fills", "name fills", "bio line 1", "…", "grid populates",
+"winner takes gold, losers desaturate".
 
 ---
 

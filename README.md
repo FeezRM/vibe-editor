@@ -83,14 +83,14 @@ The agent uses each for what it's good at, and hands the alpha `.mov` across.
 **macOS**
 
 ```bash
-git clone <your-fork-url> vibe-editor && cd vibe-editor
+git clone https://github.com/FeezRM/vibe-editor.git && cd vibe-editor
 ./scripts/setup-macos.sh
 ```
 
 **Windows** (PowerShell)
 
 ```powershell
-git clone <your-fork-url> vibe-editor; cd vibe-editor
+git clone https://github.com/FeezRM/vibe-editor.git; cd vibe-editor
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\setup-windows.ps1
 ```
 
@@ -148,16 +148,21 @@ to collapse it to one line per beat and skip ahead — the quality bar doesn't m
 `link_audio_video`. Silence and filler come out first; nothing gets polished before the
 story flows end to end.
 
-**5 · Graphics.** Each graphic is a HyperFrames composition — one HTML file, one job.
-Lint it, render it to alpha `.mov`, then `import_media` it and place it on the overlay track.
+**5 · Graphics.** Each video gets **one to three HyperFrames *scenes*** — not one file per
+graphic. A scene is a single object that mutates through a labelled state machine for its
+whole runtime, which is what separates a designed sequence from a slideshow. Lint it, render
+it to alpha `.mov`, then `import_media` it and place it on the overlay track.
 
 ```bash
 npx hyperframes lint  projects/<slug>
 npx hyperframes check projects/<slug>
-npx hyperframes render projects/<slug> -c compositions/03-counter.html \
-  --format mov --resolution portrait --fps 30 --quality high \
-  -o renders/03-counter.mov
+npx hyperframes render projects/<slug> -c compositions/03-scene.html \
+  --format mov --fps 30 --quality high \
+  -o projects/<slug>/renders/03-scene.mov
 ```
+
+Author at 1080×1920 and omit `--resolution` — it is **rejected** for alpha output. Render at
+the sequence fps; a mismatch shows up as overlay stutter and cannot be fixed at export.
 
 `--format mov` and `--format webm` carry a real alpha channel; Premiere imports the MOV with
 transparency intact. Every render ships with a `renders/IMPORT.md` cue sheet — file,
@@ -211,7 +216,7 @@ node scripts/brand.mjs scaffold  # blank brand/brand.json + brand/BRAND.md
 
 | File | Holds | Format |
 |---|---|---|
-| **`brand/brand.json`** | palette, fonts, canvas, fps, texture, density, export | JSON, schema-backed |
+| **`brand/brand.json`** | your handle, palette, fonts, canvas, fps, texture, density, export | JSON, schema-backed |
 | **`brand/BRAND.md`** | voice, subject matter, banned visuals, CTA, sound taste | free text |
 
 **Every skill reads both before it plans or builds anything**, and the precedence is
@@ -239,6 +244,11 @@ stack with no fallback, and captions parked in the bottom third.
 Omit `accentHi`, `accentLo`, `groundLift`, or `ink2` and they're derived from your accent
 and ground automatically. Most people only ever set three colours.
 
+The one field with no sensible default is **`creator.handle`** — your account name, no `@`.
+Every rebuilt app mockup (profile, comment sheet, follow card) carries it, so `check` warns
+while it is blank. It is the difference between a mockup that is yours and one wearing a
+stranger's name.
+
 ## The house style (the default)
 
 Seven skills load automatically whenever an agent runs here — one per step of the editing
@@ -248,9 +258,9 @@ process, plus an orchestrator:
 |---|---|
 | **`ig-reel`** | Orchestrator. The edit blueprint, the sequence, the track layout. Dispatches the rest. |
 | **`ig-cut`** | Step 1 — silence and filler. The spine. |
-| **`ig-captions`** | Step 2 — word-accurate captions, banded at 45–60% of frame. |
+| **`ig-captions`** | Step 2 — word-accurate captions, banded at y 920–1130 on a 1080×1920 frame. |
 | **`ig-sound`** | Steps 3 + 5 — music bed, ducking, SFX. One mix. |
-| **`ig-show`** | Step 4 — **the motion graphics.** 20 named blocks, two skins. The one that matters most. |
+| **`ig-show`** | Step 4 — **the motion graphics.** 15 named blocks, 4 frame contracts. The one that matters most. |
 | **`ig-pacing`** | Step 6 — pattern interrupts, zoom pulses, shot scale. |
 | **`ig-delivery`** | QA and export. |
 
@@ -262,15 +272,18 @@ The system in six lines:
 2. **One accent per project.** Max two accent elements per frame.
 3. **Entrances 0.28–0.42s. Hold ≥0.8s. No exits — the cut is the exit.**
    Never bounce, elastic, or back.
-4. **≤8 graphics per 30s reel**, one every 3–5s, exactly one in the first three seconds —
-   but something changes on screen every **1–2s**, mostly on the caption layer.
+4. **One object is on screen ≥85% of the runtime, mutating** — and something changes on
+   screen roughly every **1.5s**, never more than ~2s static. The graphics budget lives in
+   `brand/brand.json` (`density.maxGraphicsPer30s`), not in a skill.
 5. **Texture is mandatory.** Grain, vignette, feathered edges, and a ~15fps stutter on
    mechanical motion. Perfectly smooth, perfectly flat output is what reads AI-generated.
 6. **Zero UI chrome.** No counters, no watermark, no follow banner.
 
-Full spec in [`.claude/skills/ig-show/reference/`](.claude/skills/ig-show/reference/) —
-`DEVICES.md` (spoken idea → visual device), `BLOCKS.md`, `MOTION-LANGUAGE.md`,
-`TEXTURE.md`, `PIPELINE.md`. `templates/base/` is a lint-clean HyperFrames starter.
+Full spec in [`.claude/skills/ig-show/reference/`](.claude/skills/ig-show/reference/), in
+reading order — `SAMPLES.md` (four reels torn down structurally), `FRAME-CONTRACTS.md` (the
+four spatial architectures; declaring one is mandatory), `TEARDOWN.md`, `VISUAL-HOOK.md`,
+`DEVICES.md` (spoken idea → visual device), `BLOCKS.md`, `MOTION-LANGUAGE.md`, `TEXTURE.md`,
+`PIPELINE.md`. `templates/base/` is a lint-clean HyperFrames starter.
 
 To bring your own system entirely: rewrite `brand/BRAND.md`, or delete `.claude/skills/`
 and let the agent work from your prompts alone.
@@ -292,19 +305,25 @@ vibe-editor/
 │   ├── ig-captions/                step 2 — captions
 │   ├── ig-sound/                   steps 3+5 — music and SFX
 │   ├── ig-show/                    step 4 — the motion graphics
-│   │   └── reference/              DEVICES · BLOCKS · MOTION-LANGUAGE · TEXTURE · PIPELINE · INTAKE · tokens-*.css
+│   │   └── reference/              SAMPLES · FRAME-CONTRACTS · TEARDOWN · VISUAL-HOOK · DEVICES · BLOCKS · MOTION-LANGUAGE · TEXTURE · PIPELINE · INTAKE · tokens-*.css
 │   ├── ig-pacing/                  step 6 — pattern interrupts
 │   └── ig-delivery/                QA and export
 ├── templates/base/                 lint-clean HyperFrames starter, 4 working blocks
+├── analysis/                       measure.py · motion-density.py · build-captions.py
+│                                   (anything else in here is gitignored scratch)
+├── samples/                        bring your own reference reels — gitignored, see its README
 ├── projects/                       one folder per video (compositions + renders)
 ├── exports/                        finished masters out of Premiere
 ├── vendor/                         cloned engines — gitignored, managed by the setup script
 │   ├── hyperframes/
 │   └── adobe-premiere-pro-mcp/
-├── .mcp.json                       generated: registers the premiere-pro MCP server
 ├── scripts/brand.mjs               the brand generator (scaffold / init / build / show / check)
-└── ig-show.skill                  the motion-graphics skill, packaged for distribution
+└── .mcp.json                       generated: registers the premiere-pro MCP server
 ```
+
+Everything that is *yours* is gitignored on purpose: `brand/`, `projects/`, `samples/`,
+`vendor/`, `.mcp.json`, all media, and the `.prproj`. Clone it, run setup, and nothing you
+shoot or cut ever lands in git unless you deliberately put it there.
 
 ## Requirements
 

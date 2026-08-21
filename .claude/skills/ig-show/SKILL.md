@@ -4,8 +4,9 @@ description: >-
   Designs and builds the SHOW layer of a short-form video — the motion graphics that
   visually depict what is being said, in the VIRAL house style: rebuilt app UI (Instagram
   profile, story, feed, DM), real content carrying real metrics, side-by-side comparisons,
-  tier stacks, charts with labelled axes, countdowns, and semantic colour washes. Fourteen
-  named blocks and a spoken-idea-to-object lookup, built as HyperFrames HTML compositions
+  tier stacks, charts with labelled axes, countdowns, and semantic colour washes. Fifteen
+  named blocks, four frame contracts and a spoken-idea-to-object lookup, built as HyperFrames
+  HTML compositions
   and rendered to alpha .mov / .mp4 for Premiere Pro. Works brief to questions to approved
   MOTION PLAN to build to render to Premiere import sheet. This is step 4 of the six-step
   editing SOP and the one that matters most. Use whenever the user wants to: make or design
@@ -49,6 +50,17 @@ A graphic that could be replaced by its own caption is not a graphic — it is t
 a second typeface, and it costs you the beat it occupies. The caption layer already says the
 words, larger and better. **The graphic's job is to show what the words cannot.**
 
+> **The one carve-out: an emotional beat may carry feeling instead of fact.**
+>
+> S2 puts a gold `Congratulations` over fireworks for two seconds. S4 floods the whole frame
+> red on "SUPER" and green on "DISGUSTINGLY EASY". Neither carries a single unit of
+> information, both are load-bearing, and the mute test as stated above would delete them.
+>
+> The test disqualifies *informational* decoration — a card that restates the audio. It does
+> not disqualify a beat whose job is the feeling. **One per video**, it must be nameable as
+> a specific emotion (relief, dread, triumph), and it must land on a beat where the script
+> actually turns. If you cannot name the emotion in one word, it is decoration after all.
+
 This skill previously said "graphics are instrumentation, not decoration" and that produced
 dark plates with engraved headings — abstract dials measuring nothing, ledgers with empty
 rows, a claim in quotes with a line through it. Every one of those restated the audio.
@@ -79,11 +91,14 @@ silently following the default.
 | Read | When |
 |---|---|
 | `brand/BRAND.md` + `brand/brand.json` | **first, always** |
-| [reference/TEARDOWN.md](reference/TEARDOWN.md) | **always.** what actually performs, and why the old style failed |
+| [reference/SAMPLES.md](reference/SAMPLES.md) | **always, before you plan.** the four reels torn down structurally — the persistent object, the motif, the beat map, the technique index |
+| [reference/FRAME-CONTRACTS.md](reference/FRAME-CONTRACTS.md) | **always, before beat 2.** the four spatial architectures. Declaring one is mandatory |
+| [reference/TEARDOWN.md](reference/TEARDOWN.md) | **always.** what actually performs, and why the old style failed — the *style* measurements behind SAMPLES.md |
 | [reference/VISUAL-HOOK.md](reference/VISUAL-HOOK.md) | **always, before you plan beat 1.** the opening graphic is a different object with its own rules — SPG, and the measured lockup spec |
 | [reference/DEVICES.md](reference/DEVICES.md) | **always.** spoken line → what goes on screen |
-| [reference/BLOCKS.md](reference/BLOCKS.md) | **always.** the 14 blocks |
+| [reference/BLOCKS.md](reference/BLOCKS.md) | **always.** the 15 blocks |
 | [reference/MOTION-LANGUAGE.md](reference/MOTION-LANGUAGE.md) | palette, docks, timing, easing, banned list |
+| [reference/INTAKE.md](reference/INTAKE.md) | after the acquisition ladder — how to ask for the residue, and the MOTION PLAN template |
 | [reference/PIPELINE.md](reference/PIPELINE.md) | before scaffolding, rendering, or handing off |
 | `reference/tokens-viral.css` | the skin — copy via `node scripts/brand.mjs build` |
 
@@ -100,7 +115,36 @@ that proves something and one that asserts it. **Never invent a metric**, and ne
 container with placeholder contents — an empty numbered list shows the viewer less than a
 plain talking-head frame, because it promises information and withholds it.
 
-If the specifics genuinely aren't available, pick a block that doesn't need them
+#### Go and get them — the acquisition ladder
+
+For a long time this step ended at *"ask the creator, or build nothing."* That capped the
+ceiling at whatever the user happened to volunteer, and three separate builds paid for it:
+one shipped **five empty grey bars** standing in for hook copy the script never named;
+another was abandoned half-built because a single screenshot never arrived; a third simply
+**invented its two central numbers**, which is the worst outcome of the three.
+
+**Work down this ladder. Ask the creator only for what genuinely only they have.**
+
+| | Source | Use it for |
+|---|---|---|
+| 1 | **Already on disk** — `samples/`, `projects/*/assets/`, previous `renders/` | anything you have built or been given before |
+| 2 | **Extract from footage** — `ffmpeg -ss <t> -i <file> -frames:v 1 out.png`, then crop. Or `/watch <url-or-path>` to pull frames from a competitor reel or the creator's own back catalogue | real thumbnails, real covers, real on-screen text, a still of the A-roll for a mockup slot. **This is how S3 and S4 got their third-party evidence** |
+| 3 | **Capture a real interface** — Chrome automation (`mcp__claude-in-chrome__*`): open the real page, screenshot it | a real profile, a real dashboard, a real app screen. Far better than rebuilding one from memory, and it cannot look AI-generated |
+| 4 | **Look it up** — `WebSearch` / `WebFetch` | real public figures: a real follower count, a real published statistic, a real product price |
+| 5 | **Generate** — the `media-use` skill, or Higgsfield | textures, plates, a hand holding a phone, an icon, a background. **Never a metric** |
+| 6 | **Ask the creator** — batched into one message, per `INTAKE.md` | only what is genuinely private: their own analytics, their own DMs, their own unpublished drafts |
+| 7 | **Build nothing** | still the right answer sometimes — but now genuinely last |
+
+Steps 2–5 are all installed and working on this machine and were, until now, mentioned in no
+skill at all. That omission is most of the gap between the reference reels and this repo's
+output.
+
+**What does not change:** *never invent a metric.* Generating a texture is resourceful;
+generating a number is fraud. And never render a container with placeholder contents — an
+empty numbered list shows the viewer less than a plain talking-head frame, because it
+promises information and withholds it.
+
+If after the ladder the specifics still aren't available, pick a block that doesn't need them
 (colour wash, tier stack, a chart whose *shape* is the claim) or build nothing.
 
 ### 3. PLAN THE WHOLE VIDEO FIRST — every beat, before you build anything
@@ -108,6 +152,14 @@ If the specifics genuinely aren't available, pick a block that doesn't need them
 **Do not build a single composition until the entire video is planned beat by beat.**
 Building as you go is how an edit ends up with six interchangeable cards: each one is a
 locally reasonable answer to one sentence, and together they have no shape.
+
+**Declare the frame contract first.** Before any beat table, one line naming which of the
+four architectures in [FRAME-CONTRACTS.md](reference/FRAME-CONTRACTS.md) this video uses —
+SPLIT-STAGE, NESTED-SCALE, TWO-WORLDS or OBJECT-OVER-GROUND — what owns the frame, what the
+A-roll does, whether captions exist at all, and how you break it once at the payoff. The
+contract determines how many scene files you write, so it cannot be decided later.
+
+**A plan with no declared contract does not get built.**
 
 Write `projects/<slug>/MOTION-PLAN.md` with **one row per spoken beat — not per graphic.**
 Beats with no new graphic still get a row, saying what is on screen and why it is still the
@@ -153,7 +205,7 @@ they win here:
 1. **It holds still.** No drift, no scroll, no ambient motion. One stamp ≤0.30s, then
    nothing for ≥2.5s. The "something changes every ~1.5s" rule is suspended for the hook —
    a thumb that has not stopped moving cannot read a moving target.
-2. **It is centred and it is huge.** ~96px and ~104px type. Not a side column, not a
+2. **It is centred and it is huge.** ~108px and ~118px type. Not a side column, not a
    corner, not a bottom band.
 3. **It silences the caption track** for its whole life (see *Caption arbitration* below).
 
@@ -181,9 +233,22 @@ when each one is individually correct. Alternate: object → measurement → env
 object. Change the placement between adjacent graphics; two `.beside--r` cards in a row
 make the second look like the first one failed to leave.
 
-**The video should have a shape.** Commit to one spatial contract (see the reference
-architectures) and break it exactly once, at the payoff. A reel where every beat is the
-same size and in the same place has no climax.
+> **Carve-out: deliberate identical repetition is an argument, not a template.**
+>
+> S3 runs the same worksheet layout **three times**, pixel-identical, with three different
+> niches — and that sameness *is* the proof that the structure generalises. Varying it would
+> destroy the argument.
+>
+> The rule above bans *accidental* sameness: three beats that look alike because you reached
+> for the same block three times. It does not ban repetition where the content varies, the
+> repetition is announced (`EXAMPLE #2`, `EXAMPLE #3`), and the point being made is
+> *"this works every time."* If you use it, say so in the MOTION PLAN — an unannounced
+> repeat is still a template.
+
+**The video should have a shape.** This is the frame contract, declared in step 3 and
+specified in [FRAME-CONTRACTS.md](reference/FRAME-CONTRACTS.md). Commit to it and break it
+exactly once, at the payoff. A reel where every beat is the same size and in the same place
+has no climax.
 
 ### 3c. The AI-generated tell — what it actually looks like
 
@@ -216,9 +281,73 @@ A graphic that is beautiful and off-style is a defect. If a beat genuinely needs
 the style does not have, say so out loud and propose the addition — do not quietly ship a
 different visual language in the middle of a reel.
 
-### 4. Build
+### 4. Build — SCENES, not graphics
 
-One composition file per graphic. Load-bearing rules — breaking these breaks the render:
+> **This repo used to say "one composition file per graphic." That rule is why the output
+> was a slideshow, and it is gone.**
+>
+> Every reference reel is **one persistent object that mutates for the whole runtime**. S1 is
+> a single Instagram profile that fills in from a grey skeleton across 45 seconds — roughly
+> 13 pattern interrupts out of **one** composition. Building one file per beat structurally
+> forbids that: each file can only appear, do its thing, and cut away.
+
+**A video is 1–3 SCENES.** A scene is a single composition spanning many spoken beats,
+carrying one persistent object through a **state machine**. Only when the frame contract
+genuinely changes worlds (TWO-WORLDS) or the payoff needs a different object do you start a
+second scene.
+
+**How to build a scene**
+
+- **Lay out the finished object first**, in CSS, with every field present. Then set the
+  initial state to *skeleton* and reveal into it. The wireframe is not a loading state — it
+  is the "before" half of every reveal, and it tells the viewer what is coming so each fill
+  lands as a payoff.
+- **Mark every beat with `tl.addLabel('<beat-name>', t)`** before the tweens at that cue. The
+  labels are the state machine, they make a 45-second timeline navigable, and
+  `analysis/motion-density.py` reports them.
+- **The object accumulates. It never resets.** A field that has been filled stays filled. A
+  row that has been struck stays struck. Recede it to ~0.3 opacity when another element owns
+  the beat, and bring it back — never rebuild it.
+- **Focus by brightness, not motion.** In a 45-second single composition, motion can never
+  stop, so it cannot be the attention mechanism. The active element glows and everything
+  else dims. This is how S1 holds a single frame for its entire runtime.
+- **Use sub-compositions.** `hyperframes.json` supports nesting and **nothing in this repo
+  has ever used it.** Scene = parent composition; each device inside it (the pyramid, the
+  chart, the phone) = a sub-comp with its own timeline. This is what makes a 40-second single
+  composition tractable instead of one 900-line file.
+- **Guard the scrub.** A long accumulating timeline must survive backward seeking. Anything
+  a `tl.call()` mutates — `textContent`, `src`, a class — is *not* rewound by GSAP, so a
+  backward seek leaves the object in a state it was never in. Every callback that changes
+  state needs a matching restore, keyed off `tl.time()`:
+
+  ```js
+  /* the forward mutation */
+  tl.call(function () {
+    document.getElementById('cap2').textContent = 'after';
+    document.getElementById('tile2').classList.add('tile--sel');
+  }, null, 5.14);
+
+  /* the restore — without this, scrubbing back keeps the "after" state */
+  tl.eventCallback("onUpdate", function () {
+    if (tl.time() < 5.14) {
+      document.getElementById('cap2').textContent = 'before';
+      document.getElementById('tile2').classList.remove('tile--sel');
+    }
+  });
+  ```
+
+  One `onUpdate` handler per composition, holding one `if` block per callback beat, each
+  restoring every property that beat touched. Renders are deterministic, but `snapshot`,
+  `check` and the preview player all seek — an unguarded swap shows up as a graphic that is
+  right in the render and wrong in every still you take of it.
+
+**The reference implementation to beat** — the best composition this repo has produced —
+is a single object with **8 cumulative states and 36 tweens**: a skeleton placeholder →
+five sequential content reveals → the whole block recedes → pulses → two rows get struck
+through → three rows resolve green. One file, one object, no exits, no second card. It was
+an accident. Make it the default.
+
+**Load-bearing rules** — breaking these breaks the render:
 
 - Root div: `data-composition-id`, `data-width="1080"`, `data-height="1920"`, `data-start`,
   `data-duration`, `data-fps`. Standalone files put it directly in `<body>` — no `<template>`.
@@ -228,10 +357,15 @@ One composition file per graphic. Load-bearing rules — breaking these breaks t
   every `feTurbulence`.
 - Asset paths are **root-relative** — `href="tokens.css"`, never `../tokens.css`.
 - Lay the hero frame out in CSS first, then `gsap.from()` into it.
-- **No exits.** The cut is the exit. Only the final element may fade.
+- **No exits *between* scenes** — the cut is the exit, and only a scene's final element may
+  fade. **Inside** a scene the rule is different and stricter: elements persist, dim,
+  desaturate, or are displaced. They do not disappear and reappear. An element that leaves
+  and comes back is two graphics wearing one name.
 - Overlays keep `background: transparent`; full-frame cutaways use `.cutaway`.
-- Compose from the `.ig-*`, `.reel`, `.metric`, `.pyramid`, `.chart`, `.wash` classes in
-  `tokens.css` — they already encode the correct metrics. Do not reinvent them per project.
+- Compose from the `.ig-*`, `.reel`, `.metric`, `.pyramid`, `.chart`, `.wash`, `.skel-*`,
+  `.glow-*`, `.keep-*`, `.brace`, `.annot-*` classes in `tokens.css` — they already encode
+  the correct metrics. Do not reinvent them per project. Most of that file is currently
+  **unused**; read it before you write a line of CSS.
 
 **Fonts.** Use `--font-ui` (Inter) inside any app mockup — the brand display face inside a
 mockup breaks the illusion instantly. `Anton`, `Inter`, and `JetBrains Mono` auto-resolve
@@ -250,11 +384,52 @@ installed on the render machine and is matched by system font resolution.
 ```bash
 npx hyperframes lint  projects/<slug>
 npx hyperframes check projects/<slug>
+python analysis/motion-density.py projects/<slug>/compositions/*.html   # the motion floor
 npx hyperframes render projects/<slug> -c compositions/NN-block.html --format mov --fps 30 \
   -o projects/<slug>/renders/NN-block.mov
 ```
 
 `--resolution` is rejected for alpha output; author at 1080×1920 and omit it.
+
+> ### The motion floor — `analysis/motion-density.py`
+>
+> `lint` and `check` verify a composition is **correct**. Nothing verified it was **alive**,
+> and the consequence was measured across everything this repo has shipped: **58% of every
+> animated property was `opacity`**, zero rotation, zero depth, zero masks, a median of 9
+> tweens per composition, and four compositions that were literally a card that fades in.
+> Every one of them passed `lint` and `check`.
+>
+> The gate fails a composition on any of five hard metrics:
+>
+> | Metric | Floor |
+> |---|---|
+> | tweens (loop-expanded) | ≥ 25 per scene |
+> | distinct timeline cues | ≥ 5 |
+> | distinct animated properties | ≥ 6 |
+> | fade share of all animated properties | ≤ 50% |
+> | elements with depth (shadow / blur / mask / rotate / clip) | ≥ 1 |
+>
+> **Calibration, and it is worth knowing:** run against the existing corpus, **every single
+> composition fails, including the best one.** `01-note-v2.html` clears tweens, cues and
+> depth but its entire vocabulary is `opacity, scale, scaleX, color` — four verbs, 55% fades.
+> The thresholds describe the target tier, not the current one. Do not lower them to make old
+> work pass; that is the whole reason the old work looks the way it does.
+>
+> Widen the vocabulary with things that already exist in `tokens.css` and cost nothing:
+> `filter` (blur, saturate, brightness, drop-shadow), `clipPath` and mask position for a real
+> unmask, `rotation` on an object with weight, `backgroundColor`, `boxShadow`,
+> `xPercent`/`yPercent`, `strokeDashoffset` and `strokeWidth` on drawn annotation, `attr`
+> on an SVG `d` to morph one shape into another, and a proxy object driving `textContent`
+> for counters.
+>
+> ⚠️ **Do not animate `letterSpacing`, `width`, `height`, `left`, `top`, `padding`, `margin`
+> or `fontSize`** to pad the count. They reflow layout and snap to integer device pixels, so
+> they stutter under the seek-by-frame capture engine — `hyperframes lint` fails them as
+> `gsap_non_transform_motion`. Transforms and filters interpolate sub-pixel. If you want a
+> letter-spacing effect, split to per-character elements and animate each glyph's `x`.
+>
+> **What it cannot see:** it reads the source, not the pixels. It cannot tell you the motion
+> is *good*. It is a floor, not a ceiling, and it does not replace the next two steps.
 
 > ### ⚠️ Re-rendering over a file Premiere has open fails at 90%
 >
@@ -286,9 +461,10 @@ absent — were both invisible to lint and obvious in a frame.
 > `{"success": true}` with a clean `outputPath` and **no file appears on disk**. Two
 > separate failure modes:
 >
-> 1. **Backslash paths get mangled.** `C:\...\vibe-editor\analysis\x.png` came back as
->    `C:Users\faizkDesktopCS Stuff\u000bibe-editor…` — `\v` and `\f` were read as escapes.
->    **Always pass forward slashes:** `C:/Users/.../analysis/x.png`.
+> 1. **Backslash paths get mangled.** `C:\Users\you\vibe-editor\analysis\x.png` came back as
+>    `C:Users\youvibe-editor\u000banalysis…` — the `\v` in `\vibe-editor` (and a `\f` in any
+>    `\fonts` segment) were read as C escapes rather than path separators.
+>    **Always pass forward slashes:** `C:/Users/you/vibe-editor/analysis/x.png`.
 > 2. **Even with a clean path it may still write nothing** — the host's exporter is broken
 >    here (the same fault that makes `encodeSequence` throw).
 >
@@ -310,6 +486,28 @@ absent — were both invisible to lint and obvious in a frame.
 >   [1:v]format=rgba[ov];[bg][ov]overlay=0:0" -frames:v 1 out.png
 > python analysis/measure.py out.png 0
 > ```
+
+### 5b. Compare against the corpus — the only check that asks if it is any *good*
+
+Every other gate asks whether the work is correct. This one asks whether it is good, and it
+is the cheapest honest signal available.
+
+Composite the render over a real A-roll frame (the ffmpeg fallback above — `export_frame`
+returns success and writes nothing on this machine), then **open a still from the matching
+sample in `samples/` beside it** and answer three questions in `RESULT.md`:
+
+1. **Does one object own the frame?** Or is this a card that arrived and will leave?
+2. **Has it changed state since the last check?** Name the change. "It is still on screen"
+   is not a change.
+3. **Would a viewer read these two frames as the same tier?** If no, say which is missing —
+   depth, real content, glow, density, or continuity.
+
+Pull the sample still with `ffmpeg -ss <t> -i samples/<file> -frames:v 1 ref.png`, or
+`/watch samples/<file>` for a spread. [SAMPLES.md](reference/SAMPLES.md) has a technique
+index telling you which reel to compare against for which device.
+
+Answering "yes, yes, yes" without having looked at both images is the failure mode this step
+exists to prevent. **A verification step that cannot fail is not a verification step.**
 
 ### 6. Render and hand off
 
@@ -521,9 +719,14 @@ user described as "the visuals are barely there". See `analysis/DEEP-ANALYSIS.md
 S1 never shows a bare talking head — its profile stage is present in **every frame of the
 reel.**
 
-> **The working rule: a graphic is on screen for ≥85% of runtime, something on it changes
-> every ~1.5s, and nothing holds unchanged longer than ~2s. Bare footage is the exception
-> you spend for emphasis, not the resting state.**
+> **The working rule: ONE OBJECT is on screen for ≥85% of runtime, it changes state at
+> least every ~1.5s, and nothing holds unchanged longer than ~2s. Bare footage is the
+> exception you spend for emphasis, not the resting state.**
+
+The emphasis on *one object* is the whole point and it was missing. "A graphic is on screen
+≥85%" is satisfiable by twelve unrelated cards in a row, which is exactly what this repo
+built. **≥85% presence of a persistent, mutating object** is a completely different
+instruction and is what the references actually do.
 
 This is cheaper than it sounds, because **most of those events are state changes on one
 object that is already on screen**, not new graphics. One persistent object mutating 20
@@ -699,7 +902,12 @@ staggered arrival reads as results coming in.
 - **Motion:** entrance 0.28–0.42s, hold ≥0.8s, no exits. ≥3 distinct eases, 60–120ms
   staggers, 1–2 movers at a time. Never bounce, elastic, or back. `linear` only for a
   continuously scrolling wall.
-- **Density:** see below. **A graphic is on screen ≥85% of runtime.**
+- **Motion floor:** ≥25 tweens, ≥6 distinct animated properties, ≤50% fades, ≥1 element with
+  depth, per scene. Enforced by `python analysis/motion-density.py` — not by eye.
+- **Structure:** 1–3 SCENES per video, not one file per graphic. One persistent object per
+  scene, carried through a labelled state machine.
+- **Contract:** one of the four in `FRAME-CONTRACTS.md`, declared before any build.
+- **Density:** see below. **ONE OBJECT is on screen ≥85% of runtime.**
 - **State persists** across a progressive build. Never reset to skeleton.
 - **Zero UI chrome:** no watermark, no follow banner, no progress bar, no slide counter.
 - **Copy is the creator's voice.** Do not grammar-correct.
@@ -726,14 +934,25 @@ staggered arrival reads as results coming in.
 - Serif micro-labels, engraved tracking, "instrument" styling
 - Emoji as decoration, flying icons, arrow doodles
 - Light/white cards over footage (real app UI in dark mode is fine)
-- `box-shadow` on panels; glow so bright it clips
+- **`box-shadow` as generic elevation on a flat panel** — a dark rounded rectangle with a
+  soft drop shadow under it is a Bootstrap card, and it reads as one. Depth is *required*
+  elsewhere: an object meant to read as physical (a card held at an angle, a device, an
+  artefact lifted off the ground, a screenshot overlapping another) should carry a real
+  shadow. The distinction is whether the shadow is describing a thing with weight or
+  decorating a container. The motion floor requires at least one element with depth per
+  scene — spend it on an object, not a panel.
+- Glow so bright it clips
 - `Math.random()`, `Date.now()`, `repeat: -1`, unseeded `feTurbulence`
 - Any graphic that fails the mute test
 
 ## Self-check — before anything renders
 
+- [ ] **A frame contract is declared** and named in the MOTION PLAN — one of the four in `FRAME-CONTRACTS.md`, with the one break identified
+- [ ] **The video is 1–3 scenes, not N graphics** — each scene one persistent object through a labelled state machine
+- [ ] **`python analysis/motion-density.py` passes on every composition** — ≥25 tweens, ≥6 properties, ≤50% fades, ≥1 depth element
+- [ ] **Real material was pursued down the acquisition ladder** before anything was asked for or omitted — nothing on screen is a placeholder
 - [ ] **The hook was designed first, on its own, against SPG** — summarize ≤7 words, a power word in the accent, ONE graphic
-- [ ] **The hook lockup is centred, ~96/104px, line 2 larger than line 1, with bloom + dark halo**
+- [ ] **The hook lockup is centred, ~108/118px, line 2 larger than line 1, with bloom + dark halo**
 - [ ] **The hook holds still** — one stamp ≤0.30s, then no motion for ≥2.5s
 - [ ] **Only one text layer at a time** — caption mute windows written into the MOTION PLAN for the hook and for every content card carrying its own copy
 - [ ] **Every surface is opaque hex, zero `rgba()` fills** — verified with the grep in *Opacity is load-bearing*, not by eye

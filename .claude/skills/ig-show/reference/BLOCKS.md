@@ -284,7 +284,7 @@ this position.
 
 ```
 STOP GUESSING     .hook__line--power   96px, accent colour, bloom + dark halo
-YOUR HOOKS        .hook__line--noun   104px, white, LARGER than line 1
+YOUR HOOKS        .hook__line--noun   118px, white, LARGER than line 1
 
 ┌──────────────────────────────┐
 │  ONE wide, short proof card  │  .hook__proof — ~72% frame width, 9–14% height
@@ -315,6 +315,26 @@ still be a non-hook — because it has no summarize, no power word, no single gr
 too small to read, and it never stops moving. See `VISUAL-HOOK.md §6`.
 
 ---
+
+## Inventing a device — the method the catalogue never gave you
+
+The admission test below says what *qualifies*. It never said how to *design* one, so in
+practice nothing was ever added and every plan cycled the existing fifteen. The method:
+
+1. **Name the noun the line contains.** Not the concept — the object. "My hook sucked"
+   contains *a retention curve*. "I tested five hooks" contains *five hooks in a notes app*.
+   "Everyone says this" contains *a wall of near-identical reels*.
+2. **Ask what the viewer already recognises.** A rebuilt interface the viewer has used costs
+   you nothing to explain. An invented instrument costs you the whole beat. When in doubt,
+   rebuild something real.
+3. **Decide what CHANGES on it**, beat by beat, before you decide what it looks like. A
+   device with one state is a card. Three or more states on one object is a device. Write
+   the states out as a list first; if you cannot get past two, you have a card.
+4. **Get the real material** — `SKILL.md` §2's ladder, not a placeholder.
+5. **Check it against `SAMPLES.md`.** Which of the four reels does this most resemble? If
+   the answer is "none of them", that is worth a second look, not automatic confidence.
+
+Then add it here, with the same Shows / Anatomy / Motion / Rules structure as the fifteen.
 
 ## Adding a block
 

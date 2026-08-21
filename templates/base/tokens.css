@@ -52,7 +52,7 @@
   --ink-dim: rgba(255, 255, 255, 0.55);
   --ink-ghost: rgba(255, 255, 255, 0.18);
   --ink-trace: rgba(255, 255, 255, 0.08);
-  --plate: rgba(10, 10, 11, 0.88);
+  --plate: rgba(10, 10, 11, 0.88);                      /* SURFACE -> opaque. never alpha. */
   --stroke: rgba(255, 255, 255, 0.14);
 
   --link: #3B9DFF;                       /* iOS / Instagram link blue */
@@ -181,7 +181,7 @@
    ============================================================ */
 
 .card {
-  background: rgba(18, 18, 22, 0.92);
+  background: #121216;            /* SOLID. never alpha on a surface. */
   border: 1px solid var(--ui-stroke);
   border-radius: 28px;
   padding: 34px 38px;
@@ -277,26 +277,125 @@
    ============================================================ */
 
 /* A view count pinned to a piece of real content. The pair
-   (artefact + number) is what makes the argument. */
+   (artefact + number) is what makes the argument.
+
+   ⚠️ CORRECTED 2026-08-15. This was `background: rgba(0,0,0,.66)` — a DARK pill.
+   Measured off S3, the reference badge is a LIGHT frosted pill with a dark glyph
+   and dark digits. The dark version disappears into a dark thumbnail, which is
+   most of why cards built from this token read as muddy rather than premium.
+   The badge is meant to pop OFF the artefact, not sink into it. */
 .metric {
-  display: inline-flex; align-items: center; gap: 12px;
-  padding: 10px 20px; border-radius: 999px;
-  background: rgba(0, 0, 0, 0.66);
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 9px 18px; border-radius: 999px;
+  background: #F4F4F6;            /* SOLID. never alpha on a surface. */
   font-family: var(--font-ui); font-weight: 700; font-size: 30px;
-  font-variant-numeric: tabular-nums; color: var(--ink);
+  font-variant-numeric: tabular-nums; color: #0A0A0B;
 }
 .metric--win { background: var(--accent); color: #000; }
+/* the losing side's badge: quiet, never invisible */
+.metric--muted { background: #A9A9B2; color: #26262C; }
 .metric svg, .metric i { width: 30px; height: 30px; font-style: normal; }
 
-/* real content, as a card */
+/* Real content, as a card.
+   Radius, brightness and the loser treatment are all measured off S3. */
 .reel {
-  position: relative; border-radius: 20px; overflow: hidden;
-  background: var(--ground-lift); aspect-ratio: 9 / 16;
+  position: relative; border-radius: 34px; overflow: hidden;
+  background: var(--ground-lift); aspect-ratio: 3 / 4;
 }
-.reel img { width: 100%; height: 100%; object-fit: cover; }
-.reel .metric { position: absolute; left: 16px; bottom: 16px; }
-.reel--win { outline: 4px solid var(--accent); outline-offset: 0; }
-.reel--lose { opacity: 0.55; }
+/* Reference covers are BRIGHT and that is most of why they read as real content
+   rather than placeholder art. Footage shot in a dim room needs lifting to sit
+   in the same world. */
+.reel img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(1.30) contrast(1.10) saturate(1.08);
+}
+.reel .metric { position: absolute; left: 20px; bottom: 20px; }
+.reel--win { outline: 5px solid var(--accent); outline-offset: 0; }
+/* The loser DESATURATES, it does not fade. At 55% opacity it read as a
+   rendering fault; greyscale reads as a deliberate "this one lost". */
+.reel--lose { filter: grayscale(1) brightness(0.74); }
+
+/* The card's OWN caption — the text that was burned into the original video.
+   It is small, sits LOW and LEFT, and is set in the app's UI face, NOT the
+   brand display face: it belongs to the artefact, not to your reel.
+   Never centre it across the middle of the card. */
+.reel__cap {
+  position: absolute; left: 20px; right: 20px; bottom: 82px;
+  font-family: var(--font-ui); font-weight: 800;
+  font-size: 26px; line-height: 1.18; color: var(--ink);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .92), 0 0 4px rgba(0, 0, 0, .85);
+}
+.reel__cap em { font-style: normal; color: var(--sig-up); }
+/* the scrim a real reel cover uses, so the caption stays legible on any image */
+.reel__scrim {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top,
+    rgba(0,0,0,.78) 0%, rgba(0,0,0,.34) 28%, rgba(0,0,0,0) 52%);
+}
+
+/* ============================================================
+   5b. THE VISUAL HOOK LOCKUP — see reference/VISUAL-HOOK.md
+   ============================================================ */
+
+/* The opening graphic is a different object from every other graphic: a big
+   two-line type lockup with ONE wide, short proof card under it. It lands in
+   one stamp and then HOLDS — motion in a hook is a bug, because a thumb that
+   has not stopped yet cannot read a moving target. */
+.hook { position: absolute; left: 0; right: 0; text-align: center; }
+.hook__line {
+  /* --font-caption, NOT --font-display. The lockup REPLACES the caption for those
+     seconds, so it must read as the same voice, just louder. VISUAL-HOOK.md is the
+     authority. Under the current brand both stacks lead with Anton and render
+     identically -- a brand that sets a separate display face would silently break
+     the relationship, which is the whole reason for the rule. */
+  display: block; font-family: var(--font-caption);
+  text-transform: uppercase; letter-spacing: -0.01em; line-height: 0.98;
+}
+/* Hook lines carry a VERTICAL GRADIENT, not a flat fill -- light at the top,
+   deep at the bottom. Measured off S3; it is most of the difference between
+   "a red word" and "a title".
+
+   text-shadow cannot be combined with a clipped gradient (the shadow renders
+   THROUGH the transparent fill and reads as a blob behind the glyphs), so the
+   bloom and the dark halo use filter: drop-shadow(), which respects glyph alpha.
+   Both are required -- flat type over footage reads as a subtitle.
+
+   Sizes corrected 2026-08-15 from 96/104 after a matched-scale side-by-side:
+   the reference power line spans ~74% of frame width, not the ~53% first
+   recorded from a zoomed crop. */
+.hook__line--power {
+  font-size: 108px;
+  background: linear-gradient(180deg, #FF7A7A 0%, #EB0408 52%, #A80206 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 0 30px rgba(235, 4, 8, .72))
+          drop-shadow(0 0 12px rgba(235, 4, 8, .55))
+          drop-shadow(0 5px 16px rgba(0, 0, 0, .92));
+}
+/* the good-news variant, when the hook endorses rather than forbids */
+.hook__line--power-up {
+  background: linear-gradient(180deg, #8CFF8C 0%, #00E800 52%, #00A600 100%);
+  -webkit-background-clip: text; background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(0, 232, 0, .64))
+          drop-shadow(0 0 12px rgba(0, 232, 0, .48))
+          drop-shadow(0 5px 16px rgba(0, 0, 0, .92));
+}
+/* line 2 — the NOUN. Always LARGER than line 1; it is the payload. */
+.hook__line--noun {
+  font-size: 118px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 58%, #D6D6DC 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 0 26px rgba(255, 255, 255, .34))
+          drop-shadow(0 5px 16px rgba(0, 0, 0, .95));
+}
+/* the ONE proof card. WIDE and SHORT — a tall card under the type reads as two
+   competing objects instead of a base the type stands on. */
+.hook__proof {
+  position: absolute; left: 90px; right: 90px;
+  background: #101014;            /* SOLID. never alpha on a surface. */
+  border: 1px solid var(--ui-stroke); border-radius: 28px;
+}
 
 /* ============================================================
    6. COMPARISON — two artefacts, two numbers, winner marked
@@ -384,7 +483,7 @@
 .annot-box--bad { border-color: var(--sig-down); }
 .annot-label {
   position: absolute; font-family: var(--font-ui); font-size: 26px;
-  color: var(--ink); background: rgba(0, 0, 0, 0.7);
+  color: var(--ink); background: #0A0A0B;
   padding: 8px 14px; border-radius: 8px;
 }
 
@@ -444,3 +543,209 @@
   mix-blend-mode: overlay; opacity: var(--grain-opacity);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch' seed='11'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* ============================================================
+   14. THE SAMPLE VOCABULARY — techniques measured off samples/ that this
+   stylesheet did not previously have, so no composition could reach them
+   without inventing CSS (which SKILL.md 3d forbids). Added 2026-08-20 from
+   the teardown in reference/SAMPLES.md.
+
+   These are not decoration. Each one closes a specific gap between the
+   reference reels and this repo's output, and several of them are what the
+   motion floor (analysis/motion-density.py) expects you to animate.
+   ============================================================ */
+
+/* ---- 14a. GLOW BLOOM -------------------------------------------------
+   Every sample leans on this hard and the old stylesheet had it only baked
+   into .hook__line. It is the primary EMPHASIS mechanism under SPLIT-STAGE,
+   where motion cannot be (a 45s composition can never stop moving, so
+   brightness has to carry focus instead).
+
+   Animate `filter` or `opacity` on these -- `filter` counts toward the
+   motion floor's distinct-property count and a fade does not. */
+.glow          { filter: drop-shadow(0 0 22px rgba(255, 255, 255, .34)); }
+.glow--accent  { filter: drop-shadow(0 0 26px rgba(255, 197, 49, .70))
+                         drop-shadow(0 0 10px rgba(255, 197, 49, .45)); }
+.glow--bad     { filter: drop-shadow(0 0 26px rgba(235, 4, 8, .72))
+                         drop-shadow(0 0 10px rgba(235, 4, 8, .48)); }
+.glow--good    { filter: drop-shadow(0 0 26px rgba(0, 232, 0, .64))
+                         drop-shadow(0 0 10px rgba(0, 232, 0, .42)); }
+/* the other half of focus-by-brightness: everything that is NOT the subject */
+.recede        { opacity: .30; filter: saturate(.7); }
+
+/* ---- 14b. TWO-TONE CAPTION LOCKUP -----------------------------------
+   S4 and S2's most reproducible single feature, and the thing that most
+   makes output read as "the same tier": line 1 white, line 2 in the accent
+   that the beat means. Line 2 is LARGER. Hard cut on and off -- never
+   slide, never fade.
+
+   This is the .cap band's big brother; use it for the 2-4 word beats that
+   carry the argument, and plain .cap for the rest. */
+.cap2 { position: absolute; left: 0; right: 0; text-align: center; }
+.cap2__a, .cap2__b {
+  display: block; font-family: var(--font-caption);
+  text-transform: uppercase; letter-spacing: var(--track-caption);
+  line-height: 0.96;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .92), 0 0 4px rgba(0, 0, 0, .85);
+}
+.cap2__a { font-size: 84px; color: var(--ink); }
+.cap2__b { font-size: 96px; color: var(--accent); }
+.cap2__b--bad  { color: var(--sig-down); filter: drop-shadow(0 0 18px rgba(235, 4, 8, .55)); }
+.cap2__b--good { color: var(--sig-up);   filter: drop-shadow(0 0 18px rgba(0, 232, 0, .50)); }
+
+/* ---- 14c. SKELETON -> FILL ------------------------------------------
+   S1's entire 45-second spine, and the highest-leverage thing in this file.
+   A grey wireframe is NOT a loading state -- it is the "before" half of
+   every reveal. It tells the viewer what is coming, so each fill lands as a
+   payoff instead of an arrival.
+
+   Structure: one .skel-slot holding a .skel-bar (the placeholder), a
+   .skel-flash (the white hit) and the real content. Reveal =
+     flash opacity 0->1 (0.09s) -> set bar opacity 0 -> flash 1->0 (0.16s)
+     -> real opacity 0->1 (0.16s)
+   Timing is load-bearing: the flash must be shorter than either fade. */
+.skel-slot  { position: relative; display: block; }
+.skel-bar   { position: absolute; inset: 0; background: var(--skeleton);
+              border-radius: 4px; }
+.skel-flash { position: absolute; inset: 0; background: var(--ink);
+              border-radius: 4px; opacity: 0; }
+.skel-real  { position: relative; opacity: 0; }
+/* circular placeholders -- highlight covers, avatars */
+.skel-bar--dot, .skel-flash--dot { border-radius: 50%; }
+/* text that lands in the accent and settles to white over ~0.4s. S1 does
+   this on every field it fills; it makes the fill legible as an EVENT. */
+.skel-real--land { color: var(--accent); }
+
+/* ---- 14d. GREYSCALE, ONE COLOUR KEPT --------------------------------
+   S4's competitor cards: the whole card desaturates, one word stays in
+   colour, and that word is the argument. Losing colour reads as "this is
+   context"; keeping one reads as "this is the point".
+
+   .keep on the container, .keep__kept on the element that survives. */
+.keep        { filter: grayscale(1) brightness(.78); }
+.keep__kept  { filter: none; }
+.keep--soft  { filter: grayscale(.85) brightness(.86); }
+
+/* ---- 14e. DRAWN ANNOTATION ------------------------------------------
+   S4 points a hand-drawn curved arrow at a boxed word on real evidence.
+   Annotation drawn ONTO the artefact is the single clearest way to say
+   "look here" without a caption.
+
+   .annot-arrow is an SVG path -- animate strokeDashoffset to draw it, which
+   is a real property and not a fade. Keep the stroke slightly irregular;
+   a perfect bezier reads as a diagram, a slightly wobbly one reads as a
+   person pointing. */
+.annot-arrow {
+  position: absolute; overflow: visible; pointer-events: none;
+  stroke: var(--ink); stroke-width: 5; fill: none;
+  stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .85));
+}
+.annot-arrow--accent { stroke: var(--accent); }
+.annot-word {
+  display: inline-block; padding: 2px 8px;
+  outline: 3px solid var(--link); outline-offset: 2px;
+  border-radius: 3px;
+}
+.annot-word--good { outline-color: var(--sig-up); }
+.annot-word--bad  { outline-color: var(--sig-down); }
+
+/* ---- 14f. BRACE CONNECTOR -------------------------------------------
+   S3's hook: three thumbnails, a curly brace converging on one label. It
+   states "these different things share one structure" with no words at all.
+   A relationship diagram, not a card -- and the one thing in this file that
+   draws a RELATION rather than an object.
+
+   Animate strokeDashoffset to draw the brace, then reveal the label. */
+.brace {
+  position: absolute; overflow: visible; pointer-events: none;
+  stroke: var(--ink); stroke-width: 4; fill: none; stroke-linecap: round;
+}
+.brace__label {
+  position: absolute; background: var(--ink); color: var(--ground);
+  font-family: var(--font-ui); font-weight: 700; font-size: 30px;
+  padding: 8px 16px; border-radius: 6px; white-space: nowrap;
+}
+
+/* ---- 14g. OBJECT DEPTH ----------------------------------------------
+   The Banned list forbids box-shadow as generic elevation on a flat panel,
+   because a dark rounded rect with a soft shadow under it is a Bootstrap
+   card and reads as one. Depth on an object with WEIGHT is the opposite --
+   it is what makes S4's competitor cards read as things being held rather
+   than layers being composited.
+
+   Use .lift on artefacts: a card, a device, a screenshot overlapping
+   another. Never on a panel whose job is to hold text. */
+.lift      { box-shadow: 0 18px 44px rgba(0, 0, 0, .72),
+                         0 4px 12px rgba(0, 0, 0, .55); }
+.lift--sm  { box-shadow: 0 8px 20px rgba(0, 0, 0, .62); }
+/* real UI is asymmetric and overlapping. A few degrees is plenty; more
+   reads as a PowerPoint transition. */
+.tilt-l    { transform: rotate(-2.4deg); }
+.tilt-r    { transform: rotate(1.8deg); }
+
+/* ---- 14h. DEFOCUS ---------------------------------------------------
+   S2 gets its depth from real photographic blur on the layers behind the
+   subject. In HTML, one blurred layer behind a sharp one buys most of the
+   same read. Animate the blur radius on a scale change and it also covers
+   the motion the browser cannot. */
+.defocus     { filter: blur(6px)  brightness(.72); }
+.defocus--far{ filter: blur(14px) brightness(.60); }
+
+/* ---- 14i. MOTION BLUR -----------------------------------------------
+   Directional smear for the fastest scale/position changes. Not a
+   flourish -- it is what stops a 1.2s scale move from strobing under
+   NESTED-SCALE. Animate the blur amount up on the move and back to 0. */
+.mblur   { filter: blur(0px); }
+.mblur-x { filter: blur(0px); }   /* animate to blur(7px) mid-move, back to 0 */
+
+/* ---- 14j. PIXEL / GLITCH TEXT ---------------------------------------
+   S4 uses a chunky pixel distort as a censor and a transition texture.
+   Deterministic: no random, no keyframe loops -- drive it from the
+   timeline. Also the honest way to redact something real. */
+.glitch {
+  image-rendering: pixelated;
+  text-shadow: 3px 0 0 rgba(235, 4, 8, .55), -3px 0 0 rgba(59, 157, 255, .55);
+}
+.pixelate { image-rendering: pixelated; filter: contrast(1.15); }
+/* the flat white bar over a real screenshot -- redaction that admits it is
+   redaction, rather than a blur that looks like a mistake */
+.redact { background: var(--ink); border-radius: 2px; }
+
+/* ---- 14k. TILE WALL -------------------------------------------------
+   S4's one contract break: a single phone mockup becomes a 3x3 grid of
+   variants with the live A-roll as the centre cell. One object, one
+   dramatic scale change, enormous impact.
+
+   Build the wall at full size and scale the CONTAINER down into place --
+   never lay out nine separate elements. */
+.tile-wall {
+  position: absolute; display: grid; gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+.tile-wall__cell { position: relative; overflow: hidden; border-radius: 18px; }
+.tile-wall__cell--hero { z-index: 2; }
+
+/* ---- 14l. WORKSHEET -------------------------------------------------
+   S3's world 2: a full-frame SOLID ACCENT page carrying long-form
+   annotation beside real evidence. Exempt from the caption word budgets in
+   MOTION-LANGUAGE.md because nothing competes with it -- which means it
+   REQUIRES a caption mute window written into the MOTION PLAN.
+
+   Note the ground is a saturated colour, not black. That inversion is most
+   of why the device reads as a different world rather than another card. */
+.worksheet {
+  position: absolute; inset: 0;
+  background: var(--accent); color: var(--ground);
+  font-family: var(--font-ui);
+}
+.worksheet__label {
+  display: inline-block; background: var(--ink); color: var(--ground);
+  font-weight: 800; font-size: 30px; padding: 6px 14px; border-radius: 3px;
+}
+.worksheet__body {
+  font-size: 30px; line-height: 1.32; color: var(--ground);
+  max-width: 78%;
+}
+.worksheet__evidence { position: absolute; border-radius: 8px; overflow: hidden; }

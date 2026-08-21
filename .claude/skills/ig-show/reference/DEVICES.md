@@ -135,6 +135,10 @@ with nothing in it, which shows the viewer nothing.
 
 Do one of:
 
+0. **Work the acquisition ladder in `SKILL.md` §2 first.** Extract the frames from footage
+   with ffmpeg or `/watch`; screenshot the real interface with Chrome automation; look up the
+   real public figure; generate the texture. Most "missing specifics" are not missing, just
+   un-fetched. **Ask only for what is genuinely private.**
 1. **Ask the creator** for the five hooks, the two screenshots, the real number. Cheap.
 2. **Use a block that does not need the specifics** — a colour wash, a tier stack, a chart
    whose shape is the claim.

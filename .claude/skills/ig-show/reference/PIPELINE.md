@@ -96,7 +96,20 @@ Free-text house rules that aren't values — voice, banned visuals, CTA — live
 
 ### Fonts — the step that silently breaks renders
 
-**Never write `@font-face`.** This is the single most expensive mistake available here.
+> ⚠️ **SUPERSEDED on hyperframes >= 0.7.108.** The absolute ban below was correct on older
+> builds and is no longer. `lint` now actively *demands* an `@font-face` for any family it
+> cannot auto-resolve, and a composition using one to point at a locally-installed OTF
+> renders correctly with all custom properties intact (verified by render, 2026-08).
+>
+> **The current rule:** prefer auto-resolving families (`Anton`, `Inter`, `JetBrains Mono`)
+> and write no `@font-face` at all. Write one *only* to guarantee a licensed face from a
+> local file — and then **verify it in a rendered frame**, because a fallback is invisible in
+> the markup and obvious in the pixels. `SKILL.md` §4 is the authority on this.
+>
+> The historical warning is kept below because the failure it describes is real and
+> spectacular when it happens.
+
+**Historically: never write `@font-face`.** This was the single most expensive mistake available here.
 HyperFrames injects its own deterministic `@font-face` block at compile time, and a
 hand-authored one collides with it and **silently kills the entire stylesheet** — every
 custom property stops resolving, so the render comes out as black serif text on a
@@ -164,7 +177,7 @@ Two lint traps that 404 the render:
 
 ```html
 <!DOCTYPE html><html><head><meta charset="utf-8">
-<link rel="stylesheet" href="tokens.css">   <!-- ONE stylesheet. no fonts.css, no @font-face -->
+<link rel="stylesheet" href="tokens.css">   <!-- ONE stylesheet. no fonts.css -->
 <style>/* hero-frame layout, static */</style>
 </head><body>
 <div id="root" data-composition-id="dial" data-width="1080" data-height="1920"
@@ -332,7 +345,7 @@ of render beats a graphic eight pixels off the shared axis.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Everything renders black serif, no strokes, no colours | an `@font-face` rule collided with HyperFrames' injected block and killed the stylesheet | delete every `@font-face`; one `<link>` to `tokens.css` only. Symptom in the log: `Fonts: 0 loaded` |
+| Everything renders black serif, no strokes, no colours | an `@font-face` rule collided with HyperFrames' injected block and killed the stylesheet | on <0.7.108: delete every `@font-face`. On >=0.7.108 this collision no longer occurs and `lint` may require one — check the version before deleting. Symptom in the log: `Fonts: 0 loaded` |
 | Type looks *almost* right | licensed face fell back | not installed on this machine, or the family string is wrong — `Europa Grotesk SH`, never `...SH Bol` |
 | Black rectangle instead of the graphic | rendered `mp4` when it needed alpha | re-render `--format mov` |
 | Graphic invisible under Screen | it has a dark plate — Screen erased it | re-render as alpha MOV |
