@@ -36,3 +36,13 @@ mkdir projects/<slug>/textures
 
 Then plan every beat in `projects/<slug>/MOTION-PLAN.md` before you build a composition.
 `ig-show` owns that process end to end.
+
+For a Reel opening, run `ig-hook` first. Copy `templates/hook-packet.example.json` to
+`projects/<slug>/HOOK-PACKET.json`, replace the evidence and candidates, then gate it with:
+
+```bash
+python analysis/validate-hook-packet.py projects/<slug>/HOOK-PACKET.json
+```
+
+The `01-hook-slam.html` file demonstrates **LOCKUP-FIRST plumbing only**. It is not the
+default hook shape; the validated Hook Packet selects the mode.

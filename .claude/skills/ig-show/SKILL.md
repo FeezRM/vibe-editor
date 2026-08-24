@@ -30,6 +30,9 @@ description: >-
 This skill owns the **look** and the **build** of every designed element. The cut belongs to
 `ig-cut`, captions to `ig-captions`, audio to `ig-sound`, pacing to `ig-pacing`.
 
+`ig-hook` owns the first 0–8 seconds. When it routes a beat to HyperFrames, this skill
+builds that designed object; it does not choose the opening mode or replace the Hook Packet.
+
 ---
 
 ## The one rule
@@ -94,7 +97,8 @@ silently following the default.
 | [reference/SAMPLES.md](reference/SAMPLES.md) | **always, before you plan.** the four reels torn down structurally — the persistent object, the motif, the beat map, the technique index |
 | [reference/FRAME-CONTRACTS.md](reference/FRAME-CONTRACTS.md) | **always, before beat 2.** the four spatial architectures. Declaring one is mandatory |
 | [reference/TEARDOWN.md](reference/TEARDOWN.md) | **always.** what actually performs, and why the old style failed — the *style* measurements behind SAMPLES.md |
-| [reference/VISUAL-HOOK.md](reference/VISUAL-HOOK.md) | **always, before you plan beat 1.** the opening graphic is a different object with its own rules — SPG, and the measured lockup spec |
+| `../ig-hook/SKILL.md` + its references | whenever the first 0–8 seconds are not already locked |
+| [reference/VISUAL-HOOK.md](reference/VISUAL-HOOK.md) | only when `ig-hook` selects **LOCKUP-FIRST** — SPG and the measured lockup spec |
 | [reference/DEVICES.md](reference/DEVICES.md) | **always.** spoken line → what goes on screen |
 | [reference/BLOCKS.md](reference/BLOCKS.md) | **always.** the 15 blocks |
 | [reference/MOTION-LANGUAGE.md](reference/MOTION-LANGUAGE.md) | palette, docks, timing, easing, banned list |
@@ -187,30 +191,16 @@ does not move; only the prose does.
 
 ### 3a. Plan the HOOK on its own, before the beat sheet
 
-**The first graphic is not row 1 of the beat sheet. It is its own deliverable, and it gets
-designed first.** Read [VISUAL-HOOK.md](reference/VISUAL-HOOK.md) and write these four lines
-into the plan before anything else:
+**The opening is not row 1 of the beat sheet. It is the `ig-hook` deliverable and must be
+locked first.** Read `projects/<slug>/HOOK-PACKET.json` and build only the beats assigned to
+HyperFrames. The packet defines frame zero, evidence IDs, changes through second eight,
+caption mute windows, and the selected mode.
 
-```
-HOOK
-  S (summarize, 3–7 words) : ...
-  P (power word)           : ...
-  G (graphic, ONE, and which job — preview / borrow / before→after) : ...
-  Holds                    : [cue] → [out], no motion after the stamp
-```
-
-Three things about the hook contradict rules that hold everywhere else in this skill, and
-they win here:
-
-1. **It holds still.** No drift, no scroll, no ambient motion. One stamp ≤0.30s, then
-   nothing for ≥2.5s. The "something changes every ~1.5s" rule is suspended for the hook —
-   a thumb that has not stopped moving cannot read a moving target.
-2. **It is centred and it is huge.** ~108px and ~118px type. Not a side column, not a
-   corner, not a bottom band.
-3. **It silences the caption track** for its whole life (see *Caption arbitration* below).
-
-If the plan's first row is a small object in a side column, or anything that loops or
-scrolls, the hook is wrong regardless of how well it scores on every other rule here.
+If the selected mode is **LOCKUP-FIRST**, read
+[VISUAL-HOOK.md](reference/VISUAL-HOOK.md) and apply SPG, the 108/118px lockup, one proof
+object, and the ≥2.5s readable hold. Other modes may use receipts, comparisons,
+demonstrations, role-play, interface action, or a pattern break; do not force them into a
+lockup.
 
 ### 3b. BE CREATIVE — the catalogue is a floor, not a ceiling
 
@@ -918,16 +908,16 @@ staggered arrival reads as results coming in.
 - Restating the caption in a second typeface
 - Numbered empty slots standing in for content that was never named
 - Invented metrics, fake screenshots, fabricated axis values
-- **A comparison built from duplicate assets** — two copies of the same thumbnail with
-  different numbers on them. The device works only because the viewer believes two
-  different artefacts are being compared; identical images void it and are worse than no
-  graphic. If you have only one asset, use a different block.
+- **A comparison built from duplicate assets while pretending they are different.** The one
+  carve-out is verified sameness as evidence, declared with
+  `comparison.samenessIsClaim: true` and provenance in `HOOK-PACKET.json`.
 - **A full-frame scrim, vignette, or dark wash behind a bounded graphic** — the ground goes inside the graphic's own bounds. The viewer must never see the video get darker (see *A graphic must not restyle the footage it sits on*)
 - **`rgba()` on any surface** — cards, panels, plates, pills, badges, sheets, mockup screens, buttons. Surfaces are hex. `.96` is not "basically solid"; you can read an arm through it (see *Opacity is load-bearing*)
 - **A handle, display name, or avatar copied from a reference reel in `samples/`** — those are real people's accounts. Every mockup carries `creator.handle` from `brand/brand.json`. Copy the *layout* from the references, never the identity.
 - **A burnt-in caption over a content card that carries its own words** — see *Caption arbitration*
-- **A hook that moves** — drifting, scrolling, looping or ambient motion in the first graphic
-- **A hook with no power word**, or with the power word set in white
+- **Ambient hook motion that advances nothing.** Hook motion must reveal, compare,
+  demonstrate, annotate, or reframe; Lockup mode still holds still after its stamp.
+- **A Lockup-mode hook with no power word**, or with the power word set in white
 - **Three-plus content cards abreast**, or copy centred across the middle of a cover
 - **Every graphic docked to the same bottom band**
 - Unlabelled charts
@@ -951,9 +941,10 @@ staggered arrival reads as results coming in.
 - [ ] **The video is 1–3 scenes, not N graphics** — each scene one persistent object through a labelled state machine
 - [ ] **`python analysis/motion-density.py` passes on every composition** — ≥25 tweens, ≥6 properties, ≤50% fades, ≥1 depth element
 - [ ] **Real material was pursued down the acquisition ladder** before anything was asked for or omitted — nothing on screen is a placeholder
-- [ ] **The hook was designed first, on its own, against SPG** — summarize ≤7 words, a power word in the accent, ONE graphic
-- [ ] **The hook lockup is centred, ~108/118px, line 2 larger than line 1, with bloom + dark halo**
-- [ ] **The hook holds still** — one stamp ≤0.30s, then no motion for ≥2.5s
+- [ ] **`HOOK-PACKET.json` validates** and the selected 0–8 second candidate passed its storyboard gate
+- [ ] **Frame zero shows verified proof, consequence, or action** — not a topic label
+- [ ] **The second beat advances by second five** — not generic bridge copy
+- [ ] **If mode is LOCKUP-FIRST:** SPG, centred ~108/118px, line 2 larger, bloom + halo, one stamp then ≥2.5s hold
 - [ ] **Only one text layer at a time** — caption mute windows written into the MOTION PLAN for the hook and for every content card carrying its own copy
 - [ ] **Every surface is opaque hex, zero `rgba()` fills** — verified with the grep in *Opacity is load-bearing*, not by eye
 - [ ] **No graphic darkens the frame** — mean luma sampled across the reel; every graphic beat sits within ~±25% of the surrounding footage
@@ -976,7 +967,7 @@ staggered arrival reads as results coming in.
 - [ ] **Every graphic renders opaque; only a non-subject graphic is dimmed, to 30%**
 - [ ] **The persistent object mutates element by element; one mover at a time**
 - [ ] **Reveals use the pre-reveal white flash**
-- [ ] **No comparison built from duplicate assets**
+- [ ] **No comparison fakes difference with duplicate assets** — verified sameness-as-proof is declared in the Hook Packet
 - [ ] **At least one rebuilt app UI** — if the plan has none, it is wrong
 - [ ] **Every wash is a bad/good PAIR and leaves the subject's face untinted**
 - [ ] **Graphic CONTENT clears the caption band** (chrome under it is fine)

@@ -30,14 +30,14 @@ To choose a block from a line of script, use [DEVICES.md](DEVICES.md).
 | 12 | **ANNOTATION** | on top of 01–08 | 1–2s | singles out one part of something already on screen |
 | 13 | **THE DOCUMENT** | cutaway | 2–3s | offers a resource — the lead magnet, the template |
 | 14 | **THE INTERACTION** | cutaway | 1.8–2.6s | the CTA — a button pressed, a comment typed |
-| 15 | **HOOK LOCKUP** | centred, huge | 2.5–4.5s | **the first graphic of the reel — always** |
+| 15 | **HOOK LOCKUP** | centred, huge | 2.5–4.5s | `ig-hook` selected **LOCKUP-FIRST** |
 
 Fifteen blocks, and **eleven of them show a real object.** That ratio is the point.
 
-> **Block 15 is not optional and not interchangeable.** Every reel opens with it. It is the
-> only block with its own reference file — [VISUAL-HOOK.md](VISUAL-HOOK.md) — because it
-> follows different rules from everything else here: it holds still, it is centred and huge,
-> and it silences the caption track.
+> **Block 15 is mode-specific.** `ig-hook` chooses the 0–8 second opening from receipt,
+> comparison, demonstration, role-play, interface, pattern-break, or lockup. When it chooses
+> LOCKUP-FIRST, [VISUAL-HOOK.md](VISUAL-HOOK.md) is mandatory: the lockup holds still, is
+> centred and huge, and silences the caption track.
 
 > **Reach for 01 APP SCREEN first.** Rebuilt interface is ~60% of reference graphic time.
 > A reel whose plan contains no recreated app UI is almost certainly wrong — the fallback
@@ -167,11 +167,11 @@ show two and let the third arrive — never three at once.
 **Rules:** both must be genuinely comparable — same metric, same window. The loser is never
 made ugly; it is just quieter. Making the losing side neutral is the confident move.
 
-⚠️ **Never build this from duplicate assets.** Two copies of the same thumbnail with
-different numbers on them is worse than no graphic — the device's entire authority is that
-the viewer believes two *different* artefacts are being compared, and identical images void
-it instantly. A previous build shipped three copies of the same shot labelled `HOOK 1/2/3`
-with different view counts; it read as fake. If only one real asset exists, use
+⚠️ **Never build this from duplicate assets while pretending they are different.** Two
+copies of the same thumbnail with invented outcomes is worse than no graphic. The exception
+is when verified sameness is the evidence—such as a byte-identical Reel receiving different
+distribution. That use requires `comparison.samenessIsClaim: true` plus provenance in
+`HOOK-PACKET.json`, and the sameness must be explicit on screen. Otherwise use
 `CONTENT + METRIC` on its own, or build nothing.
 
 ## 05 — PHONE IN HAND
@@ -277,8 +277,8 @@ pressed — it depresses, then swaps to `.ig-btn--done` (Following).
 **Full spec: [VISUAL-HOOK.md](VISUAL-HOOK.md). Read it before building.** Summary only here.
 
 **Shows:** why the viewer should stay, before they have heard a full sentence.
-**Use when:** always, as the first graphic of every reel. There is no alternative block for
-this position.
+**Use when:** `ig-hook` selects **LOCKUP-FIRST** because a stronger literal receipt,
+comparison, demonstration, role-play, interface action, or pattern break is unavailable.
 
 **Anatomy:** a centred two-line type lockup with **one** wide, short proof card beneath.
 

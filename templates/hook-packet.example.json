@@ -1,0 +1,188 @@
+{
+  "version": 1,
+  "project": "four-million-zero-dollars",
+  "runMode": "design",
+  "goal": "leads",
+  "audience": "coaches with an offer who confuse reach with buyer intent",
+  "promise": "Four million views can produce zero revenue when the content attracts viewers instead of buyers.",
+  "durationSeconds": 8,
+  "evidence": [
+    {
+      "id": "views-receipt",
+      "kind": "screenshot",
+      "path": "assets/4m-views.png",
+      "claim": "The content received four million views.",
+      "source": "creator analytics",
+      "verified": true
+    },
+    {
+      "id": "revenue-receipt",
+      "kind": "screenshot",
+      "path": "assets/zero-revenue.png",
+      "claim": "The same outcome produced zero dollars in attributed revenue.",
+      "source": "creator revenue record",
+      "verified": true
+    },
+    {
+      "id": "source-a-roll",
+      "kind": "source-footage",
+      "path": "assets/a-roll.mp4",
+      "claim": "The creator delivers the opening on camera.",
+      "source": "creator footage",
+      "verified": true
+    }
+  ],
+  "candidates": [
+    {
+      "id": "A",
+      "mode": "receipt-first",
+      "frameZero": {
+        "visual": "The creator holds the 4M VIEWS and $0 receipts toward the lens.",
+        "owner": "both",
+        "evidenceIds": ["views-receipt", "revenue-receipt", "source-a-roll"]
+      },
+      "beats": [
+        {
+          "start": 0,
+          "end": 2,
+          "speech": "This Reel got four million views and made me zero dollars.",
+          "visual": "Both verified receipts fill the foreground with the creator between them.",
+          "change": "The contradiction is visible before the sentence finishes.",
+          "owner": "both"
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "speech": "The views were real. The buyers weren't.",
+          "visual": "The view receipt stays bright while the revenue receipt is circled red.",
+          "change": "The evidence is annotated to identify the business failure.",
+          "owner": "hyperframes"
+        },
+        {
+          "start": 5,
+          "end": 8,
+          "speech": "I optimized distribution and ignored buyer density.",
+          "visual": "The receipts fold into a two-variable model: distribution multiplied by buyer density.",
+          "change": "The contradiction advances into the mechanism.",
+          "owner": "hyperframes"
+        }
+      ],
+      "score": {
+        "specificity": 2,
+        "proof": 2,
+        "tension": 2,
+        "secondBeat": 2,
+        "muteTest": 2,
+        "feasibility": 2
+      },
+      "risks": []
+    },
+    {
+      "id": "B",
+      "mode": "comparison-first",
+      "frameZero": {
+        "visual": "The analytics and revenue records appear as two equally sized evidence cards.",
+        "owner": "hyperframes",
+        "evidenceIds": ["views-receipt", "revenue-receipt"]
+      },
+      "beats": [
+        {
+          "start": 0,
+          "end": 2,
+          "speech": "Four million views on this side. Zero dollars on this one.",
+          "visual": "Two verified records land side by side with no winner treatment.",
+          "change": "Both outcomes become simultaneously comparable.",
+          "owner": "hyperframes"
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "speech": "So the viral Reel worked—and the content strategy failed.",
+          "visual": "A brace connects both records to the label WRONG AUDIENCE.",
+          "change": "The apparent win is reframed as a strategic loss.",
+          "owner": "hyperframes"
+        },
+        {
+          "start": 5,
+          "end": 8,
+          "speech": "Here is the filter I should have used before posting.",
+          "visual": "A three-question buyer filter replaces the brace without removing the receipts.",
+          "change": "The evidence advances into an actionable filter.",
+          "owner": "hyperframes"
+        }
+      ],
+      "score": {
+        "specificity": 2,
+        "proof": 2,
+        "tension": 2,
+        "secondBeat": 2,
+        "muteTest": 2,
+        "feasibility": 2
+      },
+      "risks": []
+    },
+    {
+      "id": "C",
+      "mode": "pattern-break",
+      "frameZero": {
+        "visual": "A wall of view notifications surrounds the creator while one empty checkout tray sits untouched.",
+        "owner": "both",
+        "evidenceIds": ["views-receipt", "revenue-receipt", "source-a-roll"]
+      },
+      "beats": [
+        {
+          "start": 0,
+          "end": 2,
+          "speech": "This is what four million views felt like.",
+          "visual": "The notification wall creates overwhelming apparent success.",
+          "change": "Volume establishes the expectation of business success.",
+          "owner": "both"
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "speech": "Then I checked how much money it made.",
+          "visual": "The wall freezes and the empty $0 tray pushes through the center.",
+          "change": "One physical contradiction breaks the repeated pattern.",
+          "owner": "both"
+        },
+        {
+          "start": 5,
+          "end": 8,
+          "speech": "I built reach and forgot purchase intent.",
+          "visual": "Notifications sort into VIEWERS while the empty tray becomes BUYERS.",
+          "change": "The metaphor resolves into the mechanism.",
+          "owner": "hyperframes"
+        }
+      ],
+      "score": {
+        "specificity": 2,
+        "proof": 1,
+        "tension": 2,
+        "secondBeat": 2,
+        "muteTest": 2,
+        "feasibility": 1
+      },
+      "risks": ["The notification wall must be derived from the real receipt rather than invented metrics."]
+    }
+  ],
+  "selectedCandidate": "A",
+  "captionMuteWindows": [
+    {
+      "start": 0,
+      "end": 8,
+      "reason": "The evidence objects carry their own text."
+    }
+  ],
+  "premiere": {
+    "sandboxSequence": "HOOK-LAB__four-million-zero-dollars__A",
+    "mainSequence": "UNSET_UNTIL_APPROVAL",
+    "videoTracks": ["A-roll", "B-roll / cutaways", "primary graphics", "secondary graphics"],
+    "audioTracks": ["voice", "SFX", "music"]
+  },
+  "qa": {
+    "snapshotTimes": [0.15, 1.25, 3.25, 5.25, 7.25],
+    "status": "pending"
+  }
+}
+

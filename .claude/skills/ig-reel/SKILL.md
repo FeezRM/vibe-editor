@@ -1,6 +1,6 @@
 ---
 name: ig-reel
-description: "The entry point and orchestrator for editing a short-form vertical video (Instagram Reel, TikTok, YouTube Short) end to end by driving Adobe Premiere Pro over MCP. Produces the timestamped, shot-by-shot EDIT BLUEPRINT the user approves, establishes the project and sequence, sets the track architecture, then dispatches each phase to the skill that owns it: ig-cut (silence and filler), ig-captions, ig-show (motion graphics), ig-sound (music and SFX), ig-pacing (pattern interrupts), ig-delivery (QA and export). Use this when the request is a whole video rather than one task — raw footage that needs turning into a finished reel, a long video that needs clipping into shorts, or an edit plan for a script. If the request is a single phase, go straight to that phase's skill instead. Triggers: edit my reel, edit this video, cut this footage, make this a reel, turn this into a short, finish this video, edit plan, blueprint this edit, EDL, polish this video, edit my talking head, clip this long video, plan the edit, premiere, premiere pro, where do I start."
+description: "The entry point and orchestrator for editing a short-form vertical video (Instagram Reel, TikTok, YouTube Short) end to end by driving Adobe Premiere Pro over MCP. Produces the timestamped, shot-by-shot EDIT BLUEPRINT the user approves, establishes the project and sequence, sets the track architecture, then dispatches each phase to the skill that owns it: ig-hook (first 0–8 seconds), ig-cut (silence and filler), ig-captions, ig-show (motion graphics), ig-sound (music and SFX), ig-pacing (pattern interrupts), ig-delivery (QA and export). Use this when the request is a whole video rather than one task — raw footage that needs turning into a finished reel, a long video that needs clipping into shorts, or an edit plan for a script. If the request is a single phase, go straight to that phase's skill instead. Triggers: edit my reel, edit this video, cut this footage, make this a reel, turn this into a short, finish this video, edit plan, blueprint this edit, EDL, polish this video, edit my talking head, clip this long video, plan the edit, premiere, premiere pro, where do I start."
 ---
 
 # IG REEL — the orchestrator
@@ -38,6 +38,7 @@ Values in `brand.json` are already compiled into `brand/tokens.css`; regenerate 
 
 | # | Step | Skill | The one thing it does |
 |---|---|---|---|
+| 0 | Lock the opening | **`ig-hook`** | directs three evidence-backed 0–8s sequences and promotes the selected hook from a sandbox sequence |
 | 1 | Remove whitespace + filler | **`ig-cut`** | strips dead air into a tight spine, ~3s average clips |
 | 2 | Captions | **`ig-captions`** | word-accurate, banded at **y 920–1130** on 1080×1920, never bottom-third |
 | 3 | Background music | **`ig-sound`** | bed ducked ~-18dB, out under the hook |
@@ -137,14 +138,13 @@ CONTRACT: [SPLIT-STAGE | NESTED-SCALE | TWO-WORLDS | OBJECT-OVER-GROUND]
   broken once at: [TC + what changes]
 SCENES: [1-3] — [name each, and the one persistent object it carries]
 
-HOOK (0–3s)
-- A-roll: [source TC] | Scale: [wide/med/CU]
-- Caption: "[exact words — the creator's voice]" | Emphasis: [word] [.pop/.pop--bad/.pop--good]
-- Graphic: [block + cue TC + trigger word] | SFX: [riser/none] | Music: [out under hook]
-
-[BEAT 2 — 3–7s] — label what this beat does (build-up / mind-read / authority)
-- A-roll: [TC] | Scale: [..] | Caption: "[..]" | Motion: [zoom pulse / cut]
-- Graphic: [..] | SFX: [..]
+HOOK (0–8s) — owned by ig-hook / HOOK-PACKET.json
+- Candidate: [A/B/C] | Mode: [receipt/comparison/demonstration/roleplay/interface/pattern/lockup]
+- 0–2 Trigger: [exact speech] | Frame zero: [verified object + evidence IDs]
+- 2–5 Tension: [exact speech] | Change: [new proof/contrast, not more explanation]
+- 5–8 Mechanism: [exact speech] | Change: [the model, fix, or next step]
+- Ownership: [Premiere / HyperFrames / both per beat] | Caption mute: [windows]
+- Sandbox sequence: HOOK-LAB__[slug]__[candidate] | Gate: [score/12 + QA state]
 
 [BEAT 3 — value] ...
   (one row per beat; a beat is 1–4s — something changes every beat)
@@ -176,10 +176,14 @@ worked on: "skeleton", "avatar fills", "name fills", "bio line 1", "…", "grid 
 
 ## Execution order
 
-Build in this order. **Do not polish before the spine is right.**
+Build in this order. **Do not touch the main sequence before the hook storyboard is right.**
 
-**Pass 1 — the spine.** `ig-cut`. Import, pick takes, strip silence and filler, lock the
-hook. Story flows end to end with zero dead air. Nothing pretty yet.
+**Pass 0 — the hook lab.** `ig-hook`. Write and validate `HOOK-PACKET.json`, storyboard
+three complete 0–8 second sequences over real A-roll, build the selected candidate in a
+`HOOK-LAB__*` sandbox sequence, verify pixels, then promote it.
+
+**Pass 1 — the spine.** `ig-cut`. Import, pick body takes, strip silence and filler, and
+join the selected opening to the body. Story flows end to end with zero dead air.
 
 **Pass 2 — the words.** `ig-captions`. The video has to work on mute before it gets
 decorated.
@@ -191,7 +195,7 @@ what gets built.
 **Pass 4 — the mix.** `ig-sound`. Music bed, ducking, hook dropout, SFX cued off the same
 timecodes as the graphics.
 
-**Pass 5 — the pass that finds the holes.** `ig-pacing`. Audit for gaps >3s, fill with the
+**Pass 5 — the pass that finds the holes.** `ig-pacing`. Audit the body for gaps >2s, fill with the
 cheapest interrupt that works. Zoom pulses and shot-scale alternation land here.
 
 **Pass 6 — ship.** `ig-delivery`.

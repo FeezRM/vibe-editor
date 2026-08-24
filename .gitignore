@@ -29,7 +29,7 @@ projects/*
 !projects/.keep
 
 # Scratch analysis / frame checks / audit stills.
-# The OUTPUTS are scratch. The three GENERIC measurement scripts are part of the
+# The OUTPUTS are scratch. The four GENERIC validation/measurement scripts are part of the
 # tool -- the skills call them as mandatory verification steps, so a clone
 # without them cannot run the pipeline. Anything else you drop in here (frame
 # compositors, preview builders) is per-project scratch carrying your own media
@@ -38,6 +38,7 @@ analysis/*
 !analysis/measure.py
 !analysis/motion-density.py
 !analysis/build-captions.py
+!analysis/validate-hook-packet.py
 
 # --- Media in / media out ---------------------------------------------------
 # Reference reels are real creators' copyrighted work and are never redistributed.

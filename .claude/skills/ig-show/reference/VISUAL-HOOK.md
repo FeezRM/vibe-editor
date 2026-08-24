@@ -1,7 +1,12 @@
-# VISUAL HOOK — the first graphic is not a graphic
+# VISUAL HOOK — Lockup-first mode
 
-The opening graphic is a **different object** from every other graphic in the reel, with its
-own rules. Building it like a normal beat is why hooks come out weak.
+> **Scope:** this file specifies only the **LOCKUP-FIRST** mode selected by `ig-hook`.
+> The full opening is governed by `projects/<slug>/HOOK-PACKET.json`. Receipt,
+> comparison, demonstration, role-play, interface-dive, and pattern-break openings do not
+> inherit the centred type-lockup requirement.
+
+In Lockup-first mode, the opening graphic is a **different object** from every other graphic
+in the reel, with its own rules. Building it like a normal beat is why lockups come out weak.
 
 Every other graphic answers a sentence. **The visual hook answers "why should I stay?"** —
 before the viewer has heard a full sentence, and while their thumb is still moving.
@@ -14,8 +19,8 @@ before the viewer has heard a full sentence, and while their thumb is still movi
 
 ## 1. SPG — what the hook must contain
 
-A graphic visual hook visually represents the **verbal** hook. It has three parts and all
-three are required.
+A Lockup-first visual hook represents the **verbal** hook. It has three parts and all three
+are required.
 
 ### S — Summarize
 

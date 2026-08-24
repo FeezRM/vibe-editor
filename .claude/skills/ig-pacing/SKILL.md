@@ -88,7 +88,9 @@ Work down this list when auditing a gap. If a caption swap alone closes it, stop
 - Adjacent beats must differ in scale: **MED → CU → MED-WIDE → CU**, never the same size twice in a row.
 - An identical medium shot held 30+ seconds is a retention problem no graphic fixes — that's a footage problem, kick it back to the spine (ig-cut) or force a scale change via reframe/zoom, not just another caption.
 - **Longest permitted static beat is ~2 seconds.** That is the measured ceiling in all three references. Past it, something — cut, scale, graphic element, or caption — must change, no exceptions.
-- The hook (0-3s) is the densest region of the whole video; it should never sit still even for one beat.
+- Seconds 0–8 follow the approved `HOOK-PACKET.json` and are owned by `ig-hook`. A Lockup
+  candidate may deliberately hold still; other modes must advance by second five. Do not
+  overwrite that choreography with a generic zoom pulse.
 
 ---
 
@@ -146,7 +148,7 @@ No other Premiere tools are needed for this step — captions, B-roll placement,
 
 - [ ] Walked the full timeline and logged every visual/audio change with a timestamp.
 - [ ] Graphic presence measured at ≥85% of runtime before the gap audit started.
-- [ ] No gap longer than ~2 seconds anywhere, hook (0-3s) included.
+- [ ] No gap longer than ~2 seconds in the body; seconds 0–8 independently passed `ig-hook` QA.
 - [ ] Each fix used the cheapest tool from the interrupt menu that closed the gap — not a reflex hard cut.
 - [ ] Adjacent shots differ in scale (MED/CU/MED-WIDE alternation) — no two same-size shots back to back.
 - [ ] Every zoom pulse is 2-4% over ~1.2s, resets to base, verified with `get_keyframes`.

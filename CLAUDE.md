@@ -10,13 +10,14 @@ what is already decided, what this machine actually does, and what has burned pr
 
 ## First: the skills own the craft — route, don't freestyle
 
-Seven skills in `.claude/skills/` encode the house style, and they are the source of truth.
+Eight house-style skills in `.claude/skills/` encode the workflow, and they are the source of truth.
 **Do not invent an editing approach, a graphic design, or a caption spec from scratch.** Find
 the owner and follow it.
 
 | Request | Skill |
 |---|---|
 | A whole video, an edit plan, "where do I start" | **`ig-reel`** — orchestrator, blueprint, sequence + track setup |
+| **Visual hook, opening recut, first 8 seconds, Trial Reel variants** | **`ig-hook`** — hook packet, candidate lab, cross-engine direction + QA |
 | Remove silence/filler, tighten the spine | **`ig-cut`** (step 1) |
 | Captions: build, timing, styling, placement | **`ig-captions`** (step 2) |
 | Music, ducking, SFX, the mix | **`ig-sound`** (steps 3 + 5) |
@@ -25,15 +26,18 @@ the owner and follow it.
 | QA and export | **`ig-delivery`** |
 | Premiere MCP setup / bridge troubleshooting | **`premiere-pro-mcp`** |
 
-Single-phase request → go straight to that phase's skill. Whole-video request → `ig-reel`.
+Single-phase request → go straight to that phase's skill. Whole-video request → `ig-reel`,
+which must dispatch the unlocked first eight seconds to `ig-hook` before the main sequence.
 
-`ig-show/reference/` holds the deep spec. Read in this order:
+`ig-hook/` owns the opening mode and 0–8 second sequence. `ig-show/reference/` holds the
+motion-graphics spec. Read the latter in this order:
 `SAMPLES.md` (**the four reels torn down structurally** — persistent object, motif, beat map,
 technique index; read before planning anything), `FRAME-CONTRACTS.md` (**the four spatial
 architectures — declaring one is mandatory**), `TEARDOWN.md` (the style measurements behind
-SAMPLES.md, and why the previous style failed), `VISUAL-HOOK.md`, `DEVICES.md` (spoken line →
-object on screen), `BLOCKS.md` (15 blocks), `MOTION-LANGUAGE.md`, `TEXTURE.md`,
+SAMPLES.md, and why the previous style failed), `DEVICES.md` (spoken line → object on
+screen), `BLOCKS.md` (15 blocks), `MOTION-LANGUAGE.md`, `TEXTURE.md`,
 `PIPELINE.md` (build/render/handoff mechanics + failure table).
+Read `VISUAL-HOOK.md` only when `ig-hook` selects **LOCKUP-FIRST**.
 
 ### Precedence, lowest to highest
 
@@ -57,6 +61,7 @@ you hit a conflict, the later, measured figure is authoritative:
 | Graphics per 30s | "≤8" (README) | **`brand.json` `density.maxGraphicsPer30s: 12`** — brand/ outranks README |
 | `@font-face` | "never write one, it kills the stylesheet" (`PIPELINE.md` §1) | On hyperframes ≥0.7.108 lint *demands* one for non-auto-resolving families. Prefer auto-resolving families; use `@font-face` at a local file only for a licensed face, and **verify with a rendered frame** (`ig-show` §4) |
 | Composition granularity | "one HTML file per graphic" | **1–3 SCENES per video**, each one persistent object through a labelled state machine (`ig-show` §4). The old rule is why the output was a slideshow |
+| Hook shape | "every Reel opens with one static lockup" | **`ig-hook` selects receipt, comparison, demonstration, role-play, interface, pattern-break, or lockup; the hook is the full 0–8 second sequence** |
 | Hook lockup type | 96/104px | **108/118px**, measured (`VISUAL-HOOK.md`) |
 | Assets you don't have | "ask the creator, or build nothing" | **the acquisition ladder** — on disk → extract from footage → capture a real UI → look it up → generate → ask → build nothing (`ig-show` §2) |
 | Density | "a graphic is on screen ≥85%" | "**one object** is on screen ≥85% and changes state every ~1.5s" — the first is satisfied by 12 unrelated cards |
@@ -167,8 +172,8 @@ npm --prefix vendor/adobe-premiere-pro-mcp run setup:doctor:win
 output — author at 1080×1920 and omit it. **Render at the sequence fps** — a mismatch shows as
 overlay stutter and is not fixable at export.
 
-`analysis/` ships exactly three tools — `measure.py`, `motion-density.py`,
-`build-captions.py` — and they are generic, argument-driven, and tracked. Everything else in
+`analysis/` ships four tools — `measure.py`, `motion-density.py`, `build-captions.py`, and
+`validate-hook-packet.py` — and they are generic, argument-driven, and tracked. Everything else in
 that folder is **gitignored scratch**: single-frame compositors, preview builders, audit
 stills. Those carry a hardcoded source path and clip table for one project, so write a fresh
 one per project rather than trusting the numbers in an old one.
@@ -248,7 +253,8 @@ illusion instantly.
   carve-out per video:** an emotional beat may carry feeling instead of fact (S2's fireworks,
   S4's colour washes) if you can name the emotion in one word.
 - **Never invent a metric**, never ship a placeholder container (`Hook 1 / Hook 2`, empty
-  rows), never build a comparison from duplicate assets. **Work the acquisition ladder before
+  rows), never fake a comparison with duplicate assets. Verified sameness-as-proof requires
+  Hook Packet provenance. **Work the acquisition ladder before
   you ask or omit** — extract frames from footage with ffmpeg or `/watch`, screenshot a real
   interface with Chrome, look up a real public figure, generate a texture. Ask the creator
   only for what is genuinely private.

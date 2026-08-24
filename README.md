@@ -177,6 +177,17 @@ or `export_as_fcp_xml` / `export_aaf` to hand the cut to another suite.
 At every step the project is just a Premiere project. Close the agent, open the timeline,
 and keep working.
 
+### The visual-hook engine
+
+The first eight seconds now have an explicit director and machine-readable contract.
+`ig-hook` gathers real evidence, proposes three genuinely different opening sequences,
+scores them, storyboards five frames from each, then builds the selected candidate in a
+`HOOK-LAB__*` Premiere sequence. HyperFrames owns designed proof; Premiere owns real
+footage and timing. The main sequence stays untouched until the opening passes pixel QA.
+
+See [HOOK-ENGINE.md](HOOK-ENGINE.md) for the architecture, Hook Packet format, modes, and
+Trial Reel workflow.
+
 ## Say this
 
 Natural language in, tool calls out:
@@ -251,12 +262,13 @@ stranger's name.
 
 ## The house style (the default)
 
-Seven skills load automatically whenever an agent runs here — one per step of the editing
-process, plus an orchestrator:
+Eight house-style skills load automatically whenever an agent runs here — one per editing
+responsibility, plus an orchestrator:
 
 | Skill | Owns |
 |---|---|
 | **`ig-reel`** | Orchestrator. The edit blueprint, the sequence, the track layout. Dispatches the rest. |
+| **`ig-hook`** | The first 0–8 seconds. Three complete candidates, evidence gate, Hook Packet, sandbox sequence, and pixel QA. |
 | **`ig-cut`** | Step 1 — silence and filler. The spine. |
 | **`ig-captions`** | Step 2 — word-accurate captions, banded at y 920–1130 on a 1080×1920 frame. |
 | **`ig-sound`** | Steps 3 + 5 — music bed, ducking, SFX. One mix. |
@@ -264,26 +276,30 @@ process, plus an orchestrator:
 | **`ig-pacing`** | Step 6 — pattern interrupts, zoom pulses, shot scale. |
 | **`ig-delivery`** | QA and export. |
 
-The system in six lines:
+The system in seven lines:
 
-1. **Graphics are instrumentation, not decoration.** Every graphic answers *what does this
+1. **The hook is an eight-second sequence, not a headline.** Frame zero proves the claim;
+   seconds 2–5 create tension; seconds 5–8 reveal the mechanism.
+2. **Graphics are instrumentation, not decoration.** Every graphic answers *what does this
    measure, prove, or compare?* Dials, counters, deltas, curves, ledgers, diffs — never
    swooshes, highlight blobs, or emoji. Lines that prove nothing get **no graphic at all.**
-2. **One accent per project.** Max two accent elements per frame.
-3. **Entrances 0.28–0.42s. Hold ≥0.8s. No exits — the cut is the exit.**
+3. **One accent per project.** Max two accent elements per frame.
+4. **Entrances 0.28–0.42s. Hold ≥0.8s. No exits — the cut is the exit.**
    Never bounce, elastic, or back.
-4. **One object is on screen ≥85% of the runtime, mutating** — and something changes on
+5. **One object is on screen ≥85% of the runtime, mutating** — and something changes on
    screen roughly every **1.5s**, never more than ~2s static. The graphics budget lives in
    `brand/brand.json` (`density.maxGraphicsPer30s`), not in a skill.
-5. **Texture is mandatory.** Grain, vignette, feathered edges, and a ~15fps stutter on
+6. **Texture is mandatory.** Grain, vignette, feathered edges, and a ~15fps stutter on
    mechanical motion. Perfectly smooth, perfectly flat output is what reads AI-generated.
-6. **Zero UI chrome.** No counters, no watermark, no follow banner.
+7. **Zero UI chrome.** No counters, no watermark, no follow banner.
 
-Full spec in [`.claude/skills/ig-show/reference/`](.claude/skills/ig-show/reference/), in
+Opening direction lives in [`.claude/skills/ig-hook/`](.claude/skills/ig-hook/). The motion-
+graphics spec lives in [`.claude/skills/ig-show/reference/`](.claude/skills/ig-show/reference/), in
 reading order — `SAMPLES.md` (four reels torn down structurally), `FRAME-CONTRACTS.md` (the
-four spatial architectures; declaring one is mandatory), `TEARDOWN.md`, `VISUAL-HOOK.md`,
-`DEVICES.md` (spoken idea → visual device), `BLOCKS.md`, `MOTION-LANGUAGE.md`, `TEXTURE.md`,
-`PIPELINE.md`. `templates/base/` is a lint-clean HyperFrames starter.
+four spatial architectures; declaring one is mandatory), `TEARDOWN.md`, `DEVICES.md`
+(spoken idea → visual device), `BLOCKS.md`, `MOTION-LANGUAGE.md`, `TEXTURE.md`, `PIPELINE.md`.
+`VISUAL-HOOK.md` is the mode-specific build spec when `ig-hook` selects a lockup.
+`templates/base/` is a lint-clean HyperFrames starter.
 
 To bring your own system entirely: rewrite `brand/BRAND.md`, or delete `.claude/skills/`
 and let the agent work from your prompts alone.
@@ -301,6 +317,7 @@ vibe-editor/
 │   └── tokens.css                  GENERATED — never hand-edit
 ├── .claude/skills/
 │   ├── ig-reel/                    orchestrator — blueprint, tracks, dispatch
+│   ├── ig-hook/                    first 0–8s — candidates, packet, hook lab, QA
 │   ├── ig-cut/                     step 1 — silence and filler
 │   ├── ig-captions/                step 2 — captions
 │   ├── ig-sound/                   steps 3+5 — music and SFX
@@ -309,7 +326,7 @@ vibe-editor/
 │   ├── ig-pacing/                  step 6 — pattern interrupts
 │   └── ig-delivery/                QA and export
 ├── templates/base/                 lint-clean HyperFrames starter, 4 working blocks
-├── analysis/                       measure.py · motion-density.py · build-captions.py
+├── analysis/                       measure.py · motion-density.py · build-captions.py · validate-hook-packet.py
 │                                   (anything else in here is gitignored scratch)
 ├── samples/                        bring your own reference reels — gitignored, see its README
 ├── projects/                       one folder per video (compositions + renders)
