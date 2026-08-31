@@ -2,11 +2,12 @@
 #
 # Vibe Editor — macOS setup
 #
-# Installs the two engines the agent drives:
+# Installs the three engines the agent drives:
 #   1. HyperFrames  — HTML -> deterministic video, for motion graphics
 #   2. Premiere Pro MCP — 283 MCP tools that drive a local Premiere Pro
+#   3. Claude Video — /watch, so the agent can see footage and reference reels
 #
-# Idempotent. Safe to re-run to update both engines.
+# Idempotent. Safe to re-run to update all three engines.
 
 set -euo pipefail
 
@@ -14,13 +15,16 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENDOR_DIR="$REPO_ROOT/vendor"
 HF_DIR="$VENDOR_DIR/hyperframes"
 PP_DIR="$VENDOR_DIR/adobe-premiere-pro-mcp"
+CV_DIR="$VENDOR_DIR/claude-video"
 BRIDGE_DIR="/tmp/premiere-mcp-bridge"
 
 HF_REPO="https://github.com/heygen-com/hyperframes.git"
 PP_REPO="https://github.com/hetpatel-11/adobe_premiere_pro_mcp.git"
+CV_REPO="https://github.com/bradautomates/claude-video.git"
 
 SKIP_HYPERFRAMES=false
 SKIP_PREMIERE=false
+SKIP_WATCH=false
 SKIP_SKILLS=false
 SKIP_DOCTOR=false
 
@@ -50,6 +54,7 @@ Usage: scripts/setup-macos.sh [options]
 Options:
   --skip-hyperframes   Don't clone HyperFrames or install its skills
   --skip-premiere      Don't clone/build the Premiere Pro MCP bridge
+  --skip-watch         Don't clone Claude Video or install the /watch skill
   --skip-skills        Clone the repos, but don't install any agent skills
   --skip-doctor        Don't run the post-install diagnostics
   -h, --help           Show this help
@@ -60,6 +65,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --skip-hyperframes) SKIP_HYPERFRAMES=true ;;
     --skip-premiere)    SKIP_PREMIERE=true ;;
+    --skip-watch)       SKIP_WATCH=true ;;
     --skip-skills)      SKIP_SKILLS=true ;;
     --skip-doctor)      SKIP_DOCTOR=true ;;
     -h|--help)          usage; exit 0 ;;
@@ -72,7 +78,7 @@ printf '%s\n' "$BOLD"
 cat <<'EOF'
   ┌──────────────────────────────────────────────┐
   │  VIBE EDITOR — setup                         │
-  │  HyperFrames · Adobe Premiere Pro MCP        │
+  │  HyperFrames · Premiere Pro MCP · /watch     │
   └──────────────────────────────────────────────┘
 EOF
 printf '%s' "$RESET"
@@ -101,6 +107,24 @@ if command -v ffmpeg >/dev/null 2>&1; then
 else
   warn "ffmpeg not found — HyperFrames cannot encode video without it."
   note "Install with: brew install ffmpeg"
+fi
+
+# /watch runs bundled Python and pulls video with yt-dlp. Neither is fatal here:
+# the skill's own preflight installs yt-dlp on first run.
+if [[ "$SKIP_WATCH" == false ]]; then
+  if command -v python3 >/dev/null 2>&1; then
+    ok "python3 $(python3 -c 'import platform; print(platform.python_version())')"
+  else
+    warn "python3 not found — /watch cannot run without it."
+    note "Install Xcode Command Line Tools: xcode-select --install"
+  fi
+
+  if command -v yt-dlp >/dev/null 2>&1; then
+    ok "yt-dlp $(yt-dlp --version 2>/dev/null)"
+  else
+    warn "yt-dlp not found — /watch installs it on first run."
+    note "Or install it now with: brew install yt-dlp"
+  fi
 fi
 
 # bash 3.2 (macOS default) has no negative array subscripts, so walk the glob.
@@ -223,6 +247,29 @@ else
   step "Skipping the Premiere Pro MCP bridge"
 fi
 
+# ------------------------------------------------------------ claude video --
+
+if [[ "$SKIP_WATCH" == false ]]; then
+  step "Installing Claude Video (/watch — the agent's eyes)"
+  clone_or_update "$CV_DIR" "$CV_REPO" "Claude Video"
+  note "Reference reels in samples/ and your own rushes become readable footage."
+
+  if [[ "$SKIP_SKILLS" == false ]]; then
+    note "Installing the /watch agent skill…"
+    if npx -y skills add bradautomates/claude-video --skill watch; then
+      ok "watch skill installed"
+    else
+      warn "Skill install failed — retry with:"
+      note "npx skills add bradautomates/claude-video --skill watch"
+    fi
+  fi
+
+  note "Captions are free and cover most videos. For clips without them, add"
+  note "GROQ_API_KEY (or OPENAI_API_KEY) to ~/.config/watch/.env for Whisper."
+else
+  step "Skipping Claude Video"
+fi
+
 # ------------------------------------------------------------- workspace ----
 
 step "Preparing the workspace"
@@ -257,6 +304,10 @@ if [[ "$SKIP_DOCTOR" == false ]]; then
   fi
   if [[ "$SKIP_HYPERFRAMES" == false ]]; then
     npx -y hyperframes@latest doctor || warn "HyperFrames doctor reported issues — see above."
+  fi
+  if [[ "$SKIP_WATCH" == false && -f "$CV_DIR/hooks/scripts/check-setup.sh" ]]; then
+    # Claude Video ships no doctor; its session hook is the equivalent status line.
+    bash "$CV_DIR/hooks/scripts/check-setup.sh" || warn "/watch setup check reported issues — see above."
   fi
 fi
 

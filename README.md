@@ -94,9 +94,10 @@ git clone https://github.com/FeezRM/vibe-editor.git; cd vibe-editor
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\setup-windows.ps1
 ```
 
-The script clones both engines into `vendor/`, builds the MCP server, installs the Premiere
-CEP bridge panel, installs the HyperFrames and Premiere agent skills, registers the MCP
-server in `.mcp.json`, and runs diagnostics. It is idempotent — re-run it any time to update.
+The script clones all three engines into `vendor/`, builds the MCP server, installs the
+Premiere CEP bridge panel, installs the HyperFrames, Premiere, and `/watch` agent skills,
+registers the MCP server in `.mcp.json`, and runs diagnostics. It is idempotent — re-run it
+any time to update.
 
 Then three things only Premiere can do:
 
@@ -119,12 +120,13 @@ When it reports your Premiere build, open project, and active sequence — you'r
 ```bash
 ./scripts/setup-macos.sh --skip-premiere      # HyperFrames only
 ./scripts/setup-macos.sh --skip-hyperframes   # Premiere MCP only
+./scripts/setup-macos.sh --skip-watch         # no Claude Video / /watch skill
 ./scripts/setup-macos.sh --skip-skills        # clone + build, install no agent skills
 ./scripts/setup-macos.sh --skip-doctor        # skip post-install diagnostics
 ```
 
 The Windows script takes the same switches in PowerShell form: `-SkipPremiere`,
-`-SkipHyperframes`, `-SkipSkills`, `-SkipDoctor`.
+`-SkipHyperframes`, `-SkipWatch`, `-SkipSkills`, `-SkipDoctor`.
 
 </details>
 
@@ -333,7 +335,8 @@ vibe-editor/
 ├── exports/                        finished masters out of Premiere
 ├── vendor/                         cloned engines — gitignored, managed by the setup script
 │   ├── hyperframes/
-│   └── adobe-premiere-pro-mcp/
+│   ├── adobe-premiere-pro-mcp/
+│   └── claude-video/               /watch — the agent's video input
 ├── scripts/brand.mjs               the brand generator (scaffold / init / build / show / check)
 └── .mcp.json                       generated: registers the premiere-pro MCP server
 ```
@@ -350,6 +353,7 @@ shoot or cut ever lands in git unless you deliberately put it there.
 | **Node.js** | 22 or newer (HyperFrames needs 22; the Premiere MCP needs 20) |
 | **FFmpeg** | Required by HyperFrames — `brew install ffmpeg` / `winget install Gyan.FFmpeg` |
 | **Adobe Premiere Pro** | 2020 or newer, tested on 26.0 |
+| **Python 3 + yt-dlp** | Only for `/watch` — `brew install yt-dlp` / `winget install yt-dlp.yt-dlp` |
 | **Git** | For cloning the engines |
 | **MCP client** | Claude Code, Claude Desktop, Codex, Cursor, Copilot in VS Code — anything that speaks MCP |
 
@@ -399,9 +403,12 @@ More failure modes, with causes and fixes, in
   video, built for agents. Apache-2.0.
 - **[MCP Bridge for Adobe Premiere Pro](https://github.com/hetpatel-11/adobe_premiere_pro_mcp)**
   by [@hetpatel-11](https://github.com/hetpatel-11) — 283 MCP tools over a local CEP bridge. MIT.
+- **[Claude Video](https://github.com/bradautomates/claude-video)** by
+  [@bradautomates](https://github.com/bradautomates) — `/watch`, so the agent can see a
+  reference reel or your own rushes instead of guessing from a filename. MIT.
 
-Both are cloned into `vendor/` at their upstream versions and are never vendored into this
-repo's history. Their licenses are their own.
+All three are cloned into `vendor/` at their upstream versions and are never vendored into
+this repo's history. Their licenses are their own.
 
 Adobe and Premiere Pro are trademarks of Adobe Inc. This project is not affiliated with,
 endorsed by, or sponsored by Adobe.

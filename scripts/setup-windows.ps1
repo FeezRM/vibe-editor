@@ -3,17 +3,21 @@
     Vibe Editor - Windows setup.
 
 .DESCRIPTION
-    Installs the two engines the agent drives:
+    Installs the three engines the agent drives:
       1. HyperFrames      - HTML -> deterministic video, for motion graphics
       2. Premiere Pro MCP - 283 MCP tools that drive a local Premiere Pro
+      3. Claude Video     - /watch, so the agent can see footage and reference reels
 
-    Idempotent. Safe to re-run to update both engines.
+    Idempotent. Safe to re-run to update all three engines.
 
 .PARAMETER SkipHyperframes
     Do not clone HyperFrames or install its skills.
 
 .PARAMETER SkipPremiere
     Do not clone or build the Premiere Pro MCP bridge.
+
+.PARAMETER SkipWatch
+    Do not clone Claude Video or install the /watch skill.
 
 .PARAMETER SkipSkills
     Clone the repos, but do not install any agent skills.
@@ -29,6 +33,7 @@
 param(
     [switch] $SkipHyperframes,
     [switch] $SkipPremiere,
+    [switch] $SkipWatch,
     [switch] $SkipSkills,
     [switch] $SkipDoctor
 )
@@ -40,10 +45,12 @@ $repoRoot  = Split-Path -Parent $PSScriptRoot
 $vendorDir = Join-Path $repoRoot 'vendor'
 $hfDir     = Join-Path $vendorDir 'hyperframes'
 $ppDir     = Join-Path $vendorDir 'adobe-premiere-pro-mcp'
+$cvDir     = Join-Path $vendorDir 'claude-video'
 $bridgeDir = Join-Path $env:TEMP 'premiere-mcp-bridge'
 
 $hfRepo = 'https://github.com/heygen-com/hyperframes.git'
 $ppRepo = 'https://github.com/hetpatel-11/adobe_premiere_pro_mcp.git'
+$cvRepo = 'https://github.com/bradautomates/claude-video.git'
 
 # ---------------------------------------------------------------- output ----
 
@@ -70,7 +77,7 @@ function Invoke-Checked {
 Write-Host @'
   +----------------------------------------------+
   |  VIBE EDITOR - setup                         |
-  |  HyperFrames . Adobe Premiere Pro MCP        |
+  |  HyperFrames . Premiere Pro MCP . /watch     |
   +----------------------------------------------+
 '@ -ForegroundColor White
 
@@ -112,6 +119,24 @@ if (Get-Command ffmpeg -ErrorAction SilentlyContinue) {
 } else {
     Write-Warn 'ffmpeg not found - HyperFrames cannot encode video without it.'
     Write-Note 'Install with: winget install Gyan.FFmpeg'
+}
+
+# /watch runs bundled Python and pulls video with yt-dlp. Neither is fatal here:
+# the skill's own preflight prints the exact install command on first run.
+if (-not $SkipWatch) {
+    if (Get-Command python -ErrorAction SilentlyContinue) {
+        Write-Ok "python $((python --version) -replace 'Python ', '')"
+    } else {
+        Write-Warn 'python not found - /watch cannot run without it.'
+        Write-Note 'Install with: winget install Python.Python.3.12'
+    }
+
+    if (Get-Command yt-dlp -ErrorAction SilentlyContinue) {
+        Write-Ok "yt-dlp $(yt-dlp --version)"
+    } else {
+        Write-Warn 'yt-dlp not found - /watch needs it to fetch video.'
+        Write-Note 'Install with: winget install yt-dlp.yt-dlp'
+    }
 }
 
 $premiereInstalls = @(Get-ChildItem -Path 'C:\Program Files\Adobe' -Filter 'Adobe Premiere Pro*' -Directory -ErrorAction SilentlyContinue)
@@ -264,6 +289,29 @@ console.log('  [ok] .mcp.json updated with the "premiere-pro" server');
     }
 } else {
     Write-Step 'Skipping the Premiere Pro MCP bridge'
+}
+
+# ------------------------------------------------------------ claude video --
+
+if (-not $SkipWatch) {
+    Write-Step "Installing Claude Video (/watch - the agent's eyes)"
+    Sync-Repo -Directory $cvDir -Repo $cvRepo -Name 'Claude Video'
+    Write-Note 'Reference reels in samples\ and your own rushes become readable footage.'
+
+    if (-not $SkipSkills) {
+        Write-Note 'Installing the /watch agent skill...'
+        if (Invoke-Checked -Command $npx -Arguments @('-y', 'skills', 'add', 'bradautomates/claude-video', '--skill', 'watch')) {
+            Write-Ok 'watch skill installed'
+        } else {
+            Write-Warn 'Skill install failed - retry with:'
+            Write-Note 'npx skills add bradautomates/claude-video --skill watch'
+        }
+    }
+
+    Write-Note 'Captions are free and cover most videos. For clips without them, add'
+    Write-Note 'GROQ_API_KEY (or OPENAI_API_KEY) to %USERPROFILE%\.config\watch\.env for Whisper.'
+} else {
+    Write-Step 'Skipping Claude Video'
 }
 
 # ------------------------------------------------------------- workspace ----
