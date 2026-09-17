@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+{% block style %}
+  .rc { position: relative; width: 100%; transform: rotate({{ tilt }}deg); transform-origin: center; }
+  .rc img { width: 100%; display: block; border-radius: 22px; box-shadow: 0 30px 60px rgba(0,0,0,.6), 0 0 0 2px rgba(255,255,255,.08);
+            filter: brightness(1.08) contrast(1.05); }
+  .pill { position: absolute; left: 50%; bottom: -26px; transform: translateX(-50%); background: #FFC531; color: #0A0A0B;
+          font-size: 26px; font-weight: 800; padding: 10px 22px; border-radius: 999px; white-space: nowrap;
+          box-shadow: 0 10px 24px rgba(0,0,0,.5); }
+  .pl-beside-l .rc img, .pl-beside-r .rc img { max-height: {{ beside_max_h }}px; object-fit: contain; object-position: top; }
+  .pl-inline .rc img { height: {{ inline_h }}px; object-fit: cover; object-position: top; }
+  .pl-cutaway .rc { position: absolute; left: 90px; right: 90px; top: 50%; transform: translateY(-50%) rotate({{ tilt }}deg); width: auto; }
+{% endblock %}
+{% block body %}
+        <div class="rc ui">
+          <img src="{{ image }}" alt="" />
+          {% if label %}<div class="pill">{{ label }}</div>{% endif %}
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      tl.from(".rc", { opacity: 0, y: 70, rotation: {{ tilt }} + 6, scale: 0.9, filter: "blur(10px)", duration: ENTER + 0.06, ease: ease.snap }, 0);
+      {% if label %}tl.from(".pill", { opacity: 0, y: 14, scale: 0.8, duration: 0.32, ease: ease.snap }, at(0, 0.5));{% endif %}
+      {% if zoom %}tl.to(".rc img", { scale: {{ zoom }}, duration: {{ duration * 0.7 }}, ease: "power1.inOut", transformOrigin: "{{ zoom_origin }}" }, at(1, 0.3));{% endif %}
+{% endblock %}

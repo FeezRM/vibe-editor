@@ -1,0 +1,119 @@
+{
+  "$comment": "Every number a node or lane needs for the vertical/default preset. Skills and scripts read this; they never carry constants.",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "transcript": {
+    "engine": "whisperx",
+    "model": "large-v3",
+    "fallback_model": "medium.en",
+    "compute_type": "int8",
+    "vad": "silero",
+    "min_word_score": 0.3,
+    "max_word_s": 2.5,
+    "max_intra_segment_gap_s": 1.5,
+    "min_words_per_s": 1.0
+  },
+  "cut": {
+    "min_gap_s": 0.35,
+    "lead_s": 0.08,
+    "tail_s": 0.1,
+    "min_clip_s": 0.6,
+    "fillers": [
+      "um",
+      "uh",
+      "umm",
+      "uhh",
+      "hmm",
+      "mm",
+      "erm",
+      "ah"
+    ],
+    "keep_tics": [
+      "like",
+      "you know",
+      "basically",
+      "so",
+      "i mean",
+      "literally",
+      "honestly"
+    ],
+    "min_sliver_frames": 8,
+    "remove_false_starts": true
+  },
+  "captions": {
+    "font_family": "Inter",
+    "size_px": 78,
+    "hook_size_px": 104,
+    "case": "lower",
+    "max_words": 5,
+    "min_words": 1,
+    "max_width_frac": 0.78,
+    "band_top": 920,
+    "band_bottom": 1130,
+    "line_height": 1.0,
+    "tracking_em": -0.03,
+    "glow": "0 0 14px rgba(0,0,0,.75), 0 4px 22px rgba(0,0,0,.6)",
+    "accent_share_max": 0.5,
+    "cap_height_px": [
+      44,
+      70
+    ],
+    "measure_threshold": 245,
+    "colors": {
+      "ink": "#FFFFFF",
+      "bad": "#EB0408",
+      "good": "#00E800",
+      "hot": "#FFC531",
+      "em": "#FFFFFF"
+    },
+    "chars_per_line": 19,
+    "font_weight": 800,
+    "accent_family": "Playfair Display",
+    "accent_weight": 600,
+    "accent_scale": 1.2
+  },
+  "graphics": {
+    "entrance_s": [
+      0.28,
+      0.42
+    ],
+    "hold_min_s": 0.8,
+    "min_presence": 0.6,
+    "max_same_preset_run": 3,
+    "max_luma_delta": 0.25,
+    "beside_width": 520,
+    "beside_top": 180,
+    "beside_inset": 40,
+    "face_pad_px": 40,
+    "inline_top": 1180,
+    "inline_width": 920
+  },
+  "pacing": {
+    "max_static_s": 2.0,
+    "zoom_pct": 3,
+    "zoom_dur_s": 1.2,
+    "hook_hold_s": 8.0
+  },
+  "audio": {
+    "voice_lufs": -16.0,
+    "peak_dbfs": -1.5,
+    "lufs_tolerance": 1.0,
+    "music_db": -18.0,
+    "music_hook_db": -30.0,
+    "music_tail_s": 2.0,
+    "sfx_db": -12.0,
+    "max_sfx_per_10s": 4,
+    "silence_db": -35,
+    "silence_max_s": 0.45
+  },
+  "export": {
+    "codec": "libx264",
+    "crf": 18,
+    "bitrate_mbps": 20,
+    "audio_kbps": 320,
+    "pix_fmt": "yuv420p"
+  }
+}

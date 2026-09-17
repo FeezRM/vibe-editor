@@ -1,0 +1,28 @@
+{% extends "_base.html" %}
+{% block style %}
+  .chat { width: 100%; background: #0B0B0E; border: 1px solid #26262C; border-radius: 30px; padding: 26px 26px 22px;
+          box-shadow: 0 30px 60px rgba(0,0,0,.55); }
+  .hdr { display: flex; align-items: center; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #26262C; margin-bottom: 18px; }
+  .av { width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #3B9DFF, #8F5CFF); }
+  .nm { font-size: 30px; font-weight: 700; color: #fff; }
+  .msg { max-width: 84%; padding: 20px 26px; border-radius: 28px; font-size: 42px; line-height: 1.2; color: #fff; margin: 12px 0; font-weight: 600; }
+  .them { background: #26262C; border-bottom-left-radius: 8px; margin-right: auto; }
+  .me { background: #3B9DFF; border-bottom-right-radius: 8px; margin-left: auto; }
+  .pl-beside-l .msg, .pl-beside-r .msg { font-size: 32px; }
+  .pl-cutaway .chat { position: absolute; left: 90px; right: 90px; top: 50%; transform: translateY(-50%); }
+{% endblock %}
+{% block body %}
+        <div class="chat ui">
+          <div class="hdr"><div class="av"></div><div class="nm">{{ name }}</div></div>
+          {% for m in messages %}<div class="msg m{{ loop.index0 }} {{ 'me' if m.from == 'me' else 'them' }}">{{ m.text }}</div>{% endfor %}
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      tl.from(".chat", { opacity: 0, y: 40, scale: 0.96, filter: "blur(8px)", duration: ENTER, ease: ease.snap }, 0);
+      gsap.utils.toArray(".msg").forEach((m, i) => {
+        const t = at(i, 0.35 + i * 0.75);
+        tl.addLabel("msg" + (i + 1), t);
+        tl.from(m, { opacity: 0, y: 18, scale: 0.9, transformOrigin: m.classList.contains("me") ? "right bottom" : "left bottom", duration: 0.34, ease: ease.snap }, t);
+      });
+{% endblock %}

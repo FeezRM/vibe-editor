@@ -1,0 +1,9 @@
+{
+  "title": "wash — an edge-only colour flood (face stays clear), bad → good as a pair",
+  "type": "object", "required": ["pair"],
+  "properties": {
+    "pair": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "type": "object", "required": ["cls"], "properties": { "cls": { "type": "string", "enum": ["bad", "good", "hot"] } } } },
+    "reveal_at": { "type": "array", "items": { "type": "number" } }
+  },
+  "x-placements": ["wash"], "x-default-placement": "wash", "x-events": ["reveal_at"], "x-no-content": true
+}

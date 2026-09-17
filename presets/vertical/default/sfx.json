@@ -1,0 +1,12 @@
+{
+  "$comment": "graphic verb -> sound file relative to assets/sfx/ (creator-supplied). A missing file is skipped, never invented.",
+  "pop": "pop.wav",
+  "click": "click.wav",
+  "whoosh": "whoosh.wav",
+  "shutter": "shutter.wav",
+  "ding": "ding.wav",
+  "wrong": "wrong.wav",
+  "tick": "tick.wav",
+  "slide": "slide.wav",
+  "riser": "riser.wav"
+}

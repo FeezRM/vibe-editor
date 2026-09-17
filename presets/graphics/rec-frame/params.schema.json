@@ -1,0 +1,6 @@
+{
+  "title": "rec-frame — camcorder corners + blinking REC, for 'I recorded this' / raw-footage beats",
+  "type": "object",
+  "properties": { "timecode": { "type": "string", "default": "" } },
+  "x-placements": ["cutaway"], "x-default-placement": "cutaway", "x-events": [], "x-no-content": true
+}

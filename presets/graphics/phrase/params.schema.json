@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "phrase \u2014 one or two lines of spoken words, one accent word, hook-sized",
+  "type": "object",
+  "required": [
+    "line_1"
+  ],
+  "properties": {
+    "line_1": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/word"
+      },
+      "x-real": true
+    },
+    "line_2": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/word"
+      },
+      "x-real": true
+    },
+    "size_1": {
+      "type": "integer",
+      "default": 108,
+      "minimum": 72,
+      "maximum": 140
+    },
+    "size_2": {
+      "type": "integer",
+      "default": 118,
+      "minimum": 72,
+      "maximum": 150
+    },
+    "reveal_at": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "[line_2 start] seconds into the graphic"
+    }
+  },
+  "x-placements": [
+    "inline",
+    "cutaway"
+  ],
+  "x-default-placement": "inline",
+  "x-mute-captions": true,
+  "x-events": [
+    "reveal_at"
+  ],
+  "$defs": {
+    "word": {
+      "type": "object",
+      "required": [
+        "t"
+      ],
+      "properties": {
+        "t": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acc": {
+          "type": "string",
+          "enum": [
+            "em",
+            "bad",
+            "good",
+            "hot"
+          ]
+        }
+      }
+    }
+  }
+}

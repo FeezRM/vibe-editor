@@ -1,0 +1,1 @@
+{ "duration": 3.5, "screenshot": "assets/ex-screen.png", "scroll_px": 220, "annot": { "x": 8, "y": 30, "w": 84, "h": 12, "label": "Join the waitlist", "cls": "good" }, "reveal_at": [0.6, 1.4] }

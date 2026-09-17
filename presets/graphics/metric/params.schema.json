@@ -1,0 +1,16 @@
+{
+  "title": "metric — one big number that counts up to a REAL value, with unit, label and source",
+  "type": "object", "required": ["value"],
+  "properties": {
+    "value": { "type": "number", "x-real": true },
+    "prefix": { "type": "string", "default": "" },
+    "unit": { "type": "string", "default": "" },
+    "decimals": { "type": "integer", "default": 0 },
+    "label": { "type": "string", "x-real": true },
+    "source": { "type": "string", "x-real": true, "description": "where the number comes from — required by validate-plan for any metric" },
+    "size": { "type": "integer", "default": 200 },
+    "count_s": { "type": "number", "default": 1.2 },
+    "reveal_at": { "type": "array", "items": { "type": "number" } }
+  },
+  "x-placements": ["inline", "beside-l", "beside-r", "cutaway"], "x-default-placement": "inline", "x-events": ["reveal_at"], "x-needs-provenance": true
+}

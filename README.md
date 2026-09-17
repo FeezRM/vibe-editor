@@ -2,435 +2,121 @@
 
 # Vibe Editor
 
-**Describe the cut. The agent builds it in Premiere Pro.**
+**One prompt, one raw file, one postable vertical reel.**
 
-An end-to-end, agent-driven video editing workspace.
-[HyperFrames](https://github.com/heygen-com/hyperframes) draws the motion graphics.
-[Adobe Premiere Pro](https://github.com/hetpatel-11/adobe_premiere_pro_mcp) — driven over MCP — does everything else:
-ingest, cutting, captions, color, audio, and the export.
-
-<br>
+An agent-driven short-form editor that runs as a pipeline of files, not a conversation with a
+timeline. [WhisperX](https://github.com/m-bain/whisperX) cuts, [HyperFrames](https://github.com/heygen-com/hyperframes)
+draws, ffmpeg assembles and verifies, and [Adobe Premiere Pro over MCP](https://github.com/hetpatel-11/adobe_premiere_pro_mcp)
+gets the same edit as trimmable clips when you want to refine by hand.
 
 ![Node](https://img.shields.io/badge/node-22%2B-339933?style=flat-square&logo=node.js&logoColor=white)
-![macOS](https://img.shields.io/badge/macOS-supported-000000?style=flat-square&logo=apple&logoColor=white)
-![Windows](https://img.shields.io/badge/Windows-supported-0078D4?style=flat-square&logo=windows&logoColor=white)
-![Premiere Pro](https://img.shields.io/badge/Premiere%20Pro-2020%2B-9999FF?style=flat-square&logo=adobepremierepro&logoColor=white)
-![MCP](https://img.shields.io/badge/MCP-283%20tools-5fd3c6?style=flat-square)
+![macOS](https://img.shields.io/badge/macOS-tested-000000?style=flat-square&logo=apple&logoColor=white)
+![Premiere Pro](https://img.shields.io/badge/Premiere%20Pro-optional-9999FF?style=flat-square&logo=adobepremierepro&logoColor=white)
 ![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)
-
-[Quick start](#quick-start) ·
-[How it works](#how-it-works) ·
-[The workflow](#the-workflow) ·
-[Say this](#say-this) ·
-[Layout](#repository-layout) ·
-[Troubleshooting](#troubleshooting)
 
 </div>
 
 ---
 
-Most "AI video editors" are a black box: you hand over footage, you get back a render, and
-the only knob is *try again*. This one is the opposite. Your agent operates **your** Premiere
-Pro project on **your** machine — the real timeline, real tracks, real clips — and writes its
-motion graphics as HTML that renders deterministically to alpha video.
-
-Nothing is hidden behind a service. Every cut is a tool call you can inspect, every graphic
-is a file you can open, and when the agent walks away you're left with a normal Premiere
-project you can keep editing by hand.
-
 ## How it works
 
 ```
-  you ──▶ "cut the dead air, put a counter on the 4M views line, then export 9:16"
-                                       │
-                                       ▼
-                            ┌──────────────────────┐
-                            │  BLUEPRINT           │  timestamped, shot by shot
-                            │  you approve it      │  cheap to change here
-                            └──────────┬───────────┘
-                                       │
-                     ┌─────────────────┴────────────────────┐
-                     ▼                                      ▼
-        ┌────────────────────────┐              ┌────────────────────────┐
-        │  HYPERFRAMES           │              │  PREMIERE PRO · MCP    │
-        │  HTML + CSS + GSAP     │              │  283 tools             │
-        │           ↓            │              │  ingest · cut · color  │
-        │  deterministic render  │              │  audio · captions      │
-        │           ↓            │   import     │                        │
-        │  alpha .mov / .mp4     │ ────────────▶│  your real timeline    │
-        └────────────────────────┘              └───────────┬────────────┘
-                                                            │ export_sequence
-                                                            ▼
-                                                    exports/reel.mp4
+raw.mp4 ─▶ 01 intake ─▶ 02 transcript ─▶ 03 rough cut ─▶ 04 captions ─▶ 05 graphics ─▶ 06 audio ─▶ 07 pacing ─▶ 08 export
+             RUN.md      WhisperX         cuts.json       captions.json  graphics-plan   LUFS + SFX   zoom punches  final.mp4
+                         words.json       (the EDL)       alpha .mov     presets→.mov   from graphics  in the EDL    + contact sheet
 ```
 
-Two engines, one conversation:
-
-| | **HyperFrames** | **Premiere Pro MCP** |
-|---|---|---|
-| **Owns** | Motion graphics, titles, kinetic captions, data viz | The timeline: ingest, cuts, transitions, effects, color, audio, captions, export |
-| **Interface** | HTML compositions + a CLI | 283 MCP tools over a local CEP bridge |
-| **Output** | Alpha `.mov`, `.mp4`, PNG sequences | Your `.prproj`, and the final render |
-| **Runs** | Headless Chrome + FFmpeg, locally | Inside Premiere Pro, locally |
-| **Deterministic** | Yes — same HTML, same frames, every time | Yes — you can see and undo every operation |
-
-The seam between them is deliberate. HyperFrames is far better at typography and motion
-than any NLE's title tool, and Premiere is far better at cutting than any web renderer.
-The agent uses each for what it's good at, and hands the alpha `.mov` across.
+Every node reads a file and writes a file. Every gate is a script that can fail. The **preset** says
+what the edit looks like (`presets/vertical/default/numbers.json` holds every constant); the **lane**
+says how an app does it (`lanes/ffmpeg/`, `lanes/premiere/`). The agent's creative work is one JSON
+document — the graphics plan — filled with real material and checked in composited pixels before
+anything ships.
 
 ## Quick start
 
-**macOS**
-
 ```bash
 git clone https://github.com/FeezRM/vibe-editor.git && cd vibe-editor
-./scripts/setup-macos.sh
+./scripts/setup-macos.sh                                   # engines into vendor/, brand scaffold, doctor
+uv venv --python 3.11 .venv-whisperx && uv pip install --python .venv-whisperx/bin/python whisperx
+node scripts/brand.mjs init                                # your handle, colours, fonts → brand/
 ```
 
-**Windows** (PowerShell)
-
-```powershell
-git clone https://github.com/FeezRM/vibe-editor.git; cd vibe-editor
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\setup-windows.ps1
-```
-
-The script clones all three engines into `vendor/`, builds the MCP server, installs the
-Premiere CEP bridge panel, installs the HyperFrames, Premiere, and `/watch` agent skills,
-registers the MCP server in `.mcp.json`, and runs diagnostics. It is idempotent — re-run it
-any time to update.
-
-Then three things only Premiere can do:
-
-1. Restart Premiere Pro and open a project.
-2. Open **Window → Extensions → MCP Bridge (CEP)**.
-   *(Missing? Enable **Preferences → Plugins → Enable developer mode**, then restart.)*
-3. Set **Temp Directory** to the bridge path the installer printed
-   (`/tmp/premiere-mcp-bridge` on macOS, `%TEMP%\premiere-mcp-bridge` on Windows),
-   then **Save Configuration → Start Bridge → Test Connection**.
-
-Finally, start your agent in this folder and confirm the link:
-
-> Run `verify_premiere_connection`. Make no changes.
-
-When it reports your Premiere build, open project, and active sequence — you're live.
-
-<details>
-<summary><b>Setup script options</b></summary>
+Then one video:
 
 ```bash
-./scripts/setup-macos.sh --skip-premiere      # HyperFrames only
-./scripts/setup-macos.sh --skip-hyperframes   # Premiere MCP only
-./scripts/setup-macos.sh --skip-watch         # no Claude Video / /watch skill
-./scripts/setup-macos.sh --skip-skills        # clone + build, install no agent skills
-./scripts/setup-macos.sh --skip-doctor        # skip post-install diagnostics
+python workflows/new-job.py ~/Downloads/take.mp4 --slug my-reel --brief "Edit this end to end. Keep my exact words."
+./run.sh projects/my-reel
+open projects/my-reel/review/final-sheet.png              # 12 frames of the result
+open projects/my-reel/outputs/my-reel.final.mp4           # also copied to ~/Downloads
 ```
 
-The Windows script takes the same switches in PowerShell form: `-SkipPremiere`,
-`-SkipHyperframes`, `-SkipWatch`, `-SkipSkills`, `-SkipDoctor`.
+`./run.sh` is unattended: a heuristic drafter writes the graphics plan and a deterministic fixer
+converges the QA loop. With an agent in the loop it is better: `./run.sh --to captions`, the agent
+authors `graphics-plan.json` from the caption timings and real assets (a captured page, a frame from
+the footage, a real number with provenance), then `./run.sh --from graphics`.
 
-</details>
+Timing on a 42 s vertical source (M2 Pro, models cached): about six minutes end to end.
 
-## The workflow
+## What you get
 
-The agent works **blueprint-first**. It plans in text — cheap to change — and only then
-touches the timeline, where changes are expensive.
+- **A rough cut as data.** `cuts.json` lists every kept range and every removal with a reason. Veto a
+  removal by id; the EDL regenerates deterministically. Replayed as separate trimmable clips.
+- **Word-accurate captions** from WhisperX forced alignment: one line, 2–4 words, hard cuts, band under
+  the chin, accent on the payload word, dropped where a graphic carries its own words.
+- **Ten tuned graphic presets** (`presets/graphics/`): phrase, list-card, flow, metric, app-mock,
+  receipt, thumb-wall, chat, wash, rec-frame. Each is a HyperFrames composition with a params schema,
+  an example, a golden frame, and a README saying when it is right. The plan picks the preset and the
+  content; the preset owns the motion.
+- **Pixel QA.** Every graphic is composited over the real frame and checked: caption band, face box
+  (OpenCV), luma, alpha, staleness. Placeholders, missing assets, metrics without provenance and
+  borrowed handles are refused before a render starts.
+- **Measured audio.** Voice to −16 LUFS by measurement, one SFX per visual event derived from the
+  placed graphics, music only when you name a track.
+- **A verified export.** Duration equals the EDL, zero dead air, loudness in range, file on disk and
+  newer than the run, or it is not called done.
 
-**1 · Connect.** `verify_premiere_connection` before anything else. It's read-only and
-confirms Premiere, the bridge, the open project, and the active sequence in one call.
+## Premiere Pro
 
-**2 · Ingest.** `import_media` / `import_folder` pull footage into the project.
-`detect_scene_edits` finds cuts in long takes; a transcription pass turns speech into
-timestamped words the blueprint can key off.
-
-**3 · Blueprint.** A timestamped, shot-by-shot plan: every cut, caption, push-in, B-roll
-cue, graphic, and SFX. **You approve this before the timeline moves.** Say *"just do it"*
-to collapse it to one line per beat and skip ahead — the quality bar doesn't move.
-
-**4 · Cut the spine.** `razor_timeline_at_time`, `split_clip`, `trim_clip`, `move_clip`,
-`link_audio_video`. Silence and filler come out first; nothing gets polished before the
-story flows end to end.
-
-**5 · Graphics.** Each video gets **one to three HyperFrames *scenes*** — not one file per
-graphic. A scene is a single object that mutates through a labelled state machine for its
-whole runtime, which is what separates a designed sequence from a slideshow. Lint it, render
-it to alpha `.mov`, then `import_media` it and place it on the overlay track.
-
-```bash
-npx hyperframes lint  projects/<slug>
-npx hyperframes check projects/<slug>
-npx hyperframes render projects/<slug> -c compositions/03-scene.html \
-  --format mov --fps 30 --quality high \
-  -o projects/<slug>/renders/03-scene.mov
-```
-
-Author at 1080×1920 and omit `--resolution` — it is **rejected** for alpha output. Render at
-the sequence fps; a mismatch shows up as overlay stutter and cannot be fixed at export.
-
-`--format mov` and `--format webm` carry a real alpha channel; Premiere imports the MOV with
-transparency intact. Every render ships with a `renders/IMPORT.md` cue sheet — file,
-timecode, track, blend mode — so placement is mechanical, not guesswork.
-
-**6 · Finish.** `color_correct`, `adjust_audio_levels`, `apply_audio_effect`,
-`add_transition`, `create_caption_track`, `add_marker`.
-
-**7 · Export.** `validate_project_for_export` first, then `export_sequence` —
-or `export_as_fcp_xml` / `export_aaf` to hand the cut to another suite.
-
-At every step the project is just a Premiere project. Close the agent, open the timeline,
-and keep working.
-
-### The visual-hook engine
-
-The first eight seconds now have an explicit director and machine-readable contract.
-`ig-hook` gathers real evidence, proposes three genuinely different opening sequences,
-scores them, storyboards five frames from each, then builds the selected candidate in a
-`HOOK-LAB__*` Premiere sequence. HyperFrames owns designed proof; Premiere owns real
-footage and timing. The main sequence stays untouched until the opening passes pixel QA.
-
-See [HOOK-ENGINE.md](HOOK-ENGINE.md) for the architecture, Hook Packet format, modes, and
-Trial Reel workflow.
-
-## Say this
-
-Natural language in, tool calls out:
-
-> *"Import the DJI mic track, sync it to the camera audio, then cut every pause longer than 400ms across both."*
-
-> *"Razor the interview at 12.5 seconds across all tracks and drop a cross dissolve on every cut on V1."*
-
-> *"Build a counter graphic for the 4 million views line — it lands on the 12-second beat."*
-
-> *"Alternate the shot scale beat to beat for the whole middle section; nothing should sit static for more than four seconds."*
-
-> *"Grade it for the dark-room look: deep contrast, cool shadows, controlled highlights."*
-
-> *"Duck the music 18dB under the voice and pull it out entirely under the hook."*
-
-> *"Validate the sequence and export 9:16 H.264 to exports/."*
+`./run.sh projects/my-reel --lane premiere` additionally replays the EDL onto a `<job>__CUT` sequence
+as trimmable clips and reads every clip back. Start the bridge first: open a project → *Window →
+Extensions → MCP Bridge (CEP)* → Temp Directory as printed by the installer → *Start Bridge*. If the
+bridge is down the run continues on the ffmpeg lane and says so. `LANES.md` is the honest step × lane
+matrix of what is scripted, manual, unvalidated, or a gap.
 
 ## Make it yours
 
-The repo ships with one opinionated house style. **You are not stuck with it, and you
-should never have to edit a skill to change it.** Two files own everything:
+- `brand/brand.json` + `brand/BRAND.md` → `node scripts/brand.mjs build` (colours, fonts, handle, voice).
+- `presets/vertical/default/numbers.json` — caption geometry, cut thresholds, timing, loudness, export.
+- `presets/vertical/default/transcript-corrections.json` — your product names and how they are spelled.
+- `presets/vertical/default/sfx/` — drop in your own pack (same file names).
+- Add a preset: copy a folder in `presets/graphics/`, write the template + schema + example, render a
+  golden with `python workflows/build-graphics.py --preset presets/graphics/<name> --write-golden`.
 
-```bash
-node scripts/brand.mjs init      # wizard: colours, fonts, skin, fps
-```
+`tests/regress.sh` re-renders every preset against its golden and re-derives the fixture's EDL and
+caption grouping. Run it before calling any change done.
 
-That writes `brand/brand.json` and compiles `brand/tokens.css`. Then open
-`brand/BRAND.md` and write your rules in plain English.
-
-The setup scripts already create `brand/` for you — if either file is missing they scaffold
-a blank one to fill in, and they never overwrite a file you've edited. To do it by hand:
-
-```bash
-node scripts/brand.mjs scaffold  # blank brand/brand.json + brand/BRAND.md
-```
-
-| File | Holds | Format |
-|---|---|---|
-| **`brand/brand.json`** | your handle, palette, fonts, canvas, fps, texture, density, export | JSON, schema-backed |
-| **`brand/BRAND.md`** | voice, subject matter, banned visuals, CTA, sound taste | free text |
-
-**Every skill reads both before it plans or builds anything**, and the precedence is
-explicit:
+## Layout
 
 ```
-repo defaults  →  brand/  →  the project's own tokens.css / MOTION-PLAN.md  →  what you say in chat
+run.sh · finalize.sh          the one-shot entry and the export
+workflows/                    the nodes and gates (Python, argument-driven)
+lanes/ffmpeg/  lanes/premiere/ how each app replays the same files
+presets/vertical/default/     WHAT: numbers.json, captions.md, creative-moves.md, sfx, fonts
+presets/graphics/<name>/      the ten presets
+.claude/skills/               one short skill per node — maps that point at the scripts above
+docs/style/                   the premium tier: frame contracts, persistent-object scenes, the motion floor
+docs/lab-notes-archive.md     every war story behind every lock
+projects/<job>/               gitignored: RUN.md + every intermediate file of a job
 ```
 
-Change your accent once in `brand.json`, run `node scripts/brand.mjs build`, and every
-future project picks it up. `brand/tokens.css` is **generated** — never hand-edit it. It's
-built by substituting your values into the skin stylesheet, so the design system stays in
-one place and your fork only carries the diff.
-
-```bash
-node scripts/brand.mjs show      # resolved config + contrast readout
-node scripts/brand.mjs check     # validate without writing
-node scripts/brand.mjs build     # brand.json -> tokens.css
-```
-
-`check` and `build` also warn you about the things that quietly ruin a render: pure-black
-grounds, ink/ground contrast below 7:1, an accent that vanishes over dark footage, a font
-stack with no fallback, and captions parked in the bottom third.
-
-Omit `accentHi`, `accentLo`, `groundLift`, or `ink2` and they're derived from your accent
-and ground automatically. Most people only ever set three colours.
-
-The one field with no sensible default is **`creator.handle`** — your account name, no `@`.
-Every rebuilt app mockup (profile, comment sheet, follow card) carries it, so `check` warns
-while it is blank. It is the difference between a mockup that is yours and one wearing a
-stranger's name.
-
-## The house style (the default)
-
-Eight house-style skills load automatically whenever an agent runs here — one per editing
-responsibility, plus an orchestrator:
-
-| Skill | Owns |
-|---|---|
-| **`ig-reel`** | Orchestrator. The edit blueprint, the sequence, the track layout. Dispatches the rest. |
-| **`ig-hook`** | The first 0–8 seconds. Three complete candidates, evidence gate, Hook Packet, sandbox sequence, and pixel QA. |
-| **`ig-cut`** | Step 1 — silence and filler. The spine. |
-| **`ig-captions`** | Step 2 — word-accurate captions, banded at y 920–1130 on a 1080×1920 frame. |
-| **`ig-sound`** | Steps 3 + 5 — music bed, ducking, SFX. One mix. |
-| **`ig-show`** | Step 4 — **the motion graphics.** 15 named blocks, 4 frame contracts. The one that matters most. |
-| **`ig-pacing`** | Step 6 — pattern interrupts, zoom pulses, shot scale. |
-| **`ig-delivery`** | QA and export. |
-
-The system in seven lines:
-
-1. **The hook is an eight-second sequence, not a headline.** Frame zero proves the claim;
-   seconds 2–5 create tension; seconds 5–8 reveal the mechanism.
-2. **Graphics are instrumentation, not decoration.** Every graphic answers *what does this
-   measure, prove, or compare?* Dials, counters, deltas, curves, ledgers, diffs — never
-   swooshes, highlight blobs, or emoji. Lines that prove nothing get **no graphic at all.**
-3. **One accent per project.** Max two accent elements per frame.
-4. **Entrances 0.28–0.42s. Hold ≥0.8s. No exits — the cut is the exit.**
-   Never bounce, elastic, or back.
-5. **One object is on screen ≥85% of the runtime, mutating** — and something changes on
-   screen roughly every **1.5s**, never more than ~2s static. The graphics budget lives in
-   `brand/brand.json` (`density.maxGraphicsPer30s`), not in a skill.
-6. **Texture is mandatory.** Grain, vignette, feathered edges, and a ~15fps stutter on
-   mechanical motion. Perfectly smooth, perfectly flat output is what reads AI-generated.
-7. **Zero UI chrome.** No counters, no watermark, no follow banner.
-
-Opening direction lives in [`.claude/skills/ig-hook/`](.claude/skills/ig-hook/). The motion-
-graphics spec lives in [`.claude/skills/ig-show/reference/`](.claude/skills/ig-show/reference/), in
-reading order — `SAMPLES.md` (four reels torn down structurally), `FRAME-CONTRACTS.md` (the
-four spatial architectures; declaring one is mandatory), `TEARDOWN.md`, `DEVICES.md`
-(spoken idea → visual device), `BLOCKS.md`, `MOTION-LANGUAGE.md`, `TEXTURE.md`, `PIPELINE.md`.
-`VISUAL-HOOK.md` is the mode-specific build spec when `ig-hook` selects a lockup.
-`templates/base/` is a lint-clean HyperFrames starter.
-
-To bring your own system entirely: rewrite `brand/BRAND.md`, or delete `.claude/skills/`
-and let the agent work from your prompts alone.
-
-## Repository layout
-
-```
-vibe-editor/
-├── scripts/
-│   ├── setup-macos.sh              one-shot install / update (macOS)
-│   └── setup-windows.ps1           one-shot install / update (Windows)
-├── brand/                          YOUR customisation — edit these two, rebuild
-│   ├── brand.json                  palette, fonts, canvas, density  (schema-backed)
-│   ├── BRAND.md                    voice, banned visuals, CTA       (free text)
-│   └── tokens.css                  GENERATED — never hand-edit
-├── .claude/skills/
-│   ├── ig-reel/                    orchestrator — blueprint, tracks, dispatch
-│   ├── ig-hook/                    first 0–8s — candidates, packet, hook lab, QA
-│   ├── ig-cut/                     step 1 — silence and filler
-│   ├── ig-captions/                step 2 — captions
-│   ├── ig-sound/                   steps 3+5 — music and SFX
-│   ├── ig-show/                    step 4 — the motion graphics
-│   │   └── reference/              SAMPLES · FRAME-CONTRACTS · TEARDOWN · VISUAL-HOOK · DEVICES · BLOCKS · MOTION-LANGUAGE · TEXTURE · PIPELINE · INTAKE · tokens-*.css
-│   ├── ig-pacing/                  step 6 — pattern interrupts
-│   └── ig-delivery/                QA and export
-├── templates/base/                 lint-clean HyperFrames starter, 4 working blocks
-├── analysis/                       measure.py · motion-density.py · build-captions.py · validate-hook-packet.py
-│                                   (anything else in here is gitignored scratch)
-├── samples/                        bring your own reference reels — gitignored, see its README
-├── projects/                       one folder per video (compositions + renders)
-├── exports/                        finished masters out of Premiere
-├── vendor/                         cloned engines — gitignored, managed by the setup script
-│   ├── hyperframes/
-│   ├── adobe-premiere-pro-mcp/
-│   └── claude-video/               /watch — the agent's video input
-├── scripts/brand.mjs               the brand generator (scaffold / init / build / show / check)
-└── .mcp.json                       generated: registers the premiere-pro MCP server
-```
-
-Everything that is *yours* is gitignored on purpose: `brand/`, `projects/`, `samples/`,
-`vendor/`, `.mcp.json`, all media, and the `.prproj`. Clone it, run setup, and nothing you
-shoot or cut ever lands in git unless you deliberately put it there.
+`CLAUDE.md` is the agent's map. `REWORK-PLAN.md` explains why the repo is shaped like this.
 
 ## Requirements
 
-| | |
-|---|---|
-| **OS** | macOS, or Windows 10/11 |
-| **Node.js** | 22 or newer (HyperFrames needs 22; the Premiere MCP needs 20) |
-| **FFmpeg** | Required by HyperFrames — `brew install ffmpeg` / `winget install Gyan.FFmpeg` |
-| **Adobe Premiere Pro** | 2020 or newer, tested on 26.0 |
-| **Python 3 + yt-dlp** | Only for `/watch` — `brew install yt-dlp` / `winget install yt-dlp.yt-dlp` |
-| **Git** | For cloning the engines |
-| **MCP client** | Claude Code, Claude Desktop, Codex, Cursor, Copilot in VS Code — anything that speaks MCP |
-
-Premiere Pro, the MCP client, and this repo must all be on the **same machine**. The bridge
-is local by design — no footage ever leaves your computer.
-
-## Troubleshooting
-
-**The agent sees the tools but every call fails.**
-Almost always the bridge, not the server. Check, in order: Premiere is open → a project is
-open → the CEP panel is running → the panel's Temp Directory matches the installer's bridge
-path. Then right-click the panel → **Reload**.
-
-**The CEP panel isn't in the Extensions menu.**
-Enable **Preferences → Plugins → Enable developer mode** and restart Premiere. The setup
-script already sets Adobe's `PlayerDebugMode`.
-
-**Diagnostics.**
-
-```bash
-npm --prefix vendor/adobe-premiere-pro-mcp run setup:doctor   # bridge, build, client config
-npx hyperframes doctor                                        # node, ffmpeg, chrome, skills
-```
-
-On Windows the first command is `npm --prefix vendor\adobe-premiere-pro-mcp run setup:doctor:win`.
-
-The CEP panel's **Run Diagnostics** button writes a full report next to the bridge directory.
-
-**A graphic renders as a black rectangle in Premiere.**
-It was rendered without alpha. Re-render with `--format mov`. If a MOV imports opaque,
-right-click it → **Modify → Interpret Footage → Alpha Channel: Straight (Unmatted)**.
-
-**A graphic stutters on the timeline.**
-The composition's fps doesn't match the sequence. Re-render at the sequence fps rather than
-letting Premiere conform it.
-
-**Never resize or reposition a graphic in Premiere.** It was composed at full frame for a
-reason. Fix the composition and re-render — twenty seconds of render beats a graphic that's
-eight pixels off the shared axis.
-
-More failure modes, with causes and fixes, in
-[`PIPELINE.md`](.claude/skills/ig-show/reference/PIPELINE.md#7-common-failures).
+macOS (tested) or Windows · Node 22+ · Python 3.11 (for WhisperX) and 3.13 (nodes) with `opencv-python`,
+`numpy`, `jinja2` · ffmpeg 6+ · `uv` · `jq` · Adobe Premiere Pro 2020+ (optional).
 
 ## Built on
 
-- **[HyperFrames](https://github.com/heygen-com/hyperframes)** by HeyGen — write HTML, render
-  video, built for agents. Apache-2.0.
-- **[MCP Bridge for Adobe Premiere Pro](https://github.com/hetpatel-11/adobe_premiere_pro_mcp)**
-  by [@hetpatel-11](https://github.com/hetpatel-11) — 283 MCP tools over a local CEP bridge. MIT.
-- **[Claude Video](https://github.com/bradautomates/claude-video)** by
-  [@bradautomates](https://github.com/bradautomates) — `/watch`, so the agent can see a
-  reference reel or your own rushes instead of guessing from a filename. MIT.
-
-All three are cloned into `vendor/` at their upstream versions and are never vendored into
-this repo's history. Their licenses are their own.
-
-Adobe and Premiere Pro are trademarks of Adobe Inc. This project is not affiliated with,
-endorsed by, or sponsored by Adobe.
-
-## License
-
-Copyright © 2026 Faiz Kerawala. Licensed under the [GNU General Public License v3.0](LICENSE).
-
-This program is free software: you can redistribute it and/or modify it under the terms of
-the GPL as published by the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version. It is distributed **without any warranty** — without even
-the implied warranty of merchantability or fitness for a particular purpose. See the
-[LICENSE](LICENSE) for details.
-
-In practice: fork it, edit the skills, sell what you make with it. But if you **distribute** a
-modified version of the editor itself, that version has to ship its source under the GPL too.
-Reels you cut with it are your own work and carry no obligation — the license covers the tool,
-not its output.
-
-That scope is this repository: the skills, the brand layer, the scripts, and the templates.
-The engines in `vendor/` are cloned at their upstream versions and keep their own licenses
-(HyperFrames: Apache-2.0 · MCP Bridge for Premiere Pro: MIT) — both are one-way compatible
-with the GPL, and neither is redistributed here. The licensed typefaces aren't distributed
-here either; each machine supplies its own copies, and those EULAs are between you and their
-foundries.
+[WhisperX](https://github.com/m-bain/whisperX) · [HyperFrames](https://github.com/heygen-com/hyperframes) ·
+[Adobe Premiere Pro MCP](https://github.com/hetpatel-11/adobe_premiere_pro_mcp) · [Claude Video](https://github.com/bradautomates/claude-video) · GSAP · ffmpeg · OpenCV

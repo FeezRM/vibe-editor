@@ -1,0 +1,31 @@
+{% extends "_base.html" %}
+{% block style %}
+  .phrase { text-align: center; }
+  .line { display: block; white-space: nowrap; line-height: 1.02; text-transform: lowercase; letter-spacing: -0.03em; }
+  .w { display: inline-block; color: #FFFFFF;
+       text-shadow: 0 0 22px rgba(0,0,0,.9), 0 6px 26px rgba(0,0,0,.75), 0 0 40px rgba(255,255,255,.18); }
+  .w.acc-bad  { color: #EB0408; text-shadow: 0 0 22px rgba(0,0,0,.9), 0 0 36px rgba(235,4,8,.75); }
+  .w.acc-good { color: #00E800; text-shadow: 0 0 22px rgba(0,0,0,.9), 0 0 36px rgba(0,232,0,.7); }
+  .w.acc-hot  { color: #FFC531; text-shadow: 0 0 22px rgba(0,0,0,.9), 0 0 36px rgba(255,197,49,.7); }
+  .w.acc-em, .w.acc-bad, .w.acc-good, .w.acc-hot { font-family: 'CapSerif', 'Playfair Display', serif; font-style: italic; font-weight: 600;
+       font-size: 1.14em; letter-spacing: 0; text-transform: none; }
+  .l1 { font-size: {{ size_1 }}px; }
+  .l2 { font-size: {{ size_2 }}px; }
+{% endblock %}
+{% block body %}
+        <div class="phrase face">
+          <span class="line l1">{% for w in line_1 %}<span class="w{% if w.acc %} acc-{{ w.acc }}{% endif %}">{{ w.t }}</span>{% if not loop.last %} {% endif %}{% endfor %}</span>
+          {% if line_2 %}<span class="line l2">{% for w in line_2 %}<span class="w{% if w.acc %} acc-{{ w.acc }}{% endif %}">{{ w.t }}</span>{% if not loop.last %} {% endif %}{% endfor %}</span>{% endif %}
+        </div>
+{% endblock %}
+{% block tl %}
+      const words = gsap.utils.toArray(".w");
+      tl.addLabel("in", 0);
+      tl.from(".l1 .w", { opacity: 0, y: 28, scale: 0.94, filter: "blur(10px)", duration: ENTER, ease: ease.snap, stagger: 0.06 }, 0);
+      {% if line_2 %}
+      tl.from(".l2 .w", { opacity: 0, y: 34, scale: 0.92, filter: "blur(12px)", duration: ENTER + 0.06, ease: ease.snap, stagger: 0.07 }, at(0, 0.22));
+      {% endif %}
+      // a single settle so the lockup breathes once, then holds still
+      tl.to(".phrase", { scale: 1.015, duration: 0.9, ease: "sine.inOut" }, ENTER + 0.3);
+      tl.addLabel("hold", ENTER + 0.5);
+{% endblock %}

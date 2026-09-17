@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+{% block style %}
+  .c { position: absolute; width: 90px; height: 90px; border: 6px solid rgba(255,255,255,.92); }
+  .tl { left: 70px; top: 300px; border-right: 0; border-bottom: 0; }
+  .tr { right: 70px; top: 300px; border-left: 0; border-bottom: 0; }
+  .bl { left: 70px; bottom: 380px; border-right: 0; border-top: 0; }
+  .br { right: 70px; bottom: 380px; border-left: 0; border-top: 0; }
+  .rec { position: absolute; left: 96px; top: 330px; display: flex; align-items: center; gap: 14px; font-size: 34px; font-weight: 700; color: #fff; letter-spacing: .12em; }
+  .dot { width: 22px; height: 22px; border-radius: 50%; background: #EB0408; box-shadow: 0 0 18px rgba(235,4,8,.9); }
+  .tc { position: absolute; right: 96px; top: 334px; font-size: 30px; color: #fff; letter-spacing: .08em; }
+{% endblock %}
+{% block body %}
+        <div class="c tl"></div><div class="c tr"></div><div class="c bl"></div><div class="c br"></div>
+        <div class="rec ui"><div class="dot"></div>REC</div>
+        {% if timecode %}<div class="tc mono" id="tc">{{ timecode }}</div>{% endif %}
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      tl.from(".c", { opacity: 0, scale: 1.4, duration: 0.3, ease: ease.snap, stagger: 0.04 }, 0);
+      tl.from(".rec", { opacity: 0, x: -10, duration: 0.3 }, 0.1);
+      const blinks = Math.ceil(D / 1.0) - 1;
+      tl.to(".dot", { opacity: 0.15, duration: 0.5, ease: "steps(1)", repeat: blinks, yoyo: true }, 0.3);
+      tl.to(".c", { scale: 1.02, duration: 1.4, ease: "sine.inOut", repeat: Math.ceil(D / 2.8) - 1, yoyo: true }, 0.3);
+{% endblock %}

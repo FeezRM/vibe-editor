@@ -89,14 +89,21 @@ Adobe Premiere Pro Captured Audio/
 
 # Licensed font binaries — commercial EULAs forbid redistribution.
 # Each machine supplies its own copies into <project>/fonts/.
-# See the font rules in .claude/skills/ig-show/reference/PIPELINE.md
+# See the font rules in docs/style/PIPELINE.md
 **/fonts/*.otf
 **/fonts/*.ttf
 **/fonts/*.woff
 **/fonts/*.woff2
+# OFL faces shipped with a preset are redistributable and load-bearing for the render
+!presets/**/fonts/*.ttf
 !**/fonts/.gitkeep
 
 # --- OS cruft ---------------------------------------------------------------
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local toolchain / scratch
+.venv-whisperx/
+projects/_preset-test/
+__pycache__/

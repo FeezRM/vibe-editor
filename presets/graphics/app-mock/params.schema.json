@@ -1,0 +1,70 @@
+{
+  "title": "app-mock \u2014 a REAL screenshot inside a phone frame, optional scroll and one annotation box",
+  "type": "object",
+  "required": [
+    "screenshot"
+  ],
+  "properties": {
+    "screenshot": {
+      "type": "string",
+      "x-asset": true
+    },
+    "width": {
+      "type": "integer",
+      "default": 470
+    },
+    "tilt": {
+      "type": "number",
+      "default": -3
+    },
+    "scroll_px": {
+      "type": "integer",
+      "default": 0
+    },
+    "annot": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "w": {
+          "type": "number"
+        },
+        "h": {
+          "type": "number"
+        },
+        "label": {
+          "type": "string",
+          "x-real": true
+        },
+        "cls": {
+          "type": "string",
+          "enum": [
+            "good",
+            "bad"
+          ]
+        }
+      }
+    },
+    "reveal_at": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "[scroll start, annotation]"
+    }
+  },
+  "x-placements": [
+    "inline",
+    "beside-l",
+    "beside-r",
+    "cutaway"
+  ],
+  "x-default-placement": "inline",
+  "x-events": [
+    "reveal_at"
+  ]
+}

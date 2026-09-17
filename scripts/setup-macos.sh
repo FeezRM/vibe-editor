@@ -57,6 +57,7 @@ Options:
   --skip-watch         Don't clone Claude Video or install the /watch skill
   --skip-skills        Clone the repos, but don't install any agent skills
   --skip-doctor        Don't run the post-install diagnostics
+  --skip-whisperx      Don't install the WhisperX transcript engine
   -h, --help           Show this help
 EOF
 }
@@ -68,6 +69,7 @@ while [[ $# -gt 0 ]]; do
     --skip-watch)       SKIP_WATCH=true ;;
     --skip-skills)      SKIP_SKILLS=true ;;
     --skip-doctor)      SKIP_DOCTOR=true ;;
+    --skip-whisperx)    SKIP_WHISPERX=true ;;
     -h|--help)          usage; exit 0 ;;
     *)                  usage; die "Unknown option: $1" ;;
   esac
@@ -294,6 +296,25 @@ else
 fi
 note "Make it yours:  node scripts/brand.mjs init   (colours, fonts, fps)"
 note "Then edit brand/BRAND.md for voice, banned visuals, and CTA."
+
+# -------------------------------------------------------------- whisperx ----
+# The transcript engine (word-level forced alignment). Needs Python 3.11 + uv; ~3.5 GB of models
+# download on first use. Skip with --skip-whisperx.
+if [[ "${SKIP_WHISPERX:-false}" != "true" ]]; then
+  if command -v uv >/dev/null 2>&1; then
+    if [[ ! -x "$REPO_ROOT/.venv-whisperx/bin/whisperx" ]]; then
+      info "Installing WhisperX into .venv-whisperx (Python 3.11)…"
+      ( cd "$REPO_ROOT" && uv venv --python 3.11 .venv-whisperx >/dev/null && uv pip install --python .venv-whisperx/bin/python whisperx >/dev/null ) \
+        && ok "WhisperX installed" || warn "WhisperX install failed — workflows/transcribe.py falls back to hyperframes transcribe"
+    else
+      ok "WhisperX present"
+    fi
+  else
+    warn "uv not found (brew install uv) — WhisperX not installed; transcript falls back to whisper.cpp"
+  fi
+  command -v jq >/dev/null 2>&1 || warn "jq not found (brew install jq) — run.sh needs it"
+  python3 -c "import cv2, numpy, jinja2" 2>/dev/null || warn "python3 needs opencv-python numpy jinja2 (pip3 install opencv-python numpy jinja2)"
+fi
 
 # ---------------------------------------------------------------- doctor ----
 

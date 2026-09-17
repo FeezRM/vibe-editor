@@ -1,0 +1,41 @@
+{% extends "_base.html" %}
+{% block style %}
+  .wall { position: absolute; left: 60px; right: 60px; top: 50%; transform: translateY(-50%);
+          display: grid; grid-template-columns: repeat({{ cols }}, 1fr); gap: 22px; }
+  .tile { position: relative; width: 100%; padding-top: {{ pad_pct }}%; border-radius: 18px; overflow: hidden; background: #1a1a1f;
+          box-shadow: 0 18px 40px rgba(0,0,0,.55); transform-origin: center; }
+  .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(1.15) contrast(1.06); }
+  .tile.hero { outline: 6px solid #FFC531; outline-offset: -6px; box-shadow: 0 0 40px rgba(255,197,49,.5), 0 18px 40px rgba(0,0,0,.55); }
+  .tile.dim img { filter: grayscale(1) brightness(.6); }
+  .strike { position: absolute; left: 40px; right: 40px; top: 50%; height: 14px; background: #EB0408; border-radius: 8px;
+            transform: translateY(-50%) rotate(-6deg); transform-origin: left center; box-shadow: 0 0 30px rgba(235,4,8,.7); }
+  .pl-beside-l .wall, .pl-beside-r .wall { position: static; transform: none; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+{% endblock %}
+{% block body %}
+        <div class="wall">
+          {% for im in images %}
+          <div class="tile t{{ loop.index0 }}{% if hero is not none and loop.index0 == hero %} hero{% elif hero is not none %} dim{% endif %}" style="transform: rotate({{ [-2.2, 1.6, -1.1, 2.4, -1.8, 1.2, -2.6, 1.9, -0.8][loop.index0 % 9] }}deg)">
+            <img src="{{ im.src }}" alt="" />
+          </div>
+          {% endfor %}
+          {% if strike %}<div class="strike"></div>{% endif %}
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      const tiles = gsap.utils.toArray(".tile");
+      tiles.forEach((t, i) => {
+        const tt = at(i, 0.05 + i * 0.09);
+        tl.from(t, { opacity: 0, scale: 0.7, y: 40, filter: "blur(6px)", duration: ENTER, ease: ease.snap }, tt);
+      });
+      {% if hero is not none %}
+      tl.addLabel("hero", at({{ images | length }}, 1.2));
+      tl.to(".tile.hero", { scale: 1.08, duration: 0.35, ease: ease.snap }, at({{ images | length }}, 1.2));
+      tl.to(".tile.dim img", { filter: "grayscale(1) brightness(.6)", duration: 0.4 }, at({{ images | length }}, 1.2));
+      tl.fromTo(".tile.dim img", { filter: "grayscale(0) brightness(1.15)" }, { filter: "grayscale(1) brightness(.6)", duration: 0.4 }, at({{ images | length }}, 1.2));
+      {% endif %}
+      {% if strike %}
+      tl.addLabel("strike", at({{ images | length }}, 1.4));
+      tl.from(".strike", { scaleX: 0, duration: 0.42, ease: "power4.inOut" }, at({{ images | length }}, 1.4));
+      {% endif %}
+{% endblock %}

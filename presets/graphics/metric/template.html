@@ -1,0 +1,31 @@
+{% extends "_base.html" %}
+{% block style %}
+  .mt { text-align: center; }
+  .big { display: inline-flex; align-items: baseline; white-space: nowrap; font-size: {{ size }}px; font-weight: 900; color: #FFC531; letter-spacing: -0.04em; line-height: 1;
+         text-shadow: 0 0 30px rgba(255,197,49,.55), 0 8px 30px rgba(0,0,0,.8); }
+  .big .u { font-size: 0.42em; color: #FFFFFF; margin-left: 12px; font-weight: 800; letter-spacing: -0.02em; }
+  .lbl { font-size: 30px; letter-spacing: .18em; font-weight: 600; text-transform: uppercase; color: #FFFFFF; margin-top: 14px;
+         text-shadow: 0 4px 18px rgba(0,0,0,.8); }
+  .src { font-size: 22px; color: rgba(255,255,255,.7); margin-top: 8px; text-shadow: 0 4px 18px rgba(0,0,0,.8); }
+  .pl-beside-l .big, .pl-beside-r .big { font-size: {{ (size * 0.62) | int }}px; }
+{% endblock %}
+{% block body %}
+        <div class="mt">
+          <div class="big face"><span id="val">{{ prefix }}{{ '0' }}</span><span class="u">{{ unit }}</span></div>
+          {% if label %}<div class="lbl ui">{{ label }}</div>{% endif %}
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      const target = {{ value }}, prefix = {{ prefix | tojson }}, decimals = {{ decimals }};
+      const fmt = (v) => prefix + (decimals ? v.toFixed(decimals) : Math.round(v).toLocaleString("en-US"));
+      const el = document.getElementById("val");
+      const proxy = { v: 0 };
+      tl.from(".mt", { opacity: 0, y: 30, scale: 0.9, filter: "blur(8px)", duration: ENTER, ease: ease.snap }, 0);
+      tl.to(proxy, { v: target, duration: {{ count_s }}, ease: "power2.out", onUpdate: () => { el.textContent = fmt(proxy.v); } }, at(0, 0.2));
+      tl.eventCallback("onUpdate", () => { if (tl.time() < at(0, 0.2)) el.textContent = fmt(0); });
+      {% if label %}tl.from(".lbl", { opacity: 0, y: 12, duration: 0.3, ease: ease.soft }, 0.25);{% endif %}
+      tl.to(".big", { scale: 1.04, duration: 0.18, ease: "power2.in" }, at(0, 0.2) + {{ count_s }} - 0.1);
+      tl.to(".big", { scale: 1.0, duration: 0.32, ease: "power3.out" }, at(0, 0.2) + {{ count_s }} + 0.08);
+      tl.addLabel("landed", at(0, 0.2) + {{ count_s }});
+{% endblock %}

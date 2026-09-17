@@ -9,7 +9,7 @@
  *   node scripts/brand.mjs check    validate without writing
  *
  * `build` does NOT duplicate the design system. It loads the skin stylesheet from
- * .claude/skills/ig-show/reference/tokens-<skin>.css and substitutes values inside its
+ * docs/style/tokens-<skin>.css and substitutes values inside its
  * :root block, so every class definition stays in exactly one place. Add a rule to the
  * skin file and it flows through automatically.
  *
@@ -28,10 +28,10 @@ const BRAND_DIR = join(ROOT, "brand");
 const CONFIG = join(BRAND_DIR, "brand.json");
 const OUT = join(BRAND_DIR, "tokens.css");
 const SKIN = (s) =>
-  join(ROOT, ".claude", "skills", "ig-show", "reference", `tokens-${s}.css`);
+  join(ROOT, "docs", "style", `tokens-${s}.css`);
 
 /* viral is the default: it is the one derived by measurement from reels that
-   actually performed (see ig-show/reference/TEARDOWN.md). analog and digital
+   actually performed (see docs/style/TEARDOWN.md). analog and digital
    are kept for projects already built against them. */
 const SKINS = ["viral", "analog", "digital"];
 
@@ -314,7 +314,7 @@ function validate(b) {
   // House rules, enforced as warnings so a fork can knowingly break them.
   // The off-white/off-black rule belongs to the instrument skins. The viral
   // skin impersonates real app UI, which uses pure white on near-black, so
-  // warning about it there would be wrong (see ig-show/reference/TEARDOWN.md §6).
+  // warning about it there would be wrong (see docs/style/TEARDOWN.md §6).
   if (b.skin !== "viral") {
     if (p.ground.toLowerCase() === "#000000")
       warnings.push("palette.ground is pure black — it reads flat and digital. Prefer a warm near-black.");

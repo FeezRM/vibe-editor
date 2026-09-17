@@ -1,0 +1,33 @@
+{% extends "_base.html" %}
+{% block style %}
+  .phone { position: relative; width: {{ width }}px; aspect-ratio: 9 / 19.5; background: #000; border: 10px solid #1C1C1F;
+           border-radius: 54px; overflow: hidden; box-shadow: 0 34px 70px rgba(0,0,0,.6); margin: 0 auto; transform-origin: center; }
+  .screen { position: absolute; inset: 0; overflow: hidden; border-radius: 44px; }
+  .screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 116px; height: 30px; background: #000; border-radius: 16px; z-index: 5; }
+  .annot { position: absolute; border: 4px solid #00E800; border-radius: 10px; box-shadow: 0 0 24px rgba(0,232,0,.55); }
+  .annot.bad { border-color: #EB0408; box-shadow: 0 0 24px rgba(235,4,8,.55); }
+  .alabel { position: absolute; font-size: 24px; color: #fff; background: #0A0A0B; padding: 8px 14px; border-radius: 8px; white-space: nowrap; }
+  .pl-inline .phone { position: absolute; left: 50%; top: 40px; transform: translateX(-50%) rotate({{ tilt }}deg); width: 560px; }
+  .pl-cutaway .phone { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate({{ tilt }}deg); width: 620px; }
+  .pl-beside-l .phone, .pl-beside-r .phone { width: 300px; transform: rotate({{ tilt }}deg); }
+{% endblock %}
+{% block body %}
+        <div class="phone ui">
+          <div class="notch"></div>
+          <div class="screen"><img src="{{ screenshot }}" alt="" />
+            {% if annot %}<div class="annot {{ annot.cls | default('good') }}" style="left:{{ annot.x }}%; top:{{ annot.y }}%; width:{{ annot.w }}%; height:{{ annot.h }}%"></div>
+            {% if annot.label %}<div class="alabel" style="left:{{ annot.x }}%; top: calc({{ annot.y + annot.h }}% + 10px)">{{ annot.label }}</div>{% endif %}{% endif %}
+          </div>
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      tl.from(".phone", { opacity: 0, y: 60, scale: 0.92, filter: "blur(8px)", duration: ENTER + 0.05, ease: ease.snap }, 0);
+      {% if scroll_px %}tl.to(".screen img", { y: -{{ scroll_px }}, duration: {{ duration * 0.6 }}, ease: "power1.inOut" }, at(0, 0.6));{% endif %}
+      {% if annot %}
+      tl.addLabel("annot", at(1, 0.8));
+      tl.from(".annot", { scale: 1.3, opacity: 0, duration: 0.34, ease: ease.snap }, at(1, 0.8));
+      {% if annot.label %}tl.from(".alabel", { opacity: 0, y: -8, duration: 0.28, ease: ease.soft }, at(1, 0.8) + 0.14);{% endif %}
+      {% endif %}
+{% endblock %}

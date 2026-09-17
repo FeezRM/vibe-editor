@@ -1,0 +1,14 @@
+{
+  "title": "thumb-wall — a grid of REAL images; optionally one hero (gold outline, others desaturate) or a red strike through all",
+  "type": "object", "required": ["images"],
+  "properties": {
+    "images": { "type": "array", "minItems": 2, "maxItems": 12, "x-asset": true,
+                "items": { "type": "object", "required": ["src"], "properties": { "src": { "type": "string" }, "provenance": { "type": "string" } } } },
+    "cols": { "type": "integer", "default": 3, "minimum": 2, "maximum": 4 },
+    "pad_pct": { "type": "number", "default": 56.25, "description": "height as % of width: 56.25 = 16:9, 133.3 = 3:4, 177.8 = 9:16" },
+    "hero": { "type": ["integer", "null"], "default": null },
+    "strike": { "type": "boolean", "default": false },
+    "reveal_at": { "type": "array", "items": { "type": "number" }, "description": "one per image, then one for hero/strike" }
+  },
+  "x-placements": ["cutaway", "beside-l", "beside-r"], "x-default-placement": "cutaway", "x-events": ["reveal_at"]
+}

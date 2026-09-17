@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="tokens.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'CapSans'; src: url('fonts/Inter.ttf') format('truetype'); font-weight: 100 900; font-display: block; }
+      @font-face { font-family: 'CapSerif'; src: url('fonts/PlayfairDisplay-Italic.ttf') format('truetype'); font-weight: 400 900; font-style: italic; font-display: block; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: transparent; }
+      #root { position: absolute; inset: 0; overflow: hidden; }
+      .face { font-family: 'CapSans', 'Inter', sans-serif; font-weight: 800; letter-spacing: -0.03em; }
+      .serif { font-family: 'CapSerif', 'Playfair Display', serif; font-style: italic; font-weight: 600; letter-spacing: 0; }
+      .ui   { font-family: 'CapSans', 'Inter', sans-serif; }
+      .card-s { background: linear-gradient(180deg, #12223D 0%, #0B1628 100%); border: 1px solid #27395E; border-radius: 30px;
+                box-shadow: 0 30px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07); }
+      .hdr-s { display: flex; align-items: center; gap: 14px; font-size: 26px; letter-spacing: .16em; text-transform: uppercase;
+               color: #9DBBFF; font-weight: 600; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,.1); margin-bottom: 10px; }
+      .hdr-s .spark { color: #FFC531; font-size: 30px; }
+      .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+      /* placement — the plan decides; the preset never moves itself */
+      .pl { position: absolute; }
+      .pl-beside-l { top: {{ beside_top }}px; left: {{ beside_inset }}px; width: {{ beside_width }}px; }
+      .pl-beside-r { top: {{ beside_top }}px; right: {{ beside_inset }}px; width: {{ beside_width }}px; }
+      .pl-cutaway  { inset: 0; }
+      .pl-inline   { left: 50%; top: {{ inline_top }}px; transform: translateX(-50%); width: {{ inline_width }}px; }
+      .pl-wash     { inset: 0; }
+      .surface { background: #121216; border: 1px solid #2A2A31; border-radius: 28px; }
+      .lift { box-shadow: 0 30px 60px rgba(0,0,0,.55), 0 8px 18px rgba(0,0,0,.4); }
+      {% block style %}{% endblock %}
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="{{ id }}" data-start="0" data-duration="{{ '%.3f' % duration }}"
+         data-width="1080" data-height="1920" data-fps="{{ fps }}">
+      <div class="pl pl-{{ placement }}" id="pl">
+{% block body %}{% endblock %}
+      </div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = {{ '%.3f' % duration }};
+      const EV = {{ reveal_at | tojson }};
+      const tl = gsap.timeline({ paused: true });
+      const ease = { in: "power3.out", soft: "power2.out", snap: "power4.out" };
+      const ENTER = {{ entrance }};
+      function at(i, fallback) { return (EV && EV.length > i) ? EV[i] : fallback; }
+{% block tl %}{% endblock %}
+      tl.addLabel("end", D);
+      window.__timelines["{{ id }}"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,285 +1,96 @@
 # CLAUDE.md — vibe-editor
 
-Agent-driven short-form video editing. **HyperFrames** (HTML → alpha video) draws the motion
-graphics; **Adobe Premiere Pro over MCP** does everything else on the live timeline.
+One raw file in, one postable vertical reel out. **Eight nodes run in order on every job; each reads
+a file and writes a file.** The preset says WHAT (looks and numbers), the lane says HOW (the app).
+Every rule has one home; this file points at it and repeats nothing.
 
-`README.md` is the human-facing setup and product doc. **This file is the operating manual:**
-what is already decided, what this machine actually does, and what has burned previous runs.
-
----
-
-## First: the skills own the craft — route, don't freestyle
-
-Eight house-style skills in `.claude/skills/` encode the workflow, and they are the source of truth.
-**Do not invent an editing approach, a graphic design, or a caption spec from scratch.** Find
-the owner and follow it.
-
-| Request | Skill |
-|---|---|
-| A whole video, an edit plan, "where do I start" | **`ig-reel`** — orchestrator, blueprint, sequence + track setup |
-| **Visual hook, opening recut, first 8 seconds, Trial Reel variants** | **`ig-hook`** — hook packet, candidate lab, cross-engine direction + QA |
-| Remove silence/filler, tighten the spine | **`ig-cut`** (step 1) |
-| Captions: build, timing, styling, placement | **`ig-captions`** (step 2) |
-| Music, ducking, SFX, the mix | **`ig-sound`** (steps 3 + 5) |
-| **Motion graphics, overlays, mockups, charts** | **`ig-show`** (step 4) — the one that decides quality |
-| Boring, drags, needs energy, zoom pulses | **`ig-pacing`** (step 6) |
-| QA and export | **`ig-delivery`** |
-| Premiere MCP setup / bridge troubleshooting | **`premiere-pro-mcp`** |
-
-Single-phase request → go straight to that phase's skill. Whole-video request → `ig-reel`,
-which must dispatch the unlocked first eight seconds to `ig-hook` before the main sequence.
-
-`ig-hook/` owns the opening mode and 0–8 second sequence. `ig-show/reference/` holds the
-motion-graphics spec. Read the latter in this order:
-`SAMPLES.md` (**the four reels torn down structurally** — persistent object, motif, beat map,
-technique index; read before planning anything), `FRAME-CONTRACTS.md` (**the four spatial
-architectures — declaring one is mandatory**), `TEARDOWN.md` (the style measurements behind
-SAMPLES.md, and why the previous style failed), `DEVICES.md` (spoken line → object on
-screen), `BLOCKS.md` (15 blocks), `MOTION-LANGUAGE.md`, `TEXTURE.md`,
-`PIPELINE.md` (build/render/handoff mechanics + failure table).
-Read `VISUAL-HOOK.md` only when `ig-hook` selects **LOCKUP-FIRST**.
-
-### Precedence, lowest to highest
-
-```
-repo defaults (skills) → brand/ → projects/<slug>/tokens.css + MOTION-PLAN.md → this conversation
-```
-
-Read `brand/BRAND.md` and `brand/brand.json` **before planning or building anything.** Where
-`brand/` contradicts a skill default, `brand/` wins — and say so out loud rather than
-silently following the default.
-
-### Where the docs disagree, these win
-
-The repo has been corrected in place several times and older prose survives in places. When
-you hit a conflict, the later, measured figure is authoritative:
-
-| Topic | Stale | Use |
-|---|---|---|
-| Pattern-interrupt interval | "3–5s" (README, old SOP) | **~1.5s average, never past ~2s static** (`ig-pacing`) |
-| Caption band | "45–60%", "y 864–1152" | **y 920–1130** on 1080×1920 (`ig-captions`) |
-| Graphics per 30s | "≤8" (README) | **`brand.json` `density.maxGraphicsPer30s: 12`** — brand/ outranks README |
-| `@font-face` | "never write one, it kills the stylesheet" (`PIPELINE.md` §1) | On hyperframes ≥0.7.108 lint *demands* one for non-auto-resolving families. Prefer auto-resolving families; use `@font-face` at a local file only for a licensed face, and **verify with a rendered frame** (`ig-show` §4) |
-| Composition granularity | "one HTML file per graphic" | **1–3 SCENES per video**, each one persistent object through a labelled state machine (`ig-show` §4). The old rule is why the output was a slideshow |
-| Hook shape | "every Reel opens with one static lockup" | **`ig-hook` selects receipt, comparison, demonstration, role-play, interface, pattern-break, or lockup; the hook is the full 0–8 second sequence** |
-| Hook lockup type | 96/104px | **108/118px**, measured (`VISUAL-HOOK.md`) |
-| Assets you don't have | "ask the creator, or build nothing" | **the acquisition ladder** — on disk → extract from footage → capture a real UI → look it up → generate → ask → build nothing (`ig-show` §2) |
-| Density | "a graphic is on screen ≥85%" | "**one object** is on screen ≥85% and changes state every ~1.5s" — the first is satisfied by 12 unrelated cards |
+`README.md` is the human setup doc. `REWORK-PLAN.md` is why the repo looks like this.
 
 ---
 
-## Known environment defects — verified, not theory
-
-Reproduced on Windows 11 with Premiere 26.x, and each one has silently produced a false
-"verified" in a past run. **Check them on your machine before you trust a green result**;
-they may or may not reproduce on yours, and that is exactly the point — none of them
-announces itself.
-
-1. **`export_frame` returns `{"success": true}` and writes nothing.** Two failure modes:
-   backslash paths get read as escapes and mangled (`\v`, `\f`), *and* the host exporter is
-   broken even with a clean path. Always pass **forward slashes**, then:
-   ```bash
-   test -f "<path>" || echo "export_frame LIED"
-   ```
-   Fallback that works — composite the overlay over a real A-roll frame with ffmpeg:
-   ```bash
-   ffmpeg -y -ss <t> -i <a-roll> -ss <t> -i <overlay.mov> \
-     -filter_complex "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];\
-     [1:v]format=rgba[ov];[bg][ov]overlay=0:0" -frames:v 1 out.png
-   python analysis/measure.py out.png 0
-   ```
-2. **`encodeSequence` can throw — Premiere then cannot export the sequence at all.** The
-   workaround is to rebuild the spine outside Premiere: read every V1 clip's source in-point,
-   scale and position back over MCP with `get_clip_properties`, then reassemble with ffmpeg.
-   That script is per-project (it hardcodes your source path and clip table) — write it into
-   `analysis/`, which is gitignored for exactly this reason. If a real export is required,
-   hand the user *File → Export → Media*; never report an export that didn't happen.
-3. **Re-rendering a `.mov` that Premiere has open fails at ~90%** with
-   `EPERM: … rename … .hf-transaction-XXXX/x.mov -> x.mov`. The **old file survives**, so
-   anything you check afterwards is the previous render and the log tail looks normal.
-   Render to a new filename (`07-hook-v2.mov`) and swap the clip, or take the item offline
-   first. After any re-render, check the output's **timestamp** before trusting a frame from it.
-
-**The rule behind all three: a verification step that cannot fail is not a verification
-step.** Verify with pixels and file timestamps, never with a tool's return code.
-
----
-
-## Premiere MCP — non-negotiables
-
-- **`verify_premiere_connection` before anything else.** Read-only; reports build, open
-  project, active sequence. If it fails the bridge is down: Premiere open → project open →
-  *Window → Extensions → MCP Bridge (CEP)* → Temp Directory matches `PREMIERE_TEMP_DIR` in
-  `.mcp.json` → *Start Bridge*. Don't edit around a dead bridge.
-- Attach `premiere://config/get_instructions` before project-modifying work; it overrides
-  guesses made anywhere else.
-- **It edits the live project. No dry run, no agent-controlled undo** — your calls share one
-  history with the user's Ctrl-Z. Before a destructive pass, state what you're about to do
-  and how many operations it is, and have the user save.
-- **Timecodes are timeline frames, not source frames.** Read positions back with
-  `get_clip_properties` / `get_clip_at_position` instead of computing them.
-- **Never assume a track index exists** — `add_track`, then confirm with
-  `list_sequence_tracks`. Two clips can't share a start frame on one track.
-- **Premiere generates nothing** — no transcription, no images, no music. Transcribe with
-  `npx hyperframes transcribe`; generate assets via the `media-use` skill into
-  `projects/<slug>/assets/`, then `import_media`.
-- **Never scale, reposition, or add effects to a rendered graphic in Premiere.** It was
-  composed at full frame. Fix the composition and re-render.
-- Don't reach for After Effects round-trips — `import_ae_comps` is unadvertised and `.aep`
-  imports can wedge the bridge.
-- When a call fails twice the same way, run the CEP panel's **Run Diagnostics** and report
-  what it says instead of retrying a third time.
-
-**Track architecture** (each recurring graphic type gets its own track — this is deliberate):
+## The pipeline
 
 ```
-V1 A-roll · V2 B-roll/cutaways · V3 primary graphics (alpha) · V4 secondary · V5+ more
-CAP native captions (separate from graphics)
-A1 voice · A2 voice alt · A3 SFX · A4 SFX · A5 music · A6 spare
+raw → 01 intake → 02 transcript → 03 rough cut → 04 captions → 05 graphics → 06 audio → 07 pacing → 08 export
+        RUN.md     words.json      cuts.json      captions.json  graphics-plan.json  voice-gain.json  cuts.json(zoom)  outputs/<job>.final.mp4
+                   segments.json   preview/spine  renders/captions  renders/g*.mov   sfx-plan.json    preview/*        review/final-sheet.png
 ```
 
----
+| # | Node | Script(s) | Gate |
+|---|---|---|---|
+| 01 | intake | `workflows/new-job.py <src> --slug <job> [--brief …] [--lane] [--tier]` | job folder + `RUN.md` |
+| 02 | transcript | `workflows/transcribe.py` (WhisperX large-v3, int8, silero VAD) | `validate-transcript.py` |
+| 03 | rough cut | `workflows/rough-cut.py --review` → `lanes/ffmpeg/assemble.py --stage spine` | `validate-edl.py`; zero silences ≥ 0.45 s in the spine |
+| 04 | captions | `plan-captions.py` → `build-captions.py` | timing within 1 frame; `measure.py` on the composite |
+| 05 | graphics | `draft-plan.py` (or an agent-authored plan) → `validate-plan.py` → `face-frame.py` → `build-graphics.py` → `graphics-qa.py` → `fix-plan.py`, **≤ 3 rounds** | `graphics_qa` = zero objective defects |
+| 06 | audio | `voice-gain.py` (measured LUFS) → `sfx-plan.py` (from the placed graphics) | loudness within ±1 LU |
+| 07 | pacing | `pacing-audit.py --fix` (zoom punches into `cuts.json`) | zero gaps > 2.0 s |
+| 08 | export | `finalize.sh` → `verify-final.py` | file exists, newer than the run, duration = EDL, 0 silences |
 
-## Commands
+**`./run.sh <job>` runs all of it.** `--to captions` stops before graphics so an agent can author the
+plan; `--from graphics` resumes. `--lane premiere` replays the EDL onto a Premiere sequence and falls
+back to ffmpeg when the bridge is down. `tests/regress.sh` must pass before any change to
+`presets/` or `workflows/` is called done.
 
-Toolchain present and verified here: Node 24.12, ffmpeg 8.1.1, Python 3.14. `hyperframes` is
-**not** installed globally — `npx hyperframes` resolves the registry package (npx-cached);
-`vendor/hyperframes` is an upstream monorepo clone, not the CLI you invoke.
-
-```bash
-# brand — the only place the look is configured
-node scripts/brand.mjs init|scaffold|build|show|check   # build: brand.json -> brand/tokens.css
-
-# graphics
-npx hyperframes lint  projects/<slug>          # structure, no Chrome needed
-npx hyperframes check projects/<slug>          # + runtime/layout, needs Chrome
-npx hyperframes snapshot projects/<slug> --at 0.2,0.6,1.4   # NO -c on 0.8.4; snapshots index.html
-python analysis/motion-density.py projects/<slug>/compositions/*.html   # the motion floor
-npx hyperframes render projects/<slug> -c compositions/NN-block.html \
-  --format mov --fps 30 -o projects/<slug>/renders/NN-block.mov
-npx hyperframes transcribe <file>              # word-level timestamps; Premiere has none
-
-# measurement (don't eyeball anything with a number in its spec)
-python analysis/measure.py <frame-or-video> <t1,t2,...>   # caption cap height + line width
-python analysis/build-captions.py <words.json> <out.html> [--duration S]
-
-# diagnostics
-npx hyperframes doctor
-npm --prefix vendor/adobe-premiere-pro-mcp run setup:doctor:win
-```
-
-`--format mov` / `webm` carry alpha; `mp4` does not. `--resolution` is **rejected** for alpha
-output — author at 1080×1920 and omit it. **Render at the sequence fps** — a mismatch shows as
-overlay stutter and is not fixable at export.
-
-`analysis/` ships four tools — `measure.py`, `motion-density.py`, `build-captions.py`, and
-`validate-hook-packet.py` — and they are generic, argument-driven, and tracked. Everything else in
-that folder is **gitignored scratch**: single-frame compositors, preview builders, audit
-stills. Those carry a hardcoded source path and clip table for one project, so write a fresh
-one per project rather than trusting the numbers in an old one.
-
----
-
-## Layout and where things go
+## Where things live
 
 ```
-brand/            brand.json + BRAND.md → the ONLY place to change the look.
-                  tokens.css is GENERATED — never hand-edit it.
-.claude/skills/   the house style. Change brand/, not these, to restyle.
-templates/base/   lint-clean HyperFrames starter, 4 working blocks (see its README --
-                  they show the contract, and deliberately fail the motion floor)
-projects/<slug>/  one folder per video — gitignored, yours
-  hyperframes.json meta.json tokens.css index.html
-  compositions/   ONE FILE PER SCENE (1-3 per video), not one per graphic
-  assets/  textures/  renders/  (+ renders/IMPORT.md cue sheet)
-  MOTION-PLAN.md  MIX.md  DELIVERY.md  RESULT.md
-analysis/         scratch frame checks + measurement scripts (gitignored)
-exports/          finished masters out of Premiere
-samples/          reference reels — REAL people's accounts. Copy layout, never identity.
-vendor/           cloned engines, gitignored, managed by scripts/setup-*.
+presets/vertical/default/   WHAT — numbers.json (every constant), captions.md, creative-moves.md, sfx.json, fonts/, sfx/
+presets/graphics/<name>/    the ten basic-tier presets: template.html · params.schema.json · example.json · golden.png · README.md
+lanes/ffmpeg/               assemble.py (EDL replay + layers + mix), frame.py (the only way stills are made)
+lanes/premiere/             bridge.mjs (MCP client), replay-edl.mjs, export.mjs, lab-notes.md
+workflows/                  the nodes and gates above; argument-driven; no project data inside
+docs/style/                 the PREMIUM tier: SAMPLES, FRAME-CONTRACTS, TEARDOWN, DEVICES, BLOCKS, MOTION-LANGUAGE, TEXTURE, PIPELINE, HOOK-ENGINE
+docs/lab-notes-archive.md   every war story behind every lock, one anchor each
+brand/                      brand.json + BRAND.md → tokens.css (generated: node scripts/brand.mjs build)
+projects/<job>/             gitignored: RUN.md raw/ transcript/ cuts.json captions.json graphics-plan.json sfx-plan.json
+                            compositions/ renders/ assets/ audio/ preview/ outputs/ review/
+LANES.md                    step × lane matrix (✅ scripted · ✋ manual · ⚠️ unvalidated · ⛔ gap)
 ```
 
-Scaffold a project: `npx hyperframes init <slug> --example blank --non-interactive` from
-inside `projects/`, then copy `brand/tokens.css` → `<slug>/tokens.css` and `mkdir textures`.
+## Format table
 
-**Git hygiene:** this repo is the *tool*, not the footage. `.prproj`, all media, `projects/*`,
-`analysis/`, `renders/*`, `exports/*`, `vendor/`, `.mcp.json`, and font binaries are
-gitignored on purpose. Don't add them, and don't commit unless asked.
+| Format | Preset | Lane default | Notes |
+|---|---|---|---|
+| vertical (h > w) | `vertical/default` | ffmpeg | the only tuned preset; captions at y 920–1130, 1080×1920 |
+| horizontal | `vertical/default` numbers, no vertical placement rules | ffmpeg | works but untuned — see LANES.md |
 
----
+## Skills index (one line each — the SKILL.md is the home of the procedure)
 
-## Composition rules that break the render if ignored
+`ig-reel` orchestrates a whole video · `ig-hook` the first 8 s (mode + evidence, inside the plan) ·
+`ig-cut` rough cut · `ig-captions` captions · `ig-show` graphics (basic presets; premium by name) ·
+`ig-sound` audio · `ig-pacing` pacing · `ig-delivery` export/QA · `premiere-pro-mcp` bridge setup.
 
-- Root div carries `data-composition-id`, `data-width="1080"`, `data-height="1920"`,
-  `data-start`, `data-duration`, `data-fps`, directly in `<body>` (no `<template>` wrapper —
-  that's only for sub-compositions).
-- `gsap.timeline({ paused: true })`, registered as `window.__timelines["<id>"]`, built
-  **synchronously** — never in `async`, `setTimeout`, or a Promise.
-- **Deterministic only.** No `Math.random()`, no `Date.now()`, no `repeat: -1` (compute
-  `Math.ceil(duration / cycle) - 1`), fixed `seed` on every `feTurbulence`.
-- **Asset paths are root-relative** — `href="tokens.css"`, never `../tokens.css` (hard lint
-  error). No Google Fonts `<link>` or `@import`.
-- Lay the hero frame out in CSS, then `gsap.from()` into it. Animate visual properties only —
-  never `left`/`top`/`width`, `display`, `visibility`, or `.play()`.
-- **No exits *between* scenes — the cut is the exit**, and only a scene's final element may
-  fade. **Inside** a scene, elements persist, dim, desaturate, or are displaced; they never
-  disappear and reappear.
-- **Mark every beat with `tl.addLabel()`.** The labels are the scene's state machine.
-- **Sub-compositions are supported and were never used.** A scene is the parent; each device
-  inside it is a sub-comp with its own timeline. That is what makes a 40s composition
-  tractable.
-- Overlays stay `background: transparent`; full-frame cutaways use `.cutaway`. Grain over
-  transparency fringes in Premiere — put it on the graphic's own plate or drop it.
-- Compose from the `tokens.css` classes (`.ig-*`, `.reel`, `.metric`, `.pyramid`, `.chart`,
-  `.wash`, `.skel-*`, `.glow-*`, `.keep-*`, `.brace`, `.annot-*`, `.hook2`, `.tile-wall`) —
-  they already encode the correct metrics. **Most of that file is unused; read it before
-  writing CSS.**
+## Tiers
 
-**Font family strings** (not guessable, one is a trap): `Europa Grotesk SH` — **not**
-`Europa Grotesk SH Bol`, which is the truncated Windows GDI name Chrome won't match and which
-falls back to a serif in total silence. Display: `TacticSans-UltIt`. `Anton`, `Inter`, and
-`JetBrains Mono` auto-resolve. Licensed faces must be installed on the render machine. Use
-`--font-ui` (Inter) inside app mockups — the brand display face inside a mockup breaks the
-illusion instantly.
+**basic** (default): the ten presets in `presets/graphics/`, placement computed, captions from the
+transcript, one SFX per visual event. Consistent and defect-free is the bar.
+**premium** (opt-in by name in the brief): `docs/style/` — frame contracts, 1–3 persistent-object
+scenes, the motion floor (`workflows/motion-density.py`). Same plan → build → QA loop.
 
----
+## Locks — one line each; the story is in the archive
 
-## The quality bar, in one screen
+- `export_frame` on Premiere returns success and writes nothing → stills come only from `lanes/ffmpeg/frame.py`. archive#export-frame
+- Re-rendering a `.mov` Premiere holds open fails at 90 % and leaves the old file → `_hf.render` always writes a new filename and checks mtime. archive#rerender-eperm
+- `encodeSequence` can throw → `finalize.sh` falls back to the ffmpeg lane; never report an export that is not on disk. archive#encode-throws
+- whisper.cpp word timing drifts 100–300 ms → WhisperX is the transcript engine; hyperframes transcribe is the fallback. archive#whisper-drift
+- The caption/graphics type is Inter 800 lowercase + Playfair Display Italic accents, both local OFL files in `presets/vertical/default/fonts/` (Anton caps was rejected on sight; italics don't auto-resolve). archive#caption-font
+- `hyperframes render` needs ~10 GB temp without `--low-memory-mode` → always passed. archive#low-memory
+- `crop` w/h are evaluated at init (no `t`) → zoom punches scale then crop to fixed source dims. archive#crop-expr
+- A Jinja expression outside `{{ }}` in a preset's script block throws before the timeline registers → the render is silently empty; `build-graphics --golden` catches it. archive#jinja-leak
+- `.metric` exists in `tokens.css` (a light pill) → presets never reuse tokens class names for their own containers. archive#tokens-collision
+- Caption entrances (slide/fade) were rejected twice → captions hard-cut only. archive#caption-motion
+- Two text layers never share a frame → presets with `x-mute-captions` add a mute window; captions are dropped, not hidden. archive#mute-windows
+- Never invent a metric, a screenshot, or a comparison from duplicate assets → `validate-plan.py` refuses placeholders; metrics need provenance. archive#no-fabrication
+- Handles from `samples/` never appear in a mockup → `creator.handle` only; `validate-plan.py` greps for them. archive#sample-handles
+- A graphic must not darken the frame → `graphics-qa.py` luma check (darkening > 25 % fails). archive#no-scrim
+- The footage is sometimes the receipt (he is holding the phone up) → don't add a receipt of the same object; punch in instead. archive#footage-is-receipt
 
-- **SHOW THE NOUN.** If the script names a thing, put that thing on screen, rebuilt faithfully.
-  If it names a number, draw the real measurement with real axes and units.
-- **The mute test disqualifies** *informational* decoration. Hide audio and captions — if the
-  frame still makes the point, keep it. If not, it's decoration: build nothing. **One
-  carve-out per video:** an emotional beat may carry feeling instead of fact (S2's fireworks,
-  S4's colour washes) if you can name the emotion in one word.
-- **Never invent a metric**, never ship a placeholder container (`Hook 1 / Hook 2`, empty
-  rows), never fake a comparison with duplicate assets. Verified sameness-as-proof requires
-  Hook Packet provenance. **Work the acquisition ladder before
-  you ask or omit** — extract frames from footage with ffmpeg or `/watch`, screenshot a real
-  interface with Chrome, look up a real public figure, generate a texture. Ask the creator
-  only for what is genuinely private.
-- **Declare a frame contract before you plan beats** — SPLIT-STAGE, NESTED-SCALE, TWO-WORLDS
-  or OBJECT-OVER-GROUND. A plan with no contract doesn't get built.
-- **Plan the entire video beat by beat before building one composition.** `MOTION-PLAN.md`,
-  one row per spoken beat, with a Change column. Read the Change column alone: if it reads
-  "card in, card out", it's a slideshow.
-- **ONE OBJECT is on screen ≥85% of runtime**, mutating. Not "a graphic" — one object.
-- **The motion floor is enforced, not advised:** `python analysis/motion-density.py` —
-  ≥25 tweens, ≥6 distinct animated properties, ≤50% fades, ≥1 element with depth, per scene.
-  The whole existing corpus fails it, including the best composition in it. That is the point.
-- One accent per meaning: red = bad, green = good, gold = the metric/winner. Surfaces are
-  **opaque hex — no `rgba()`**. No graphic may darken the frame.
-- Entrances 0.28–0.42s, hold ≥0.8s, no exits, never bounce/elastic/back.
-- Captions: the speaker's **exact words**, uncorrected. ONE line, 2–4 words, 88px
-  (`Europa Grotesk SH`), ≤78% frame width, y 920–1130, hard cut — never slide or fade.
-- Only one text layer at a time — a content card carrying its own copy gets a **caption mute
-  window** written into the MOTION PLAN.
-- Zero UI chrome. No watermark, follow banner, progress bar, or slide counter.
-- Every mockup account uses `creator.handle` from `brand/brand.json`. If it is blank, ask —
-  never invent one, and never lift one from `samples/`: a past build shipped a real person's
-  handle that way. Grep the compositions for it before you render.
-- Texture is mandatory. Perfectly smooth, perfectly flat output is what reads AI-generated;
-  `ig-show/reference/TEXTURE.md` and §3c of `ig-show` enumerate the tells.
+## What the agent does, and does not
 
-Blueprint-first, always: plan in text where changes are cheap, then touch the timeline where
-they are expensive. Fast mode ("just do it") shortens the approval step, not the quality bar.
+Does: create the job, run `./run.sh --to captions`, author `graphics-plan.json` from `captions.json`
+with **real material** (acquisition ladder: on disk → extract from footage → `workflows/capture-url.py`
+→ look it up → generate a texture → ask → build nothing), run `./run.sh --from graphics`, read
+`review/final-sheet.png`, hand the user the file.
+Does not: put a timing constant in a skill, author a composition by hand for a job, lower a gate,
+trust a tool's success flag, re-render onto an open file, put the plan in chat instead of the file.

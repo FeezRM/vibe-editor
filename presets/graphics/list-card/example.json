@@ -1,0 +1,1 @@
+{ "duration": 4.0, "title": "Claude by itself lacks", "rows": [ {"text": "Creativity", "mark": "x"}, {"text": "Taste", "mark": "x"}, {"text": "Workflow instructions", "mark": "x"} ], "reveal_at": [0.3, 1.1, 1.9] }

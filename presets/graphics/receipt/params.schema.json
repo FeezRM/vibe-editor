@@ -1,0 +1,57 @@
+{
+  "title": "receipt \u2014 one REAL still (screenshot, photo, document) held at a slight angle with a label pill",
+  "type": "object",
+  "required": [
+    "image"
+  ],
+  "properties": {
+    "image": {
+      "type": "string",
+      "x-asset": true
+    },
+    "label": {
+      "type": "string",
+      "x-real": true
+    },
+    "tilt": {
+      "type": "number",
+      "default": -2.5
+    },
+    "zoom": {
+      "type": "number",
+      "default": 0,
+      "description": "slow push, e.g. 1.12; 0 = none"
+    },
+    "zoom_origin": {
+      "type": "string",
+      "default": "50% 40%"
+    },
+    "reveal_at": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "[label, zoom start]"
+    },
+    "beside_max_h": {
+      "type": "integer",
+      "default": 600,
+      "description": "height cap in beside placement so the still stays clear of the caption band"
+    },
+    "inline_h": {
+      "type": "integer",
+      "default": 600,
+      "description": "inline placement crops the still to this height (top-anchored) so tall screenshots read"
+    }
+  },
+  "x-placements": [
+    "beside-l",
+    "beside-r",
+    "cutaway",
+    "inline"
+  ],
+  "x-default-placement": "inline",
+  "x-events": [
+    "reveal_at"
+  ]
+}
