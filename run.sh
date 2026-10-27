@@ -1,25 +1,23 @@
 #!/usr/bin/env bash
 # One-shot entry. Runs the nodes in order, stops at the first failing gate, prints the gate verbatim.
 #
-#   ./run.sh <job-dir> [--lane ffmpeg|premiere] [--tier basic|premium] [--from NODE] [--to NODE] [--no-auto-fix]
+#   ./run.sh <job-dir> [--lane ffmpeg|premiere] [--from NODE] [--to NODE]
 #
 # Nodes: transcript rough_cut captions graphics audio pacing export
-# The graphics node: (draft-plan if no plan) → validate → face-frame → build → qa → fix-plan, ≤3 rounds.
-# An agent in the loop authors graphics-plan.json before this script reaches `graphics` (run --to captions
-# first, plan with real material, then run --from graphics). Without an agent the deterministic drafter
-# and fixer converge on a defect-free basic-tier edit.
+# The mechanical work is scripted; the editing decisions are the agent's, made between runs from files:
+#   --to rough_cut   → read review/takes.md, decide the takes in cuts.overrides.json, re-run --from rough_cut
+#   --to captions    → write graphics-plan.json (and compositions/) against the samples, then --from graphics
+# With no graphics-plan.json the graphics node builds nothing: a clean cut with captions is a valid edit.
 set -euo pipefail
 export PYTHONUTF8=1   # review listings print "└"/"→"; a logged run on a cp1252 console crashed on them
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY=python3
-JOB=""; LANE=""; FROM="transcript"; TO="export"; AUTOFIX=1; MAX_ROUNDS=3
+JOB=""; LANE=""; FROM="transcript"; TO="export"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --lane) LANE="$2"; shift 2;;
-    --tier) TIER="$2"; shift 2;;
     --from) FROM="$2"; shift 2;;
     --to) TO="$2"; shift 2;;
-    --no-auto-fix) AUTOFIX=0; shift;;
     -*) echo "unknown flag $1" >&2; exit 64;;
     *) JOB="$1"; shift;;
   esac
@@ -76,30 +74,18 @@ if run_node captions; then
 fi
 if run_node graphics; then
   log graphics
-  [[ -f "$JOB/graphics-plan.json" ]] || $PY workflows/draft-plan.py "$JOB"
-  round=1; ok=0
-  while [[ $round -le $MAX_ROUNDS ]]; do
-    echo "-- graphics round $round"
+  if [[ -f "$JOB/graphics-plan.json" ]]; then
     $PY workflows/validate-plan.py "$JOB"
-    $PY workflows/face-frame.py "$JOB" >/dev/null
-    $PY workflows/build-graphics.py "$JOB" 2>&1 | grep -E "^  g|build-graphics|FAIL|Error" || true
-    if $PY workflows/graphics-qa.py "$JOB" --round "$round"; then ok=1; break; fi
-    if [[ $AUTOFIX -eq 1 ]]; then $PY workflows/fix-plan.py "$JOB" "review/qa-round-$round.json"; else break; fi
-    round=$((round+1))
-  done
-  if [[ $ok -eq 1 ]]; then
+    $PY workflows/build-graphics.py "$JOB" 2>&1 | grep -E "^  g|build-graphics|FAIL|Error|lint" || true
     $PY workflows/build-captions.py "$JOB" --keep-downstream | grep -E "muted|build-captions" || true   # apply mute windows
-    $PY - "$JOB" "$round" <<'EOF'
-import sys; sys.path.insert(0, "workflows"); from _lib import Job
-j = Job(sys.argv[1]); j.mark("graphics", "done", out="graphics-plan.json", rounds=int(sys.argv[2]))
-EOF
   else
-    $PY - "$JOB" "$round" <<'EOF'
-import sys; sys.path.insert(0, "workflows"); from _lib import Job
-j = Job(sys.argv[1]); j.mark("graphics", "blocked", rounds=int(sys.argv[2])); j.note("graphics", "blocked: defects remain after the review loop — see review/qa-round-*.json")
-EOF
-    echo "FAIL: graphics blocked after $MAX_ROUNDS rounds" >&2; exit 1
+    echo "no graphics-plan.json — no graphics (captions and the cut carry the video)"
+    echo '{"graphics": []}' > "$JOB/graphics-plan.json"
   fi
+  $PY - "$JOB" <<'EOF'
+import sys; sys.path.insert(0, "workflows"); from _lib import Job
+Job(sys.argv[1]).mark("graphics", "done", out="graphics-plan.json")
+EOF
   $PY lanes/ffmpeg/assemble.py "$JOB" --stage graphics --quiet
 fi
 if run_node audio; then
@@ -117,10 +103,8 @@ EOF
 fi
 if run_node pacing; then
   log pacing
-  $PY workflows/pacing-audit.py "$JOB" --fix
+  $PY workflows/pacing-audit.py "$JOB"                          # a report: punches are placed by hand (--zoom-at)
   $PY lanes/ffmpeg/assemble.py "$JOB" --stage spine --quiet   # zoom punches live in the EDL
-  $PY workflows/match-cuts.py "$JOB"   # measured on the spine: trims each cut to the same face size
-  $PY workflows/check-framing.py "$JOB" || { echo "FAIL: framing / zoom punches off the face" >&2; exit 1; }
 fi
 if run_node export; then
   log export

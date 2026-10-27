@@ -41,7 +41,6 @@ SW, SH = src_info["width"], src_info["height"]
 SFPS = float(src_info["fps"])
 stage_rank = ["spine", "captions", "graphics", "audio", "final"].index(a.stage)
 FR = N.get("framing", {})
-PC = N.get("pacing", {})
 
 inputs: list[str] = []
 input_opts: list[list[str]] = []
@@ -58,60 +57,33 @@ S = float(FR.get("scale", 1.0))
 clip_dir = job.p("preview", "clips")
 clip_dir.mkdir(parents=True, exist_ok=True)
 src_mtime = job.source.stat().st_mtime
-_ws = sorted(k["face"][2] for k in cuts["keep"] if k.get("face"))
-WREF = _ws[len(_ws) // 2] if _ws else None          # the median face width: every cut is matched to it
-if S > 1.0001 and WREF and FR.get("face_w"):
-    # frame to a face size, not a fixed zoom: a take shot from further back gets the same tight shot (9280 at 1.45×
-    # left the face 0.23 wide where 9278's was 0.27) — capped at framing.max_scale (2.0 on a 2160-wide source is 1:1 pixels)
-    S = min(max(S, float(FR["face_w"]) / WREF), float(FR.get("max_scale", 1.8)))
+# One fixed camera for the whole video: at framing.scale > 1 the window is placed once, on the median face across all
+# clips, so jump cuts change only the pose — the frame never glides, re-centres or resizes per clip.
+_fc = sorted(k["face"][:2] for k in cuts["keep"] if k.get("face"))
+_mx = sorted(f[0] for f in _fc)[len(_fc) // 2] if _fc else 0.5
+_my = sorted(f[1] for f in _fc)[len(_fc) // 2] if _fc else 0.42
+LX = min(max(_mx - 0.5 / S, 0.0), 1 - 1 / S) if S > 1.0001 else 0.0
+LY = min(max(_my - float(FR.get("face_y", 0.36)) / S, 0.0), 1 - 1 / S) if S > 1.0001 else 0.0
 listing = []
 for i, k in enumerate(cuts["keep"]):
     dur = k["out"] - k["in"]
     z = k.get("zoom")
     v = "setpts=PTS-STARTPTS"
     if z or S > 1.0001:
-        # base framing × punch, anchored on the face (cuts.json keep.face_in → face_out, from rough-cut): the window glides
-        # from where the face is on the clip's first frame to where it is on its last, so across every cut the face sits
-        # in the same place and only the pose changes (a framing that jumped at each cut read as a snap — 9278). With
-        # framing the face lands at (0.5, face_y); without, a punch keeps it where it is. zoompan, not scale+crop
-        # (archive#zoom-anchor). A punch snaps in on its word, holds, and eases back out before the cut.
-        f0 = (k.get("face_in") or k.get("face") or [0.5, 0.42])[:2]
-        f1 = (k.get("face_out") or k.get("face") or [0.5, 0.42])[:2]
-        g = f"clip(in/{SFPS:.3f}/{dur:.3f},0,1)"
-        fx, fy = f"({f0[0]:.4f}+({f1[0] - f0[0]:.4f})*{g})", f"({f0[1]:.4f}+({f1[1] - f0[1]:.4f})*{g})"
-        mid = (k.get("face") or [0.5, 0.42])[:2]
-        tx, ty = (0.5, float(FR.get("face_y", 0.36))) if S > 1.0001 else tuple(mid)
-        # the face the same size across cuts: the base scale follows face_in → face_out width toward the cut's median,
-        # within ±framing.size_match (takes shot at different distances jumped 11 % at a cut)
-        SB = f"{S:.4f}"
-        if S > 1.0001 and WREF:
-            w0 = (k.get("face_in") or k.get("face") or [0, 0, WREF])[2]
-            w1 = (k.get("face_out") or k.get("face") or [0, 0, WREF])[2]
-            m = float(FR.get("size_match", 0.1))
-            SB = f"({S:.4f}*clip({WREF:.4f}/({w0:.4f}+({w1 - w0:.4f})*{g}),{1 - m:.3f},{1 + m:.3f}))"
-        # match-cuts.py's measured trim (keep.fit = [first frame, last frame]): the prediction above is made on the
-        # source, the cut is judged on the framed spine — the loop closes the last few percent
-        fi, fo = (k.get("fit") or [1.0, 1.0])
-        if abs(fi - 1) > 1e-4 or abs(fo - 1) > 1e-4:
-            SB = f"({SB}*({fi:.4f}+({fo - fi:.4f})*{g}))"
-        zexpr = SB
+        # a punch (placed by hand, pacing-audit --zoom-at) snaps in on its word around the face and holds; the next
+        # jump cut resets it. zoompan, not scale+crop (archive#zoom-anchor).
+        zexpr = f"{S:.4f}"
         if z:
             A = z["at"] - tl.offsets[i]
             P, D = z["pct"] / 100.0, max(0.02, z["dur"])
             up = f"clip((in/{SFPS:.3f}-{A:.3f})/{D:.3f},0,1)"
             ramp = f"({up}*{up}*(3-2*{up}))"
-            OUT, HOLD = float(PC.get("zoom_out_s", 0.4)), float(PC.get("zoom_hold_s", 1.4))
-            o0 = min(A + D + HOLD, dur - OUT - 0.08)          # the punch is all the way out before the cut
-            if o0 > A + D:
-                dn = f"clip((in/{SFPS:.3f}-{o0:.3f})/{OUT:.3f},0,1)"
-                ramp = f"({ramp}*(1-{dn}*{dn}*(3-2*{dn})))"
-            zexpr = f"{SB}*(1+{P:.4f}*{ramp})"
-        # window left/top at the base scale follows the face path; a punch then zooms around the face measured at the
-        # punch (zoom.face): left' = P − (P − left)·S/zoom keeps P where it was on screen
-        lx, ly = f"({fx}-{tx:.4f}/{SB})", f"({fy}-{ty:.4f}/{SB})"
-        px, py = (z.get("face") or [None, None]) if z else (None, None)
-        xe = f"({px:.4f}-({px:.4f}-{lx})*{SB}/zoom)" if px is not None else lx
-        ye = f"({py:.4f}-({py:.4f}-{ly})*{SB}/zoom)" if py is not None else ly
+            # "out": the reel's opening move — start punched in and ease out to the base framing on the first word
+            zexpr = f"{S:.4f}*(1+{P:.4f}*(1-{ramp}))" if z.get("out") else f"{S:.4f}*(1+{P:.4f}*{ramp})"
+        # keep the anchor point P where it is on screen while zooming: left' = P − (P − left)·S/zoom
+        px, py = (z.get("face") or k.get("face") or [0.5, 0.42])[:2] if z else (None, None)
+        xe = f"({px:.4f}-({px:.4f}-{LX:.4f})*{S:.4f}/zoom)" if px is not None else f"{LX:.4f}"
+        ye = f"({py:.4f}-({py:.4f}-{LY:.4f})*{S:.4f}/zoom)" if py is not None else f"{LY:.4f}"
         v += (f",zoompan=z='{zexpr}':x='clip({xe}*iw,0,iw-iw/zoom)'"
               f":y='clip({ye}*ih,0,ih-ih/zoom)':d=1:s={W}x{H}:fps={SFPS:.3f}")
     else:

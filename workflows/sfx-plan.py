@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Node 06b — SFX derived from the PLACED graphics. graphics-plan.json → sfx-plan.json
 
-One sound per visual event, never per word: each graphic's entrance and each of its reveal events
-gets the verb its preset declares (or the plan's `sfx` override), mapped through presets/.../sfx.json
+Sound on the visual events, never per word: a kept preset's entrance and reveal events get the verb it declares,
+a composition written for the video only what the plan asks for (`sfx`, `sfx_events`), mapped through presets/.../sfx.json
 to a file in the job's assets/sfx/ (copied from the preset pack if absent). Density-capped at
 audio.max_sfx_per_10s by dropping the lowest-priority events. Music is opt-in: only when the brief
 names a file that exists in audio/.
@@ -25,35 +25,13 @@ verb_map = __import__("json").loads(preset_file(_preset, "sfx.json").read_text()
 plan = job.read_json("graphics-plan.json")
 tl = Timeline(job.read_json("cuts.json"))
 
-# entrance verb and per-event verb per preset; priority: higher survives the density cap
+# entrance verb and per-event verb for the kept presets; priority: higher survives the density cap. A composition written
+# for the video (`html`) gets sound only where the plan asks for it: `sfx` (entrance) and `sfx_events` (one per reveal_at).
 VERBS = {
-    "phrase":     ("pop",     None,     3),
-    "list-card":  ("whoosh",  "click",  2),
-    "flow":       ("slide",   "slide",  2),
     "thumb-wall": ("whoosh",  None,     2),
     "app-mock":   ("whoosh",  "click",  2),
-    "chat":       ("pop",     "pop",    3),
-    "metric":     ("tick",    "ding",   3),
-    "wash":       (None,      None,     1),
     "receipt":    ("shutter", None,     2),
-    "rec-frame":  ("click",   None,     1),
-    # demonstration presets: the entrance, then one hit per reveal (slash, feed, drop, break, merge, stamp, send)
-    "script-cut": ("whoosh",  "slide",  3),
-    "transform":  ("pop",     "whoosh", 2),
-    "drag-drop":  ("click",   "pop",    2),
-    "dead-space": ("whoosh",  "wrong",  3),
-    "layer-stack":("slide",   "pop",    2),
-    "stamp":      ("tick",    "ding",   3),
-    "phone-play": ("whoosh",  "pop",    2),
     "comment":    ("pop",     "click",  3),
-    "shatter":    ("riser",   "wrong",  3),
-    "split":      ("pop",     "tick",   3),
-    "pixel-quest":("pop",     "ding",   3),   # spawn pop; the bonk and the landing ding
-    "pixel-crowd":("pop",     "ding",   3),
-    "agent-chat": ("whoosh",  "pop",    3),
-    "ad-stack":   ("pop",     "whoosh", 3),   # each ad slams onto the pile
-    "bot-team":   ("pop",     "pop",    3),
-    "bg-swap":    (None,      "whoosh", 3),   # every background switch whooshes   # the team scene: a plan's sfx_events picks a verb per beat   # the phone slams up; each send / reply pops (a plan's sfx_events can vary it)
 }
 
 sfx_dir = job.p("assets", "sfx")
@@ -76,7 +54,7 @@ def resolve(verb):
 
 events = []
 for g in plan["graphics"]:
-    enter, per_event, prio = VERBS.get(g["preset"], ("pop", None, 1))
+    enter, per_event, prio = VERBS.get(g.get("preset"), (None, None, 2))
     if g.get("sfx") is not None:
         enter = g["sfx"] or None
     if enter:
@@ -91,9 +69,6 @@ for g in plan["graphics"]:
             verb = ev_verbs[i] if ev_verbs and i < len(ev_verbs) else per_event
             if not verb:
                 continue
-            if g["preset"] == "metric":
-                # the ding lands when the count finishes
-                r = r + float(g.get("params", {}).get("count_s", 1.2))
             f = resolve(verb)
             if f:
                 events.append({"cue": round(g["cue"] + r, 3), "verb": verb, "file": f, "graphic": g["id"], "prio": prio - 1, "db": A["sfx_db"] - 3})

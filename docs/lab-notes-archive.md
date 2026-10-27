@@ -1,7 +1,8 @@
-# Lab notes archive — the story behind every lock
+# Lab notes archive — the story behind every technical lock
 
-`CLAUDE.md` carries one line per lock and points here. Nothing in this file is a rule; the rules
-live at their homes. This is why they exist.
+`CLAUDE.md` carries one line per lock and points here. Nothing in this file is a rule; this is why the locks exist.
+Taste notes from earlier versions were removed in the overhaul — what an edit should look like now comes from
+`samples/STYLE.md`.
 
 ## export-frame
 Premiere's `export_frame` (MCP) returned `{"success": true}` and wrote nothing on Windows 11 /
@@ -25,21 +26,6 @@ never reports a file that is not on disk and newer than the run.
 (VAD + wav2vec2 forced alignment) measured 49 s for a 42 s clip on this M2 Pro with models cached.
 Lock: `workflows/transcribe.py` engine `whisperx`, `hyperframes` as fallback.
 
-## caption-font
-The first pipeline output used Anton ALL CAPS with wide word spacing (the old repo's spec) and the owner
-called it terrible on sight; graphics at 500 px / 34 px text in a 1080 frame read as “a box around text”.
-Measured against the reference (Jason's intro) and Faiz's own reels: both use a heavy geometric sans in
-sentence/lower case with an italic serif accent word, and cards at ~2× the size. Lock: Inter 800 lowercase +
-Playfair Display Italic (local OFL files), cards centred at 920 px with 42–48 px text, no provenance text on
-screen, and every look change is checked at full frame size, never on a contact sheet.
-
-## anton-font
-CLAUDE.md used to say Anton auto-resolves. hyperframes 0.8.36's deterministic font list is Inter,
-Montserrat, Outfit, Nunito, Oswald, League Gothic, Archivo Black, Space Mono, IBM Plex Mono, JetBrains
-Mono, EB Garamond, Playfair, Source Code Pro, Noto Sans JP, Roboto, Open Sans, Lato, Poppins — no
-Anton. Lock: `presets/vertical/default/fonts/Anton-Regular.ttf` (OFL) via a local `@font-face`
-named `CapFace`; the family string `Anton` is never used in a stack (lint flags it).
-
 ## low-memory
 `hyperframes render` estimated ~9.9 GB of temp frame storage for a 40 s alpha render and failed with
 9.7 GB free. Lock: `--low-memory-mode` always (streams frames; 22 s instead of 36 s here).
@@ -61,11 +47,6 @@ The `metric` preset used a `.metric` container and `brand/tokens.css` already de
 light frosted view-badge pill, so the number sat on a white pill. Lock: presets prefix their own
 containers (`.mt`, `.rc`, `.w`) and never reuse a tokens.css class name for a container.
 
-## caption-motion
-Match-cut chaining (`x: 120 → 0`) and a gentler `y: 26 → 0` slide were both rejected by the owner on
-sight as template effects. Lock: `build-captions.py` emits `tl.set(opacity 1)` / `tl.set(opacity 0)`
-only.
-
 ## mute-windows
 Two text layers in one frame was the most common reason a technically correct build looked cheap,
 and no automated check saw it because each layer was individually fine. Lock: presets declare
@@ -82,17 +63,6 @@ creator, work the ladder: disk → footage (`ffmpeg -ss`) → real UI (`workflow
 ## sample-handles
 A past build shipped a reference creator's real handle in a mockup. Lock: `creator.handle` from
 `brand/brand.json`; `validate-plan.py` greps every plan for handles found in `samples/*.md`.
-
-## no-scrim
-A `radial-gradient(… rgba(0,0,0,.9))` behind a profile grid dropped mean frame luma from 62 to 14
-for 9.9 s — the viewer saw the video get darker, not a graphic arrive. Lock: `graphics-qa.py` fails
-darkening > 25 %; brightening (a real white screenshot) is allowed up to 50 %.
-
-## footage-is-receipt
-On the fixture the plan put a `receipt` of the Aug 27 lock screen at 4.85 s, exactly where the
-speaker holds that phone up to camera; QA flagged 54–79 % face overlap on either side. The footage
-was already the receipt. Lock: `creative-moves.md` — if the footage shows the object, punch in
-(`pacing-audit.py --zoom-at`) instead of adding a graphic of it.
 
 ## premiere-2022-bridge
 On this Mac Premiere Pro 2022 (22.0) is installed; the MCP server (v1.2.0, tested by upstream on
@@ -123,16 +93,6 @@ overlap was separate: group end = last word end + hold, never clamped to the nex
 `transcribe.py --spine` → `spine-words.json` in timeline time, which `plan-captions.py` prefers, plus the clamp.
 Also: the orphan-merge joined a sentence's last word forward ("skill. Then I record"); it now joins backward.
 
-## act-it-out
-2026-09-28, 9077 v1: nine graphics, all real material, all gates green: an `agent-run` console with the job's
-real steps, a real skills-page screenshot zooming, the GitHub page scrolling in a phone, a 145 s `metric`, a
-Premiere timeline still zooming, a `scan` of the reel's frames, `rec-frame`, a `chat`. Creator: "6/10 … some
-visuals contain text, and don't really stand out, some are just image stills slowly zooming in. I want more
-motion graphics that visually demonstrate what I'm saying (if I say 'this hook is OVERPOWERED' it could show a
-hook … explode into tiny pieces and turn red)". v2 replaced every beat with an action on the spoken verb
-(nine new presets: script-cut, transform, drag-drop, dead-space, layer-stack, stamp, phone-play, comment,
-shatter) and scored "pretty good". Real-and-static is the floor, not the bar.
-
 ## gsap-seek
 2026-09-28, building the demonstration presets. (1) `tl.to(el, { keyframes: [...] })` rendered a drag that sat
 still for half its duration and then jumped to the end; two consecutive `tl.to` calls rendered smoothly.
@@ -159,12 +119,6 @@ a V track whose A lane is empty (added V4/V5 with empty A4/A5), and diff the aud
 2026-10-24, 9030: graphics passed graphics-qa in the `top` slot (face box y 699–984 on the spine), but the creator's
 V1 is punched in — on his program monitor the hair reached y≈250 in the hook and the game ledge cut across his head.
 QA measures the spine, not his framing. PrintWindow at 3–4 moments per graphic found it; `inline` was clear.
-
-## creativity-floor
-2026-10-23/24, 9030: rejected in order — keyed green-screen cash ("tacky"), a hand-made PIL profile card ("out of
-place"), stock `metric` ("lacks creativity in every single aspect"), a `receipt` still that zoomed ("nothing of
-substance"). Asked for: a pixel-art game with a character that looks like him and a counter going white → green.
-Became `pixel-quest` / `pixel-crowd`, the PixelQuest font, the `pixel-arcade` skin and the `broll-story` look.
 
 ## join-whitespace
 2026-10-25, 9278: "too much whitespace". Every join carried 0.22–0.39 s of near-silence (lead 0.08 + tail 0.10 + what
@@ -201,12 +155,6 @@ check-joins, check-framing and match-cuts all index the EDL. Clips are whole fra
 the lane trims `end_frame` and `end_sample`). Same day: remap-plan treated graphic-local times as timeline times
 (9279's bot-team beats all shifted by its cue) — local times map through cue + t.
 
-## matte-head
-2026-10-26, 9280 after the tighter framing: on 5 of 12 contact-sheet frames a dark figure stood on his head — the
-framed picture on the wall, which `remove-background` keeps when it touches the hair. Above the face box, over the
-head's columns, the matte keeps only an ellipse continuing the skull (hair ends ~0.31 face heights up; the ellipse
-reaches 0.34, 0.9 face widths out). A hand raised beside the head is outside those columns and survives.
-
 ## zoom-anchor
 2026-10-25, 9278: "the zooming in is completely off". Punches were a 1.2 s smoothstep creep (3–8 %) via
 `scale=…:eval=frame,crop=SW:SH` — the crop's x/y did not follow the per-frame scaled size, so the zoom grew from the
@@ -219,13 +167,6 @@ the 4K raw (and later six input-seeked copies of it) into `concat`; ffmpeg decod
 frames concat isn't ready for. Now pass 1 renders each clip alone (input seek, framing, punch, canvas size) into
 `preview/clips/` — cached by everything that shapes it — and pass 2 reads them with the concat demuxer: 0.9 GB spine,
 1.6 GB final, 15 s instead of 4.5 min.
-
-## cut-match
-2026-10-25, 9278: "between clips, there's a clear cut. it looks snappy instead of smooth." His posted reels are hard
-cuts (one-frame difference spike, no dissolve) on a camera that never moves. Ours re-centred each clip on its median
-face: across the six cuts the face jumped 0.012–0.154 of the width and changed size up to 11 %, and punches held to
-the cut. Now the window glides from face_in to face_out (each three frames averaged), the base scale follows the face
-width toward the median (±10 %), and punches ease out 0.4 s before the cut: jumps 0.006–0.014, size ≤ 6 %.
 
 ## caption-rerun
 2026-10-25, 9278: re-running from the rough cut re-planned captions.json and dropped hand-set accents ("called"

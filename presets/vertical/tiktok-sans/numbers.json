@@ -1,5 +1,5 @@
 {
-  "$comment": "Faiz's look: TikTok Sans captions (accent = the same face in colour) and the tight framing of his posted reels (framing.scale). Geometry, graphics, audio, fonts/ and sfx/ are inherited.",
+  "$comment": "A caption look: TikTok Sans Black (accent = the same face in colour). Everything else is inherited from vertical/default.",
   "extends": "vertical/default",
   "captions": {
     "font_family": "TikTok Sans",
@@ -18,17 +18,5 @@
       "hot": "#FFD23F",
       "em": "#FFD23F"
     }
-  },
-  "framing": {
-    "scale": 1.45,
-    "face_y": 0.33,
-    "min_face_w": 0.24,
-    "face_w": 0.31,
-    "max_scale": 2.0
-  },
-  "graphics": {
-    "$comment": "the tight framing puts the top of the head near y 400: a top graphic (and comment's DM) lives in 130–390",
-    "top_top": 130,
-    "top_h": 260
   }
 }

@@ -52,6 +52,15 @@ band_mid = (C["band_top"] + C["band_bottom"]) / 2
 max_w = int(C["max_width_frac"] * W)
 case_css = "uppercase" if C["case"] == "upper" else ("lowercase" if C["case"] == "lower" else "none")
 col = C["colors"]
+# "natural": lowercase like a hand-typed caption, but a capitalised word mid-sentence is a name and keeps its case
+# ("i told Tony", "open Instagram", "PS5")
+_natural, _prev_end = {}, "."
+for g in caps["groups"]:
+    for x in g["words"]:
+        w_ = x["w"]
+        first = _prev_end in (".", "?", "!")
+        _natural[id(x)] = w_.lower() if (first or w_ in ("I", "I'm", "I'll", "I've", "I'd", "I’m", "I’ll", "I’ve", "I’d")) else w_
+        _prev_end = (x.get("end_punct") or "")[-1:] if x.get("end_punct") else ""
 
 
 def _rgba(hex_: str, a: float) -> str:
@@ -63,10 +72,13 @@ divs = []
 rows = []
 for i, g in enumerate(kept):
     cls = "cap hook" if g.get("hook") else "cap"
+    if g.get("keyword"):
+        cls += f" kw {g['keyword']}"
     parts = []
     used = False
     for x in g["words"]:
-        tok = html.escape(x["w"] + x.get("end_punct", ""))
+        punct = "".join(ch for ch in x.get("end_punct", "") if ch not in C.get("strip_punct", ""))
+        tok = html.escape((_natural.get(id(x), x["w"]) if C["case"] == "natural" else x["w"]).rstrip(C.get("strip_punct", "")) + punct)
         acc = g.get("accent")
         if acc and not used and x["w"] == acc["word"]:
             parts.append(f'<em class="{acc["cls"]}">{tok}</em>')
@@ -99,10 +111,16 @@ page = f"""<!doctype html>
         text-shadow: {C["glow"]}, 0 6px 26px rgba(0,0,0,0.7), 0 0 44px rgba(255,255,255,0.18);
         opacity: 0; will-change: opacity;
       }}
-      .cap.hook {{ font-size: {C["hook_size_px"]}px; top: {band_mid - 40}px; }}
+      .cap.hook {{ font-size: {C["hook_size_px"]}px; top: {band_mid - (40 if C["hook_size_px"] != C["size_px"] else 0)}px; }}
       .cap b {{ font-weight: inherit; display: block; white-space: nowrap; }}
       .cap em {{ font-family: 'CapSerif', '{C["accent_family"]}', serif; font-style: {C.get("accent_style", "italic")}; font-weight: {C["accent_weight"]};
                  font-size: {C["accent_scale"]}em; letter-spacing: 0; }}
+      .cap em {{ text-transform: {C.get("accent_case", "none")}; }}
+      .cap.kw {{ font-family: 'CapSerif', '{C["accent_family"]}', sans-serif; font-style: {C.get("accent_style", "italic")};
+                 font-weight: {C["accent_weight"]}; text-transform: {C.get("accent_case", "none")}; font-size: {C["size_px"] * C["accent_scale"]:.0f}px; }}
+      .ink  {{ color: {col["ink"]}; }}
+      .cyan {{ color: {col.get("cyan", "#13FFFB")}; }}
+      .magenta {{ color: {col.get("magenta", "#E300F6")}; }}
       .em   {{ color: {col["em"]}; }}
       .bad  {{ color: {col["bad"]};  text-shadow: 0 0 18px rgba(0,0,0,.88), 0 0 34px {_rgba(col["bad"], .72)}; }}
       .good {{ color: {col["good"]}; text-shadow: 0 0 18px rgba(0,0,0,.88), 0 0 34px {_rgba(col["good"], .72)}; }}

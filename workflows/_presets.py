@@ -100,7 +100,6 @@ _env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(PRESETS)), autoesca
 
 
 def fill(preset: dict, params: dict, comp_id: str, fps: int, numbers: dict, placement: str, job_dir: Path | None = None) -> str:
-    G = numbers["graphics"]
     ctx = defaults(preset)
     ctx.update(params)
     # x-json: the param names a JSON file (real data — an audio envelope, the EDL's keep ranges) loaded at build time
@@ -114,14 +113,9 @@ def fill(preset: dict, params: dict, comp_id: str, fps: int, numbers: dict, plac
     ctx.update({
         "id": comp_id, "fps": fps, "placement": placement,
         "duration": float(params.get("duration", 3.0)),
-        "entrance": round(sum(G["entrance_s"]) / 2, 3),
-        "beside_top": G["beside_top"], "beside_inset": G["beside_inset"], "beside_width": G["beside_width"],
-        "inline_top": G.get("inline_top", 1180), "inline_width": G.get("inline_width", 920),
-        "top_top": G.get("top_top", 210), "top_h": G.get("top_h", 430),
+        "entrance": float(numbers.get("graphics", {}).get("entrance_s", 0.35)),
+        "box": params.get("box"),
         "handle": numbers.get("_handle", ""),
-        "skin": G.get("skin", ""),
-        # stepped motion for a look (pixel-arcade: 12); presets that step themselves (x-own-steps) are left alone
-        "motion_fps": 0 if preset["schema"].get("x-own-steps") else G.get("motion_fps", 0),
     })
     tpl = _env.get_template(f"{preset['name']}/template.html")
     return tpl.render(**ctx)

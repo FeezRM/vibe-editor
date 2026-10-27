@@ -1,5 +1,5 @@
 {
-  "$comment": "Every number a node or lane needs for the vertical/default preset. Skills and scripts read this; they never carry constants.",
+  "$comment": "The mechanical numbers for the vertical/default preset: canvas, transcript, the cut's silence/edge handling, the caption look, audio levels, export. Taste — what to show, where, how it moves — is not a number; it comes from the samples (samples/STYLE.md).",
   "canvas": {
     "width": 1080,
     "height": 1920,
@@ -94,12 +94,10 @@
     "line_height": 1.0,
     "tracking_em": -0.03,
     "glow": "0 0 14px rgba(0,0,0,.75), 0 4px 22px rgba(0,0,0,.6)",
-    "accent_share_max": 0.5,
     "cap_height_px": [
       44,
       70
     ],
-    "measure_threshold": 245,
     "colors": {
       "ink": "#FFFFFF",
       "bad": "#EB0408",
@@ -113,96 +111,24 @@
     "accent_file": "PlayfairDisplay-Italic.ttf",
     "accent_style": "italic",
     "accent_weight": 600,
-    "accent_scale": 1.2
+    "accent_scale": 1.2,
+    "auto_accent": false
   },
   "graphics": {
-    "entrance_s": [
-      0.28,
-      0.42
-    ],
-    "hold_min_s": 0.8,
-    "min_presence": 0.6,
-    "max_same_preset_run": 3,
-    "max_luma_delta": 0.25,
-    "beside_width": 520,
-    "beside_top": 180,
-    "beside_inset": 40,
-    "face_pad_px": 40,
-    "inline_top": 1180,
-    "inline_width": 920,
-    "text_presets": [
-      "phrase",
-      "list-card",
-      "flow",
-      "metric",
-      "chat"
-    ],
-    "max_text_share": 0.4,
-    "families": {
-      "scan": "wall",
-      "thumb-wall": "wall",
-      "multiply": "tiles",
-      "receipt": "screen",
-      "app-mock": "device",
-      "metric": "number",
-      "phrase": "words",
-      "list-card": "words",
-      "flow": "words",
-      "chat": "thread",
-      "wash": "flood",
-      "rec-frame": "footage",
-      "agent-run": "console",
-      "upgrade": "gauge",
-      "script-cut": "page",
-      "transform": "machine",
-      "drag-drop": "drop",
-      "dead-space": "wave",
-      "layer-stack": "layers",
-      "stamp": "stamp",
-      "phone-play": "device",
-      "comment": "thread",
-      "shatter": "break",
-      "split": "ring",
-      "pixel-quest": "game",
-      "pixel-crowd": "crowd",
-      "agent-chat": "device",
-      "ad-stack": "pile",
-      "bot-team": "scene",
-      "bg-swap": "flood"
-    },
-    "variety": {
-      "min_families": 4,
-      "max_family_uses": 2,
-      "callback_gap": 2,
-      "max_asset_uses": 2,
-      "exempt": [
-        "flood",
-        "footage"
-      ]
-    },
-    "top_top": 210,
-    "top_h": 430
+    "$comment": "entrance_s: the default entrance time the kept presets animate over",
+    "entrance_s": 0.35
   },
   "framing": {
-    "$comment": "the base shot: scale > 1 punches the whole cut in, face centred at face_y (fraction of the height); zoom punches anchor on the face too",
+    "$comment": "scale > 1 crops in once for the whole video (one fixed camera on the median face, face at face_y of the height); 1.0 = the source framing",
     "scale": 1.0,
-    "face_y": 0.36,
-    "face_y_tol": 0.06,
-    "min_face_w": 0.0,
-    "anchor_tol": 0.03,
-    "cut_jump_tol": 0.04,
-    "size_match": 0.1,
-    "cut_size_tol": 0.06,
-    "fit_max": 0.08,
-    "match_rounds": 3
+    "face_y": 0.36
   },
   "pacing": {
+    "$comment": "max_static_s: pacing-audit reports stretches with nothing changing longer than this (a report, not a gate); zoom_*: a hand-placed punch (pacing-audit --zoom-at); open_zoom_s: the opening zoom-out (pacing-audit --zoom-out-open)",
     "max_static_s": 2.0,
     "zoom_pct": 8,
     "zoom_dur_s": 0.12,
-    "zoom_hold_s": 1.4,
-    "zoom_out_s": 0.4,
-    "hook_hold_s": 8.0
+    "open_zoom_s": 0.25
   },
   "broll_window": {
     "cx": 640,

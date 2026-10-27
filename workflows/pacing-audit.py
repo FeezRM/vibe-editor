@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Node 07 — pacing as an audit over data. Event log from cuts + captions + graphics (+ reveals) + sfx.
+"""Node 07 — pacing report. Event log from cuts + captions + graphics (+ reveals) + sfx.
 
-Reports every stretch with nothing changing for more than pacing.max_static_s. With --fix, closes each
-gap with the cheapest interrupt: a zoom punch written into cuts.json on the clip that spans the gap
-(applied by both lanes), never stacking two punches inside one clip. --zoom-at T adds a deliberate
-punch (e.g. on a held-up prop). Seconds 0–hook_hold_s are exempt from automatic punches when the plan
-marks a hold there.
+Reports every stretch with nothing changing for more than pacing.max_static_s — information for the editor, not a
+gate: nothing is added automatically. A zoom punch is an editing decision, placed by hand on the word it serves:
+--zoom-at T writes one into cuts.json on the clip that spans T (one per clip); --zoom-out-open PCT starts the first
+clip PCT % punched in and eases it out to the base framing over pacing.open_zoom_s (the samples' opening move);
+--clear-zooms removes them all.
 
-Usage: python workflows/pacing-audit.py <job> [--fix] [--zoom-at 4.85,20.1]
+Usage: python workflows/pacing-audit.py <job> [--zoom-at 4.85,20.1] [--zoom-out-open 35] [--clear-zooms]
 """
 import argparse
 import sys
@@ -18,7 +18,8 @@ from _lib import Job, Timeline  # noqa: E402
 
 ap = argparse.ArgumentParser()
 ap.add_argument("job")
-ap.add_argument("--fix", action="store_true")
+ap.add_argument("--clear-zooms", action="store_true")
+ap.add_argument("--zoom-out-open", type=float, default=None)
 ap.add_argument("--zoom-at", default=None)
 a = ap.parse_args()
 job = Job(a.job)
@@ -63,14 +64,16 @@ def clip_index(t):
     return None
 
 
-def add_zoom(t, reason):
+def add_zoom(t, reason, pct=None, dur=None, out=False):
     i = clip_index(t)
     if i is None:
         return False
     k = cuts["keep"][i]
     if k.get("zoom"):
         return False
-    k["zoom"] = {"at": round(t, 3), "pct": P["zoom_pct"], "dur": P["zoom_dur_s"], "reason": reason}
+    k["zoom"] = {"at": round(t, 3), "pct": pct or P["zoom_pct"], "dur": dur or P["zoom_dur_s"], "reason": reason}
+    if out:
+        k["zoom"]["out"] = True
     # the face at the punch (source frame): the lane zooms around this point so the face grows in place
     from _faces import FaceFinder
     fw, fh = job.numbers["canvas"]["width"] // 3, job.numbers["canvas"]["height"] // 3
@@ -81,15 +84,17 @@ def add_zoom(t, reason):
 
 
 applied = []
+if a.clear_zooms:
+    for k in cuts["keep"]:
+        k.pop("zoom", None)
+    applied.append((0.0, "cleared every zoom"))
+if a.zoom_out_open:
+    if add_zoom(0.0, "opening zoom-out", pct=a.zoom_out_open, dur=P.get("open_zoom_s", 0.25), out=True):
+        applied.append((0.0, f"opening zoom-out {a.zoom_out_open:.0f}%"))
 if a.zoom_at:
     for t in a.zoom_at.split(","):
         if add_zoom(float(t), "requested"):
             applied.append((float(t), "zoom (requested)"))
-if a.fix:
-    for t, d in gaps:
-        at = round(t + 0.35, 3)
-        if add_zoom(at, f"gap {d:.1f}s"):
-            applied.append((at, f"zoom (gap {d:.1f}s)"))
 if applied:
     job.write_json(cuts, "cuts.json")
 
@@ -98,8 +103,5 @@ for t, d in gaps:
     print(f"  gap {d:.1f}s from {t:.2f}s")
 for t, what in applied:
     print(f"  + {what} at {t:.2f}s")
-remaining = 0 if a.fix else len(gaps)
-job.gate("pacing", "pass" if not gaps or a.fix else "fail")
 job.mark("pacing", "done", gaps=len(gaps), zooms=sum(1 for k in cuts["keep"] if k.get("zoom")))
-job.note("pacing", f"{len(ts)} events, {len(gaps)} gaps, {len(applied)} punches added")
-sys.exit(0 if (not gaps or a.fix or applied) else 1)
+job.note("pacing", f"{len(ts)} events, {len(gaps)} gaps, {len(applied)} zoom edits")

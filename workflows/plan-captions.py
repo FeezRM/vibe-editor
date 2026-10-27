@@ -2,8 +2,8 @@
 """Node 03a — captions as data. words.json + cuts.json → captions.json (timeline times).
 
 Groups words into single-line captions (min..max words, ≤ width ceiling, never ending on a glue
-word), remaps every time through the EDL, and assigns a lenient default emphasis (numbers and a
-small good/bad lexicon, ≤ accent_share_max of groups). The agent may edit captions.json — text,
+word), remaps every time through the EDL. No word is accented unless the editor names it in
+captions.overrides.json {"accents": {"word": "hot"}}. The agent may edit captions.json — text,
 grouping, accent — before build-captions.py runs; edits survive because the builder reads this
 file, not the transcript.
 
@@ -224,9 +224,10 @@ if job.p("broll-plan.json").exists():
     if dropped_for_titles:
         print(f"plan-captions: {len(dropped_for_titles)} groups under hook titles dropped: {' | '.join(dropped_for_titles)}")
 
-# 6. emphasis: the payload word of a phrase in the italic serif (white "em"); colour only for numbers
-#    and the bad/good lexicon. ≤ accent_share_max of groups, never two accented groups in a row.
-budget = int(len(groups) * C["accent_share_max"])
+# 6. emphasis is an editing decision, not a lexicon: by default no word is accented and the editor picks the few that
+#    earn it in captions.overrides.json (step 7). captions.auto_accent: true brings back the old guesser (numbers, a
+#    good/bad word list, else the longest word) — it accented filler words and read as generated.
+budget = int(len(groups) * C.get("accent_share_max", 0.3)) if C.get("auto_accent") else 0
 last_accented = -2
 for i, g in enumerate(groups):
     g["idx"] = i
@@ -269,6 +270,15 @@ if ov.get("accents"):
         if hit and i - last_accented >= 2:
             g["accent"] = {"word": hit["w"], "cls": want[hit["w"].lower().strip(".,!?’'")]}
             last_accented = i
+# keywords: {"keywords": {"profile picture": "cyan"}} — the whole group that says the phrase is set as a keyword (the
+# accent face, caps, in that colour), the way the reference reels set "PROFILE PICTURE" or "BLEW UP".
+flat = [(gi, x["w"].lower().strip(".,!?’'")) for gi, g in enumerate(groups) for x in g["words"]]
+for phrase, cls in ov.get("keywords", {}).items():
+    p = [w.strip(".,!?’'") for w in phrase.lower().split()]
+    for k in range(len(flat) - len(p) + 1):
+        if [w for _, w in flat[k:k + len(p)]] == p:   # every group the phrase runs through, wherever it is said
+            for gi in {gi for gi, _ in flat[k:k + len(p)]}:
+                groups[gi]["keyword"] = cls
 
 for g in groups:
     g["words"] = [{"w": x["w"], "s": x["s"], "e": x["e"], "end_punct": x.get("end_punct", "")} for x in g["words"]]

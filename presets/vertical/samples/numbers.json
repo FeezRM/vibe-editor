@@ -1,0 +1,37 @@
+{
+  "$comment": "The look measured from the reference reels in samples/ (2026-10-27, see samples/STYLE.md). Captions: one line at the frame's centre, bold lowercase with names kept; keywords as whole groups in heavy caps italic colour. Louder master. Re-measure when samples/ changes.",
+  "extends": "vertical/default",
+  "captions": {
+    "font_family": "TikTok Sans",
+    "font_file": "TikTokSans-Bold.ttf",
+    "font_weight": 700,
+    "size_px": 76,
+    "hook_size_px": 76,
+    "case": "natural",
+    "strip_punct": ".,",
+    "max_words": 3,
+    "band_top": 920,
+    "band_bottom": 1000,
+    "tracking_em": -0.02,
+    "glow": "0 3px 6px rgba(0,0,0,.55), 0 0 14px rgba(0,0,0,.35)",
+    "accent_family": "TikTok Sans",
+    "accent_file": "TikTokSans-Black.ttf",
+    "accent_style": "italic",
+    "accent_weight": 900,
+    "accent_scale": 1.12,
+    "accent_case": "uppercase",
+    "colors": {
+      "ink": "#FFFFFF",
+      "bad": "#E80000",
+      "good": "#13FF12",
+      "hot": "#FAFF0A",
+      "em": "#FFFFFF",
+      "cyan": "#13FFFB",
+      "magenta": "#E300F6"
+    }
+  },
+  "audio": {
+    "voice_lufs": -13.0,
+    "peak_dbfs": -1.0
+  }
+}

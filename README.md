@@ -23,14 +23,13 @@ gets the same edit as trimmable clips when you want to refine by hand.
 ```
 raw.mp4 ─▶ 01 intake ─▶ 02 transcript ─▶ 03 rough cut ─▶ 04 captions ─▶ 05 graphics ─▶ 06 audio ─▶ 07 pacing ─▶ 08 export
              RUN.md      WhisperX         cuts.json       captions.json  graphics-plan   LUFS + SFX   zoom punches  final.mp4
-                         words.json       (the EDL)       alpha .mov     presets→.mov   from graphics  in the EDL    + contact sheet
+                         words.json       (the EDL)       alpha .mov     compositions   from graphics  hand-placed   + contact sheet
 ```
 
-Every node reads a file and writes a file. Every gate is a script that can fail. The **preset** says
-what the edit looks like (`presets/vertical/default/numbers.json` holds every constant); the **lane**
-says how an app does it (`lanes/ffmpeg/`, `lanes/premiere/`). The agent's creative work is one JSON
-document — the graphics plan — filled with real material and checked in composited pixels before
-anything ships.
+The scripts do the mechanical work — transcription, silence and edge cutting, caption timing, loudness, rendering,
+export — and every one reads a file and writes a file. The **editing decisions** are the agent's: which takes stay,
+what (if anything) goes on screen, where, how it moves, where a zoom lands. It makes them against a set of reference
+reels you choose (`samples/`), studied into `samples/STYLE.md`, and checks its work by watching the result.
 
 ## Quick start
 
@@ -50,28 +49,21 @@ open projects/my-reel/review/final-sheet.png              # 12 frames of the res
 open projects/my-reel/outputs/my-reel.final.mp4           # also copied to ~/Downloads
 ```
 
-`./run.sh` is unattended: a heuristic drafter writes the graphics plan and a deterministic fixer
-converges the QA loop. With an agent in the loop it is better: `./run.sh --to captions`, the agent
-authors `graphics-plan.json` from the caption timings and real assets (a captured page, a frame from
-the footage, a real number with provenance), then `./run.sh --from graphics`.
+Run alone, `./run.sh` gives a clean cut with captions and no graphics. With the agent (the `ig-reel` skill) it
+stops after the rough cut to choose the takes from `review/takes.md`, and after captions to plan and write the
+graphics for this video, then finishes the run.
 
 Timing on a 42 s vertical source (M2 Pro, models cached): about six minutes end to end.
 
 ## What you get
 
-- **A rough cut as data.** `cuts.json` lists every kept range and every removal with a reason. Veto a
-  removal by id; the EDL regenerates deterministically. Replayed as separate trimmable clips.
-- **Word-accurate captions** from WhisperX forced alignment: one line, 2–4 words, hard cuts, band under
-  the chin, accent on the payload word, dropped where a graphic carries its own words.
-- **Ten tuned graphic presets** (`presets/graphics/`): phrase, list-card, flow, metric, app-mock,
-  receipt, thumb-wall, chat, wash, rec-frame. Each is a HyperFrames composition with a params schema,
-  an example, a golden frame, and a README saying when it is right. The plan picks the preset and the
-  content; the preset owns the motion.
-- **Pixel QA.** Every graphic is composited over the real frame and checked: caption band, face box
-  (OpenCV), luma, alpha, staleness. Placeholders, missing assets, metrics without provenance and
-  borrowed handles are refused before a render starts.
-- **Measured audio.** Voice to −16 LUFS by measurement, one SFX per visual event derived from the
-  placed graphics, music only when you name a track.
+- **A rough cut as data.** `cuts.json` lists every kept range and every removal with a reason; `review/takes.md`
+  shows the whole raw with every cut word bracketed, so the takes are chosen by reading, not by a rule.
+- **Word-accurate captions** from WhisperX forced alignment on the cut's own audio: hard cuts, one line.
+- **Graphics written for each video.** HyperFrames compositions the agent authors per beat, rendered to alpha
+  `.mov`. Four neutral presets (`app-mock`, `receipt`, `thumb-wall`, `comment`) are there to reuse when they fit.
+- **Measured audio.** Voice to −16 LUFS by measurement, SFX where the plan asks for them, music only when you
+  name a track.
 - **A verified export.** Duration equals the EDL, zero dead air, loudness in range, file on disk and
   newer than the run, or it is not called done.
 
@@ -86,14 +78,12 @@ matrix of what is scripted, manual, unvalidated, or a gap.
 ## Make it yours
 
 - `brand/brand.json` + `brand/BRAND.md` → `node scripts/brand.mjs build` (colours, fonts, handle, voice).
-- `presets/vertical/default/numbers.json` — caption geometry, cut thresholds, timing, loudness, export.
+- `samples/` — the reels the edit should look like; `samples/STYLE.md` is what the agent learned from them.
+- `presets/vertical/default/numbers.json` — caption geometry, cut thresholds, loudness, export.
 - `presets/vertical/default/transcript-corrections.json` — your product names and how they are spelled.
 - `presets/vertical/default/sfx/` — drop in your own pack (same file names).
-- Add a preset: copy a folder in `presets/graphics/`, write the template + schema + example, render a
-  golden with `python workflows/build-graphics.py --preset presets/graphics/<name> --write-golden`.
-
-`tests/regress.sh` re-renders every preset against its golden and re-derives the fixture's EDL and
-caption grouping. Run it before calling any change done.
+`tests/regress.sh` re-renders the kept presets against their goldens and re-derives a fixture's EDL and caption
+grouping.
 
 ## Layout
 
@@ -101,15 +91,15 @@ caption grouping. Run it before calling any change done.
 run.sh · finalize.sh          the one-shot entry and the export
 workflows/                    the nodes and gates (Python, argument-driven)
 lanes/ffmpeg/  lanes/premiere/ how each app replays the same files
-presets/vertical/default/     WHAT: numbers.json, captions.md, creative-moves.md, sfx, fonts
-presets/graphics/<name>/      the ten presets
+presets/vertical/default/     numbers.json, captions.md, sfx, fonts
+presets/graphics/<name>/      four reusable presets
+samples/                      your reference reels + STYLE.md (what good looks like)
 .claude/skills/               one short skill per node — maps that point at the scripts above
-docs/style/                   the premium tier: frame contracts, persistent-object scenes, the motion floor
-docs/lab-notes-archive.md     every war story behind every lock
+docs/lab-notes-archive.md     the technical war stories behind the locks
 projects/<job>/               gitignored: RUN.md + every intermediate file of a job
 ```
 
-`CLAUDE.md` is the agent's map. `REWORK-PLAN.md` explains why the repo is shaped like this.
+`CLAUDE.md` is the agent's map.
 
 ## Requirements
 

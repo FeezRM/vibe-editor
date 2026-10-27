@@ -1,38 +1,23 @@
-# samples/ — your reference corpus
+# samples/ — what good editing looks like
 
-**Empty on a fresh clone, and that is correct.** This folder is a bring-your-own slot.
-
-The reels this repo's style was measured from are real creators' copyrighted work. They are
-not redistributed here, and neither is any other footage — see the media rules in
-`../.gitignore`. What *is* shipped is the analysis: `TEARDOWN.md` (style measurements),
-`SAMPLES.md` (the structural teardown), and `VISUAL-HOOK.md` all carry the findings, so the
-skills work with this folder empty.
-
-## What to put here
-
-Three to five short-form reels you want the output to resemble — **yours, or ones you have a
-right to keep a local copy of.** Anything in `samples/` is gitignored, so nothing you drop
-here is ever committed or published.
+Drop in reels whose editing you want the output to match: clean cuts, the captions, the graphics, the zooms, the
+pacing. Yours, or ones you have a right to keep a local copy of. The videos are gitignored; only this README and
+`STYLE.md` are tracked.
 
 ```
 samples/
-  01-<what-it-does>.mp4
-  02-<what-it-does>.mp4
+  01-<what-it-does-well>.mp4
+  02-<what-it-does-well>.mp4
+  STYLE.md          ← written by the agent (the ig-study skill), not by hand
 ```
 
-Name them for the *device* they demonstrate, not the account they came from.
+Name each file for what it does well ("clean-jump-cuts", "screenshot-popups"), not for the account it came from.
 
-## What the skills do with them
+## How they are used
 
-| Skill | Uses `samples/` for | With the folder empty |
-|---|---|---|
-| `ig-show` | Step 1 of the asset acquisition ladder — reuse a frame you already have | Falls through to the next rung; nothing breaks |
-| `ig-show` §"compare against the corpus" | Pull a still with `ffmpeg -ss <t> -i samples/<file> -frames:v 1 ref.png` and hold it beside your composite | Compare against the written spec in `SAMPLES.md` instead |
-| `ig-delivery` | The final QA side-by-side | Checklist item is skipped; say so in `RESULT.md` rather than claiming it passed |
+After adding or removing samples, ask the agent to study them (`ig-study`). It watches each one frame by frame,
+measures what it sees, and writes `STYLE.md`: the cut, the camera, the captions, the graphics, the sound, what makes
+each reel engaging, and what none of them ever do. Every editing decision (`ig-reel`, `ig-cut`, `ig-show`,
+`ig-pacing`) is made against that file, and every finished edit is compared frame by frame with the samples.
 
-## The one hard rule
-
-**Copy layout, never identity.** Every account, handle, display name, and avatar in a mockup
-uses `creator.handle` from `brand/brand.json`. Lifting a handle out of a reference reel puts
-a real person's name in your video. `ig-show/SKILL.md` bans it and the pre-render checklist
-greps for it.
+**Copy the craft, never the identity**: no handle, name or avatar from a sample ever appears in an edit.

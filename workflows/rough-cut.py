@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Node 02b — rough cut as data. transcript/words.json → cuts.json (the EDL).
 
+Writes review/takes.md: every line of the raw with each word marked kept or [cut]. The rules are mechanical; which
+take is the right one is the editor's call, made from that file (ig-cut).
+
 Removes: dead air between words ≥ cut.min_gap_s (leaving cut.lead_s before the next onset — the
 "cut on the breath" rule as a number), filler tokens, immediate repeats (false starts), and retakes
 (a segment whose opening cut.retake_min_words words open a later segment within cut.retake_window_s —
@@ -374,11 +377,9 @@ if overrides.get("mark", mark.get("enabled", True)) and len(keep) > 2:   # {"mar
         off_mark = keep[:lead_n] + keep[tail_n:]
         keep = keep[lead_n:tail_n]
 
-# 9. where the face is in every clip (centre x, centre y, width — fractions of the frame): the lane frames the shot on it
-#    (framing.scale) and anchors zoom punches on it instead of the frame centre. `face` is the median of three samples;
-#    `face_in` / `face_out` are measured on the clip's first and last frames, so the framing can put the face in the
-#    same place on both sides of every cut (a jump cut whose framing jumps reads as a snap — 9278). A sample where the
-#    face is not found falls back to the clip's median, then to the median of all clips.
+# 9. where the face is in every clip (centre x, centre y, width — fractions of the frame): the lane places its one fixed
+#    camera on the median of these (framing.scale) and anchors hand-placed zoom punches on them. `face` is the median of
+#    three samples; a clip where no face is found falls back to the median of all clips.
 from _faces import FaceFinder
 _fw, _fh = job.numbers["canvas"]["width"] // 3, job.numbers["canvas"]["height"] // 3
 _ff = FaceFinder(_fw, _fh)
@@ -392,24 +393,10 @@ def _face(t):
 for k in keep:
     fs = [f for f in (_face(k["in"] + (k["out"] - k["in"]) * p) for p in (0.25, 0.5, 0.75)) if f]
     k["face"] = [round(float(np.median([f[i] for f in fs])), 4) for i in range(3)] if fs else None
-    # the frames AT the cut, median of four: the size match must hold on the very frames either side of the join — a
-    # window reaching 0.19 s in read a speaker still settling (0.206 → 0.186 wide on 9278's 57.06 take) and
-    # over-scaled the first frame 8 %; one detector box is ±5 %, so never fewer than four
-    for key, ts in (("face_in", (0.0, 0.033, 0.067, 0.1)), ("face_out", (-0.1, -0.067, -0.033, -0.005))):
-        edge = k["in"] if key == "face_in" else k["out"]
-        got = [f for f in (_face(edge + d) for d in ts) if f]
-        sgn = 1 if key == "face_in" else -1
-        for d in (0.16, 0.24, 0.32, 0.4):          # looking down at a laptop: no face on the edge frames — the nearest
-            if got or d > (k["out"] - k["in"]) / 2:  # face inward, not the clip's median (9287: 0.08 off → 0.18 on screen)
-                break
-            got = [f for f in (_face(edge + sgn * d),) if f]
-        k[key] = [round(float(np.median([f[i] for f in got])), 4) for i in range(3)] if got else None
 _found = [k["face"] for k in keep if k["face"]]
 for k in keep:
     if not k["face"] and _found:
         k["face"] = [round(float(np.median([f[i] for f in _found])), 4) for i in range(3)]
-    k["face_in"] = k["face_in"] or k["face"]
-    k["face_out"] = k["face_out"] or k["face"]
 
 # recompute removed from the final keep list so stats are exact
 removed = []
@@ -472,6 +459,46 @@ print(f"rough-cut: {len(keep)} clips · kept {kept_s:.1f}s · removed {duration-
       f" · {len(off_mark)} off-mark · {len(hot_edges)} edges inside speech")
 for o in off_mark:
     print(f"  off-mark  {o['in']:7.2f}–{o['out']:7.2f}  {' '.join(w['w'] for w in words if w['s'] < o['out'] and w['e'] > o['in'])}")
+
+
+# review/takes.md — the whole raw read as lines, every word marked kept or [cut]. The rules above only catch what looks
+# alike on paper (repeats, restarts, fillers); a fumbled line said once, a sentence abandoned for a better one in other
+# words, a wrong fact corrected later, an aside to the camera person all pass them. The editor reads this file and
+# decides the takes in cuts.overrides.json.
+def _kept(w):
+    m = (w["s"] + w["e"]) / 2
+    return any(k["in"] <= m < k["out"] for k in keep)
+
+
+lines, cur = [], [words[0]]
+for p_, w in zip(words, words[1:]):
+    if w["s"] - p_["e"] >= 0.6 or p_["w"].rstrip().endswith((".", "?", "!")):
+        lines.append(cur)
+        cur = []
+    cur.append(w)
+lines.append(cur)
+out = ["# takes — every line of the raw, in order", "",
+       "Words in [brackets] are cut. Read it as the viewer will hear it: is every kept line the best, complete take? Is",
+       "anything kept that the speaker fumbled, abandoned, corrected or said again better later? Decide in",
+       "cuts.overrides.json ({\"remove\"|\"keep\": [{\"in\", \"out\", \"why\"}]}) and re-run rough_cut.", ""]
+for n, ln in enumerate(lines, 1):
+    marks = [_kept(w) for w in ln]
+    tag = "KEEP" if all(marks) else "CUT " if not any(marks) else "PART"
+    text, run = [], []
+    for w, k_ in zip(ln, marks):
+        if k_:
+            if run:
+                text.append("[" + " ".join(run) + "]")
+                run = []
+            text.append(w["w"])
+        else:
+            run.append(w["w"])
+    if run:
+        text.append("[" + " ".join(run) + "]")
+    out.append(f"L{n:03d}  {ln[0]['s']:7.2f}–{ln[-1]['e']:7.2f}  {tag}  {' '.join(text)}")
+job.p("review").mkdir(exist_ok=True)
+job.p("review", "takes.md").write_text("\n".join(out) + "\n", encoding="utf-8")
+print(f"rough-cut: review/takes.md — {len(lines)} lines, {sum(1 for l in out if '  KEEP  ' in l or '  PART  ' in l)} kept in whole or part")
 
 if a.review:
     print("\nREMOVALS (veto with cuts.overrides.json {\"keep_ids\": [...]})")

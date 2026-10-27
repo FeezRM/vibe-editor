@@ -1,6 +1,6 @@
 ---
 name: ig-captions
-description: "Captions from word timestamps: one line, 2–4 words, hard cuts, band y 920–1130, accent on the payload word, muted where a graphic carries its own words. Use for: add captions, subtitles, caption timing, caption style, sync the captions, emphasise a word."
+description: "Captions from word timestamps on the cut's own audio: grouping, timing, the look (matched to the samples), accents the editor picks, muted where a graphic carries its own words. Use for: add captions, subtitles, caption timing, caption style, sync the captions, emphasise a word."
 ---
 
 # ig-captions — node 04
@@ -27,30 +27,24 @@ the glow would draw), and fails if a group does not start within one frame of it
 
 ## The look
 
-Everything is in `presets/vertical/default/numbers.json` → `captions` and explained in
-`presets/vertical/default/captions.md`: Inter 800 lowercase (local OFL), 78 px, band 920–1130, ≤ 78 %
-width, ≤ 5 words, soft glow not stroke, hard cut on/off, accent ≤ 50 % of groups in the italic serif:
-white `em` on the payload word, green/gold for a number, red for the bad thing.
+The default is in `presets/vertical/default/numbers.json` → `captions` (see `captions.md`); a look under
+`presets/vertical/<name>/` overrides it. Match the samples (`samples/STYLE.md` → captions): if they differ from the
+default, make or pick a look rather than living with the default.
 
 ## Emphasis
 
-`plan-captions.py` gives a lenient default (numbers → gold, a small bad/good lexicon). You may
-improve it in `captions.json` before building: accent the payload word the speaker hits hardest,
-leave connective groups white, never three accented groups in a row.
+No word is accented by default. Emphasis goes in `captions.overrides.json` (it survives re-runs; hand edits to
+`captions.json` are lost when anything upstream re-runs):
+
+- `{"keywords": {"profile picture": "cyan"}}` — every caption group that says the phrase is set whole in the accent
+  face (caps italic in the `samples` look) in that colour. This is how the samples emphasise: the hook words, the
+  feature name, the CTA word. Classes: `ink`, `bad`, `good`, `hot`, `cyan`, `magenta`, `em`.
+- `{"accents": {"not": "bad"}}` — one word inside an otherwise plain line ("does NOT").
+
+Look options a look's `numbers.json` can set: `case: natural` (lowercase, names keep their capitals), `strip_punct`
+(characters dropped from captions, e.g. `".,"`), `accent_case` (`uppercase` for the accent face).
 
 ## Verify
 
 `workflows/measure.py <preview/captions.mp4> t1,t2,t3` reports cap height and width at 1080×1920;
 `run.sh` prints it. Look at `review/` composites, not at the caption composition alone.
-
-## Never
-
-Slide, fade or scale a caption (rejected twice) · a second line · a stroke or box · the bottom third ·
-grammar-correcting the speaker · a caption over a graphic that carries its own words.
-
-## Accents you choose survive re-runs
-
-Put the words in `captions.overrides.json` → `{"accents": {"Muse": "hot", "insane": "hot"}}`; `plan-captions.py`
-applies them on every run (never two accented groups in a row). Editing `captions.json` by hand is lost the next time
-anything upstream re-runs (9278 lost its accents twice that way).
-

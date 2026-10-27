@@ -1,8 +1,0 @@
-{
-  "$comment": "vertical/default for a creator sitting low in frame (face box y ~870-1290 on 9119): the default band 920-1130 lands on the eyes, so captions sit under the chin. Everything else inherits.",
-  "extends": "vertical/default",
-  "captions": {
-    "band_top": 1320,
-    "band_bottom": 1440
-  }
-}

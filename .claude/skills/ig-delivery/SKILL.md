@@ -15,5 +15,5 @@ the Premiere lane `lanes/premiere/export.mjs` proves the file itself and falls b
 
 Export numbers: `numbers.json` → `export` (libx264 crf 18, 20 Mbps cap, AAC 320k, yuv420p, sequence fps).
 
-The human review that follows is taste only. If something objective is wrong, a gate is missing —
-add the check to `verify-final.py` or `graphics-qa.py` rather than fixing the one file.
+Then watch the final yourself (`ig-reel` → watch it) before handing it over. If something mechanical is wrong
+(duration, loudness, dead air), a gate is missing — add the check to `verify-final.py` rather than fixing the one file.

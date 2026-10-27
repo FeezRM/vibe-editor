@@ -2,7 +2,7 @@
 """Create a job folder: copy the source (never move), record its facts, write RUN.md.
 
 Usage: python workflows/new-job.py <source-file> --slug <slug> [--brief "..."] [--lane ffmpeg|premiere]
-                                   [--tier basic|premium] [--preset vertical/default]
+ [--preset vertical/default]
 """
 import argparse
 import shutil
@@ -17,7 +17,6 @@ ap.add_argument("source")
 ap.add_argument("--slug", required=True)
 ap.add_argument("--brief", default="Edit this video end to end.")
 ap.add_argument("--lane", default="ffmpeg", choices=["ffmpeg", "premiere"])
-ap.add_argument("--tier", default="basic", choices=["basic", "premium"])
 ap.add_argument("--preset", default="vertical/default")
 ap.add_argument("--music", default=None, help="optional music file to copy into audio/")
 ap.add_argument("--force", action="store_true")
@@ -56,7 +55,6 @@ state = {
     "format": fmt,
     "fps": int(round(info["fps"])) if int(round(info["fps"])) in (24, 25, 30, 60) else numbers["canvas"]["fps"],
     "lane": a.lane,
-    "tier": a.tier,
     "preset": a.preset,
     "created": now(),
     "nodes": {"intake": {"status": "done", "at": now(), "out": f"raw/{src.name}"}},
@@ -64,4 +62,4 @@ state = {
 }
 body = f"## Brief\n{a.brief}\n\n## Notes\n- intake: copied {src.name} ({info['width']}x{info['height']} @ {info['fps']:.2f}fps, {info['duration']:.1f}s) → raw/\n"
 (job / "RUN.md").write_text("---\n" + _dump_front(state) + "\n---\n" + body)
-print(f"job ready: {job}\n  format={fmt} duration={info['duration']:.1f}s lane={a.lane} tier={a.tier}")
+print(f"job ready: {job}\n  format={fmt} duration={info['duration']:.1f}s lane={a.lane}")

@@ -20,25 +20,26 @@
                color: #9DBBFF; font-weight: 600; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,.1); margin-bottom: 10px; }
       .hdr-s .spark { color: #FFC531; font-size: 30px; }
       .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
-      /* placement — the plan decides; the preset never moves itself */
+      /* placement — the plan decides: a named spot, or a `box` {x, y, w[, h]} in canvas pixels anywhere on the frame */
       .pl { position: absolute; }
-      .pl-beside-l { top: {{ beside_top }}px; left: {{ beside_inset }}px; width: {{ beside_width }}px; }
-      .pl-beside-r { top: {{ beside_top }}px; right: {{ beside_inset }}px; width: {{ beside_width }}px; }
+      .pl-beside-l { top: 180px; left: 40px; width: 520px; }
+      .pl-beside-r { top: 180px; right: 40px; width: 520px; }
       .pl-cutaway  { inset: 0; }
-      .pl-inline   { left: 50%; top: {{ inline_top }}px; transform: translateX(-50%); width: {{ inline_width }}px; }
+      .pl-inline   { left: 50%; top: 1180px; transform: translateX(-50%); width: 920px; }
       .pl-wash     { inset: 0; }
-      .pl-top      { left: 50%; top: {{ top_top }}px; transform: translateX(-50%); width: {{ inline_width }}px; height: {{ top_h }}px; }
+      .pl-top      { left: 50%; top: 210px; transform: translateX(-50%); width: 920px; height: 430px; }
+{% if box %}
+      .pl-box      { left: {{ box.x }}px; top: {{ box.y }}px; width: {{ box.w }}px;{% if box.h %} height: {{ box.h }}px;{% endif %} }
+{% endif %}
       .surface { background: #121216; border: 1px solid #2A2A31; border-radius: 28px; }
       .lift { box-shadow: 0 30px 60px rgba(0,0,0,.55), 0 8px 18px rgba(0,0,0,.4); }
       {% block style %}{% endblock %}
-      {# a skin is a look: presets/graphics/_skins/<name>.css, chosen by numbers.json → graphics.skin. Loaded last so it wins. #}
-      {% if skin %}{% include "_skins/" ~ skin ~ ".css" %}{% endif %}
     </style>
   </head>
   <body>
     <div id="root" data-composition-id="{{ id }}" data-start="0" data-duration="{{ '%.3f' % duration }}"
          data-width="1080" data-height="1920" data-fps="{{ fps }}">
-      <div class="pl pl-{{ placement }}" id="pl">
+      <div class="pl pl-{{ 'box' if box else placement }}" id="pl">
 {% block body %}{% endblock %}
       </div>
     </div>
@@ -55,20 +56,7 @@
         t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 {% block tl %}{% endblock %}
       tl.addLabel("end", D);
-{% if motion_fps %}
-      // stepped motion (a look's numbers.json → graphics.motion_fps): the renderer seeks an outer timeline and the preset's
-      // own timeline is set to the last step at or before it, so every move lands on a {{ motion_fps }} fps grid — sprite
-      // animation "on twos". suppressEvents=false keeps the presets' onUpdate drawing (counters, canvases) alive.
-      const __STEP = 1 / {{ motion_fps }};
-      const __outer = gsap.timeline({ paused: true });
-      const __snap = () => tl.time(Math.min(D, Math.floor(__outer.time() / __STEP + 1e-6) * __STEP), false);
-      __outer.to({}, { duration: D, ease: "none", onUpdate: __snap }, 0);
-      __outer.eventCallback("onUpdate", __snap);
-      tl.time(0, false);
-      window.__timelines["{{ id }}"] = __outer;
-{% else %}
       window.__timelines["{{ id }}"] = tl;
-{% endif %}
     </script>
   </body>
 </html>
