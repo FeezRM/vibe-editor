@@ -7,7 +7,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 JOB=""; LANE="ffmpeg"
 while [[ $# -gt 0 ]]; do case "$1" in --lane) LANE="$2"; shift 2;; *) JOB="$1"; shift;; esac; done
-JOB="$(cd "$JOB" && pwd)"
+JOB="$(cd "$JOB" && (pwd -W 2>/dev/null || pwd))"
 SLUG="$(grep -E '^job:' "$JOB/RUN.md" | awk '{print $2}')"
 OUT="$JOB/outputs/$SLUG.final.mp4"
 T0=$(date +%s)
@@ -21,7 +21,7 @@ if [[ "$LANE" == "ffmpeg" ]]; then
   python3 lanes/ffmpeg/assemble.py "$JOB" --stage final --quiet --out "$OUT"
 fi
 [[ -f "$OUT" ]] || { echo "FAIL: no final on disk at $OUT" >&2; exit 1; }
-MT=$(stat -f %m "$OUT" 2>/dev/null || stat -c %Y "$OUT")
+MT=$(python3 -c "import os,sys; print(int(os.stat(sys.argv[1]).st_mtime))" "$OUT")   # portable (BSD/GNU stat differ)
 [[ $MT -ge $T0 ]] || { echo "FAIL: $OUT is older than this run" >&2; exit 1; }
 cp -f "$OUT" "$HOME/Downloads/$SLUG.final.mp4" 2>/dev/null || true
 python3 - "$JOB" "$OUT" "$LANE" <<'EOF'

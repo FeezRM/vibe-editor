@@ -13,7 +13,10 @@ import sys
 import time
 from pathlib import Path
 
-from _lib import REPO, die
+from _lib import REPO, die, preset_file
+
+# Windows installs npx as npx.cmd; CreateProcess does not search PATHEXT the way a shell does
+NPX = shutil.which("npx") or "npx"
 
 
 def scaffold_hf(job) -> None:
@@ -32,7 +35,7 @@ def scaffold_hf(job) -> None:
     tokens_src = REPO / "brand" / "tokens.css"
     if tokens_src.exists():
         shutil.copy2(tokens_src, d / "tokens.css")
-    fonts_src = REPO / "presets" / job.state.get("preset", "vertical/default") / "fonts"
+    fonts_src = preset_file(job.state.get("preset", "vertical/default"), "fonts")
     (d / "fonts").mkdir(exist_ok=True)
     if fonts_src.exists():
         for f in fonts_src.glob("*.ttf"):
@@ -43,23 +46,27 @@ def scaffold_hf(job) -> None:
 
 
 def unique_out(job, rel: str) -> Path:
-    """renders/x.mov → renders/x-r2.mov if x.mov already exists (never overwrite a file Premiere may hold)."""
+    """renders/x.mov → a name this job has NEVER used (x-r2, x-r3, …), counted in renders/.seq — never a name Premiere
+    may already hold, even if that file is gone from disk (a re-used name is a dead clip in the sequence)."""
     p = job.p(rel)
-    if not p.exists():
+    stem, suf = re.sub(r"-r\d+$", "", p.stem), p.suffix
+    seq = p.parent / ".seq"
+    seq.parent.mkdir(parents=True, exist_ok=True)
+    counts = json.loads(seq.read_text(encoding="utf-8")) if seq.exists() else {}
+    n = max(counts.get(stem, 1), *[int(m.group(1)) for f in p.parent.glob(f"{stem}-r*{suf}") if (m := re.search(r"-r(\d+)$", f.stem))], 1)
+    if n == 1 and not p.exists() and stem not in counts:
+        counts[stem] = 1
+        seq.write_text(json.dumps(counts), encoding="utf-8")
         return p
-    stem, suf = p.stem, p.suffix
-    stem = re.sub(r"-r\d+$", "", stem)
-    n = 2
-    while True:
-        cand = p.with_name(f"{stem}-r{n}{suf}")
-        if not cand.exists():
-            return cand
-        n += 1
+    n += 1
+    counts[stem] = n
+    seq.write_text(json.dumps(counts), encoding="utf-8")
+    return p.with_name(f"{stem}-r{n}{suf}")
 
 
 def render(job, comp_rel: str, out_rel: str, fmt: str = "mov", timeout: int = 1800) -> Path:
     out = unique_out(job, out_rel)
-    cmd = ["npx", "--yes", "hyperframes", "render", str(job.dir), "-c", comp_rel, "--format", fmt, "--fps", str(int(job.fps)),
+    cmd = [NPX, "--yes", "hyperframes", "render", str(job.dir), "-c", comp_rel, "--format", fmt, "--fps", str(int(job.fps)),
            "--low-memory-mode", "-o", str(out)]
     t0 = time.time()
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=str(REPO))
@@ -68,20 +75,22 @@ def render(job, comp_rel: str, out_rel: str, fmt: str = "mov", timeout: int = 18
         die(f"hyperframes render failed for {comp_rel}")
     if out.stat().st_mtime < t0 - 1:
         die(f"render output {out} is older than the render start — stale file")
-    # best-effort prune of superseded renders of the same stem (a file Premiere holds open just survives)
-    base = re.sub(r"-r\d+$", "", out.stem)
-    for sib in out.parent.glob(f"{base}*{out.suffix}"):
-        if sib != out and re.sub(r"-r\d+$", "", sib.stem) == base:
-            try:
-                sib.unlink()
-            except OSError:
-                pass
+    # superseded renders of the same stem are pruned on the ffmpeg lane only: on the premiere lane the sequence
+    # still references them (deleting one leaves a dead clip; the new render is placed as a new clip)
+    if job.state.get("lane", "ffmpeg") != "premiere":
+        base = re.sub(r"-r\d+$", "", out.stem)
+        for sib in out.parent.glob(f"{base}*{out.suffix}"):
+            if sib != out and re.sub(r"-r\d+$", "", sib.stem) == base:
+                try:
+                    sib.unlink()
+                except OSError:
+                    pass
     return out
 
 
 def lint(job, comp_rel: str) -> tuple[bool, str]:
     """Lint the whole job project (the CLI has no per-composition flag); report lines mentioning comp_rel."""
-    r = subprocess.run(["npx", "--yes", "hyperframes", "lint", str(job.dir), "--json"], capture_output=True, text=True, cwd=str(REPO))
+    r = subprocess.run([NPX, "--yes", "hyperframes", "lint", str(job.dir), "--json"], capture_output=True, text=True, cwd=str(REPO))
     try:
         data = json.loads(r.stdout[r.stdout.index("{"):]) if "{" in r.stdout else {}
     except Exception:

@@ -1,0 +1,119 @@
+/* ============================================================
+   PIXEL ARCADE skin — presets/graphics/_skins/pixel-arcade.css
+   Chosen by numbers.json → graphics.skin (presets/vertical/pixel-arcade, presets/vertical/broll-story).
+   Included by _base.html AFTER the preset's own style block, so rules here win.
+
+   The look of the pixel-quest / pixel-crowd game world, applied to every preset:
+     · type: PixelQuest (presets/vertical/default/fonts, built by scripts/pixel-font.py from _pixel.html)
+     · no blur anywhere: glows become hard 1-font-pixel outlines and stepped drop shadows
+     · square corners, brick-bordered panels, image-rendering: pixelated
+     · motion: numbers.json → graphics.motion_fps (12) steps every preset's timeline "on twos" (_base.html)
+   Palette (the game's):
+     Ink #0B0D14 · Panel #141A2E · Brick #3B5590 · Brick lite #7F9BE0 · White #FFFFFF
+     Coin gold #FFC531 · Money green #3BFF7A · Heart pink #FF4D8D · Danger red #FF4D4D · Sky #3BA8FF
+   Signal colours keep their meaning: green = gained / good, red = lost / bad, gold = the number, pink = love.
+   ============================================================ */
+@font-face { font-family: 'PixelQuest'; src: url('fonts/PixelQuest.ttf') format('truetype'); font-display: block; }
+:root {
+  --px-ink: #0B0D14;
+  --px-out: -0.08em 0 0 #0B0D14, 0.08em 0 0 #0B0D14, 0 -0.08em 0 #0B0D14, 0 0.08em 0 #0B0D14,
+            -0.08em -0.08em 0 #0B0D14, 0.08em -0.08em 0 #0B0D14, -0.08em 0.08em 0 #0B0D14, 0.08em 0.08em 0 #0B0D14,
+            0.1em 0.18em 0 #0B0D14;
+  --px-panel: 0 0 0 6px #0B0D14, inset 0 0 0 6px #3B5590, inset 0 6px 0 6px #7F9BE0, 14px 14px 0 6px #0B0D14B3;
+}
+
+/* ---- the whole layer: one typeface, no smoothing, no rounded corners ------- */
+#root, #root * {
+  font-family: 'PixelQuest', 'CapSans', monospace !important;
+  font-weight: 400 !important; font-style: normal !important; letter-spacing: 0.02em !important;
+  -webkit-font-smoothing: none; text-rendering: optimizeSpeed;
+}
+#root * { border-radius: 0 !important; text-shadow: var(--px-out); }
+#root img, #root canvas, #root video { image-rendering: pixelated; }
+.face, .ui, .serif { text-transform: uppercase; }
+
+/* ---- shared surfaces: brick-framed arcade panels ---------------------------- */
+.card-s, .surface, .chat, .node, .con {
+  background: #141A2E !important; border: 0 !important; box-shadow: var(--px-panel) !important;
+}
+.lift { box-shadow: 14px 14px 0 0 #0B0D14B3 !important; }
+.hdr-s { color: #FFC531; border-bottom: 4px solid #3B5590; }
+.hdr-s .spark { color: #3BFF7A; }
+
+/* ---- list-card ------------------------------------------------------------ */
+.row { border-top: 4px solid #3B5590; }
+.txt { color: #FFFFFF; }
+.mark { color: #0B0D14; text-shadow: none; box-shadow: 0 0 0 4px #0B0D14; }
+.mark.check { background: #3BFF7A; }
+.mark.x { background: #FF4D4D; color: #FFFFFF; }
+.mark.none, .mark.num { background: #FFC531; color: #0B0D14; }
+
+/* ---- flow ----------------------------------------------------------------- */
+.node { color: #FFFFFF; }
+.node.hi { box-shadow: 0 0 0 6px #0B0D14, inset 0 0 0 6px #3BFF7A, 14px 14px 0 6px #0B0D14B3 !important; color: #3BFF7A; }
+.arrow { background: #FFC531; box-shadow: 0 0 0 4px #0B0D14; }
+.arrow:after { border-left-color: #FFC531; }
+.tag { color: #FFC531; }
+
+/* ---- phrase (over footage) ------------------------------------------------- */
+.phrase .w { color: #FFFFFF; }
+.phrase .w, .phrase .w.acc-em, .phrase .w.acc-hot, .phrase .w.acc-good, .phrase .w.acc-bad { font-size: 0.72em; }   /* the pixel face runs ~36% wider than Inter: keep hook lines inside the frame */
+.phrase .w.acc-em, .phrase .w.acc-hot { color: #FFC531; }
+.phrase .w.acc-good { color: #3BFF7A; }
+.phrase .w.acc-bad { color: #FF4D4D; }
+
+/* ---- metric: an arcade score ------------------------------------------------- */
+.big { color: #FFC531; }
+.big .u { color: #FFFFFF; }
+.lbl { color: #FFFFFF; }
+.src { color: #7F9BE0; }
+
+/* ---- chat ----------------------------------------------------------------- */
+.hdr { border-bottom: 4px solid #3B5590; }
+.av { background: #FF4D8D; box-shadow: 0 0 0 4px #0B0D14; }
+.nm { color: #FFFFFF; }
+.msg.them { background: #3B5590; color: #FFFFFF; box-shadow: 0 0 0 4px #0B0D14; }
+.msg.me { background: #3BFF7A; color: #0B0D14; text-shadow: none; box-shadow: 0 0 0 4px #0B0D14, 8px 8px 0 4px #0B0D14B3; }
+
+/* ---- wash (emotion only): flat stepped vignettes, no soft fog ---------------- */
+.pl-wash .w.bad  { background: radial-gradient(ellipse 96% 62% at 50% 44%, #FF4D4D00 60%, #FF4D4D33 60%, #FF4D4D33 80%, #B0030666 80%); }
+.pl-wash .w.good { background: radial-gradient(ellipse 96% 62% at 50% 44%, #3BFF7A00 60%, #3BFF7A2E 60%, #3BFF7A2E 80%, #1E9E4A5E 80%); }
+.pl-wash .w.hot  { background: radial-gradient(ellipse 96% 62% at 50% 44%, #FFC53100 60%, #FFC5312E 60%, #FFC5312E 80%, #C98A125E 80%); }
+
+/* ---- rec-frame ------------------------------------------------------------ */
+.c { border-color: #FFFFFF; }
+.dot { background: #FF4D4D; box-shadow: 0 0 0 4px #0B0D14; }
+
+/* ---- receipt: the still sits in a brick frame ---------------------------------- */
+.rc img { box-shadow: 0 0 0 8px #3B5590, 0 0 0 14px #0B0D14, 16px 16px 0 14px #0B0D14B3 !important; }
+.pill { background: #FFC531; color: #0B0D14; text-shadow: none; box-shadow: 0 0 0 4px #0B0D14; }
+
+/* ---- scan ----------------------------------------------------------------- */
+.tile .box { border-color: #3BFF7A; box-shadow: 0 0 0 4px #0B0D14; }
+.tile .chk { background: #3BFF7A; color: #0B0D14; text-shadow: none; }
+.tile.hero .box { border-color: #FFC531; }
+.scanline { background: #FFFFFF; box-shadow: 0 0 0 4px #3BFF7A, 0 0 0 8px #0B0D14; }
+
+/* ---- multiply ------------------------------------------------------------- */
+.ring { border-color: #FFC531; box-shadow: 0 0 0 4px #0B0D14, inset 0 0 0 4px #0B0D14; }
+.count { color: #FFC531; }
+.count .u { color: #FFFFFF; }
+
+/* ---- agent-run: a game console ------------------------------------------------- */
+.con .bar { border-bottom: 4px solid #3B5590; }
+.con .led { background: #3BFF7A; box-shadow: 0 0 0 3px #0B0D14; }
+.con .ttl { color: #FFC531; }
+.con .ln { color: #FFFFFF; }
+.con .ln .pr { color: #3BFF7A; }
+.con .ln .cur { background: #3BFF7A; }
+.con .ln .st.spin { border-color: #3B5590; border-top-color: #3BFF7A; }
+.con .ln .st.ok { background: #3BFF7A; color: #0B0D14; text-shadow: none; }
+.con .out { background: #FFC531; color: #0B0D14; text-shadow: none; box-shadow: 0 0 0 4px #0B0D14, 8px 8px 0 4px #0B0D14B3; }
+
+/* ---- upgrade: a level-up bar ---------------------------------------------------- */
+.tick { background: #3B5590; box-shadow: 0 0 0 3px #0B0D14; }
+.tick.lit { background: #3BFF7A; }
+.glow { border-color: #3BFF7A; box-shadow: 0 0 0 4px #0B0D14; }
+.lock .big { color: #3BFF7A; }
+.lock .big .u { color: #FFFFFF; }
+.lock .word em { color: #FFC531; }

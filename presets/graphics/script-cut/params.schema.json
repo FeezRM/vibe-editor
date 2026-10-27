@@ -1,0 +1,70 @@
+{
+  "title": "script-cut \u00e2\u20ac\u201d 'scripted and edited': the real script writes itself onto a page, one blade slices the page into clips that drop into a timeline row; dead clips go red and break",
+  "type": "object",
+  "required": [
+    "lines"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "default": "script",
+      "x-real": true,
+      "description": "the page header \u00e2\u20ac\u201d the script's real name or just 'script'"
+    },
+    "lines": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "x-real": true,
+      "items": {
+        "type": "string",
+        "maxLength": 34
+      },
+      "description": "the script's real lines (the transcript IS the script), \u00e2\u2030\u00a4 40 chars each"
+    },
+    "clips": {
+      "type": "integer",
+      "default": 8,
+      "minimum": 3,
+      "maximum": 12,
+      "x-real": true,
+      "description": "how many clips the page is cut into \u00e2\u20ac\u201d the EDL's real clip count"
+    },
+    "remove": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "integer"
+      },
+      "description": "indices of clips that fall out red (dead takes); omit when nothing real was dropped"
+    },
+    "reveal_at": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "[the writing starts, the blade slashes, the kept clips snap together]"
+    },
+    "thumbs": {
+      "type": "array",
+      "default": [],
+      "maxItems": 12,
+      "x-asset": true,
+      "items": {
+        "type": [
+          "object",
+          "string"
+        ]
+      },
+      "description": "optional: one REAL frame per clip (extract from each EDL keep) \u2014 the clip blocks show them"
+    }
+  },
+  "x-placements": [
+    "top",
+    "inline"
+  ],
+  "x-default-placement": "top",
+  "x-events": [
+    "reveal_at"
+  ]
+}

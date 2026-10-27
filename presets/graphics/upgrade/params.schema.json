@@ -1,0 +1,17 @@
+{
+  "title": "upgrade — the SAME real thing gets N× better: a dial fills, the number climbs, the picture sharpens and colours in",
+  "type": "object", "required": ["image", "count", "word"],
+  "properties": {
+    "image": { "type": "string", "x-asset": true, "description": "the creator's own tile — the thing that gets better" },
+    "count": { "type": "integer", "minimum": 2, "maximum": 60, "x-real": true },
+    "unit": { "type": "string", "default": "×" },
+    "word": { "type": "string", "x-real": true, "description": "the spoken quality word — 'better', 'sharper', 'faster'" },
+    "word_pre": { "type": "string", "default": "" },
+    "source": { "type": "string", "x-real": true, "description": "where the number comes from — required by validate-plan" },
+    "stage_h": { "type": "integer", "default": 470 },
+    "size": { "type": "integer", "default": 170 },
+    "fill_s": { "type": "number", "default": 1.3 },
+    "reveal_at": { "type": "array", "items": { "type": "number" }, "description": "[the dial starts filling, the quality word lands]" }
+  },
+  "x-placements": ["inline", "cutaway"], "x-default-placement": "inline", "x-events": ["reveal_at"], "x-needs-provenance": true
+}

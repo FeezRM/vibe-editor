@@ -1,0 +1,112 @@
+{
+  "title": "pixel-crowd — the creator's pixel hero stands on a ledge while tiny pixel followers run in from both edges and pack in around them; a follower counter climbs to the REAL count, then the crowd jumps and hearts float up",
+  "type": "object",
+  "required": [
+    "value",
+    "source"
+  ],
+  "properties": {
+    "value": {
+      "type": "number",
+      "x-real": true,
+      "description": "the real count in `unit`s (e.g. 151.4 with unit K)"
+    },
+    "decimals": {
+      "type": "integer",
+      "default": 1
+    },
+    "unit": {
+      "type": "string",
+      "default": "K",
+      "maxLength": 2
+    },
+    "label": {
+      "type": "string",
+      "default": "FOLLOWERS",
+      "maxLength": 12,
+      "x-real": true
+    },
+    "source": {
+      "type": "string",
+      "x-real": true,
+      "description": "where the count comes from (a real profile screenshot) — required by validate-plan"
+    },
+    "avatar": {
+      "type": "string",
+      "x-asset": true,
+      "description": "optional: the creator's real profile picture, pre-pixelated to 16x16 (shown at 8x, on the same pixel grid as the scene)"
+    },
+    "color_from": {
+      "type": "string",
+      "default": "#FFFFFF"
+    },
+    "color_to": {
+      "type": "string",
+      "default": "#FFC531"
+    },
+    "ledge": {
+      "type": "string",
+      "default": "#3B5590"
+    },
+    "look": {
+      "type": "object",
+      "description": "how the hero is dressed — same keys as pixel-quest so the character is the same one in both",
+      "default": {
+        "skin": "#C68A63",
+        "hair": "#2A2226",
+        "shirt": "#3D4452",
+        "shirt_accent": "#3D4452",
+        "pants": "#2E3440",
+        "shoes": "#EEF1F5",
+        "glasses": false,
+        "beard": false
+      },
+      "properties": {
+        "skin": {
+          "type": "string"
+        },
+        "hair": {
+          "type": "string"
+        },
+        "shirt": {
+          "type": "string"
+        },
+        "shirt_accent": {
+          "type": "string"
+        },
+        "pants": {
+          "type": "string"
+        },
+        "shoes": {
+          "type": "string"
+        },
+        "lens": {
+          "type": "string"
+        },
+        "glasses": {
+          "type": "boolean"
+        },
+        "beard": {
+          "type": "boolean"
+        }
+      }
+    },
+    "reveal_at": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "[count start (on the growth verb), land (on the number / 'followers')]"
+    }
+  },
+  "x-placements": [
+    "inline",
+    "top"
+  ],
+  "x-default-placement": "inline",
+  "x-events": [
+    "reveal_at"
+  ],
+  "x-needs-provenance": true,
+  "x-own-steps": true
+}

@@ -3,12 +3,13 @@
   .phone { position: relative; width: {{ width }}px; aspect-ratio: 9 / 19.5; background: #000; border: 10px solid #1C1C1F;
            border-radius: 54px; overflow: hidden; box-shadow: 0 34px 70px rgba(0,0,0,.6); margin: 0 auto; transform-origin: center; }
   .screen { position: absolute; inset: 0; overflow: hidden; border-radius: 44px; }
-  .screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .screen img { width: 100%; height: auto; min-height: 100%; object-fit: cover; object-position: top; }   /* natural height so scroll_px reveals the page */
   .notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 116px; height: 30px; background: #000; border-radius: 16px; z-index: 5; }
   .annot { position: absolute; border: 4px solid #00E800; border-radius: 10px; box-shadow: 0 0 24px rgba(0,232,0,.55); }
   .annot.bad { border-color: #EB0408; box-shadow: 0 0 24px rgba(235,4,8,.55); }
   .alabel { position: absolute; font-size: 24px; color: #fff; background: #0A0A0B; padding: 8px 14px; border-radius: 8px; white-space: nowrap; }
-  .pl-inline .phone { position: absolute; left: 50%; top: 40px; transform: translateX(-50%) rotate({{ tilt }}deg); width: 560px; }
+  /* inline: the phone rises from the bottom edge of the frame — its top ~740px are in shot at chest height, the rest runs off frame */
+  .pl-inline .phone { position: absolute; left: 50%; top: 0; transform: translateX(-50%) rotate({{ tilt }}deg); width: {{ width }}px; }
   .pl-cutaway .phone { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate({{ tilt }}deg); width: 620px; }
   .pl-beside-l .phone, .pl-beside-r .phone { width: 300px; transform: rotate({{ tilt }}deg); }
 {% endblock %}

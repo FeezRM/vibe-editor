@@ -33,6 +33,5 @@
         tl.addLabel("row" + (i + 1), t);
         tl.from(r, { opacity: 0, x: -22, duration: 0.32, ease: ease.in }, t);
         tl.from(r.querySelector(".mark"), { scale: 0.3, rotation: -25, duration: 0.38, ease: ease.snap }, t + 0.06);
-        tl.fromTo(r.querySelector(".txt"), { color: "#ffffff" }, { color: "#ffffff", duration: 0.01 }, t);
       });
 {% endblock %}

@@ -1,0 +1,5 @@
+{ "duration": 9.0, "placement": "inline", "label": "Example team", "feedback_icons": ["bug", "thumb", "star"],
+  "hero": {"pre": "do the", "big": "example", "post": "task"},
+  "beats": {"setup_at": 0.0, "spawn_at": 0.3, "label_at": 0.9, "app_at": 1.2, "use_at": 1.5, "disguise_at": 2.2, "feedback_at": 2.9,
+            "computers_at": 4.2, "disguise_off_at": 4.2, "onboard_at": 5.0, "train_at": 5.6, "badge_at": 6.4, "tasks_at": 7.4, "hero_at": 7.9},
+  "reveal_at": [0.3, 0.9, 1.2, 2.2, 2.9, 4.2, 5.0, 5.6, 6.4, 7.4, 7.9] }

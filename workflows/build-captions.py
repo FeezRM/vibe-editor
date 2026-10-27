@@ -53,6 +53,12 @@ max_w = int(C["max_width_frac"] * W)
 case_css = "uppercase" if C["case"] == "upper" else ("lowercase" if C["case"] == "lower" else "none")
 col = C["colors"]
 
+
+def _rgba(hex_: str, a: float) -> str:
+    h = hex_.lstrip("#")
+    return f"rgba({int(h[0:2], 16)},{int(h[2:4], 16)},{int(h[4:6], 16)},{a:.2f})"
+
+
 divs = []
 rows = []
 for i, g in enumerate(kept):
@@ -79,14 +85,14 @@ page = f"""<!doctype html>
     <link rel="stylesheet" href="tokens.css" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
-      @font-face {{ font-family: 'CapSans'; src: url('fonts/Inter.ttf') format('truetype'); font-weight: 100 900; font-display: block; }}
-      @font-face {{ font-family: 'CapSerif'; src: url('fonts/PlayfairDisplay-Italic.ttf') format('truetype'); font-weight: 400 900; font-style: italic; font-display: block; }}
+      @font-face {{ font-family: 'CapSans'; src: url('fonts/{C.get("font_file", "Inter.ttf")}') format('truetype'); font-weight: 100 900; font-display: block; }}
+      @font-face {{ font-family: 'CapSerif'; src: url('fonts/{C.get("accent_file", "PlayfairDisplay-Italic.ttf")}') format('truetype'); font-weight: 100 900; font-style: {C.get("accent_style", "italic")}; font-display: block; }}
       * {{ margin: 0; padding: 0; box-sizing: border-box; }}
       html, body {{ width: {W}px; height: {H}px; overflow: hidden; background: transparent; }}
       .cap {{
         position: absolute; left: 50%; top: {band_mid}px; transform: translate(-50%, -50%);
         width: {max_w}px; text-align: center;
-        font-family: 'CapSans', 'Inter', sans-serif; font-weight: {C["font_weight"]};
+        font-family: 'CapSans', '{C["font_family"]}', sans-serif; font-weight: {C["font_weight"]};
         font-size: {C["size_px"]}px; line-height: {C["line_height"]};
         letter-spacing: {C["tracking_em"]}em;
         text-transform: {case_css}; color: {col["ink"]};
@@ -95,12 +101,12 @@ page = f"""<!doctype html>
       }}
       .cap.hook {{ font-size: {C["hook_size_px"]}px; top: {band_mid - 40}px; }}
       .cap b {{ font-weight: inherit; display: block; white-space: nowrap; }}
-      .cap em {{ font-family: 'CapSerif', 'Playfair Display', serif; font-style: italic; font-weight: {C["accent_weight"]};
+      .cap em {{ font-family: 'CapSerif', '{C["accent_family"]}', serif; font-style: {C.get("accent_style", "italic")}; font-weight: {C["accent_weight"]};
                  font-size: {C["accent_scale"]}em; letter-spacing: 0; }}
       .em   {{ color: {col["em"]}; }}
-      .bad  {{ color: {col["bad"]};  text-shadow: 0 0 18px rgba(0,0,0,.88), 0 0 34px rgba(235,4,8,.75); }}
-      .good {{ color: {col["good"]}; text-shadow: 0 0 18px rgba(0,0,0,.88), 0 0 34px rgba(0,232,0,.70); }}
-      .hot  {{ color: {col["hot"]};  text-shadow: 0 0 18px rgba(0,0,0,.88), 0 0 34px rgba(255,197,49,.70); }}
+      .bad  {{ color: {col["bad"]};  text-shadow: 0 0 18px rgba(0,0,0,.88), 0 0 34px {_rgba(col["bad"], .72)}; }}
+      .good {{ color: {col["good"]}; text-shadow: 0 0 18px rgba(0,0,0,.88), 0 0 34px {_rgba(col["good"], .72)}; }}
+      .hot  {{ color: {col["hot"]};  text-shadow: 0 0 18px rgba(0,0,0,.88), 0 0 34px {_rgba(col["hot"], .72)}; }}
     </style>
   </head>
   <body>
@@ -132,7 +138,7 @@ if a.no_render:
     sys.exit(0)
 t0 = time.time()
 out = render(job, "compositions/captions.html", "renders/captions.mov")
-caps["render"] = str(out.relative_to(job.dir))
+caps["render"] = out.relative_to(job.dir).as_posix()
 job.write_json(caps, "captions.json")
 job.mark("captions", "done", invalidate=not a.keep_downstream, out=caps["render"], groups=len(kept), muted=len(dropped))
 job.note("captions", f"built {len(kept)} captions ({len(dropped)} muted) → renders/captions.mov in {time.time()-t0:.0f}s")

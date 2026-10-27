@@ -9,6 +9,7 @@
 # first, plan with real material, then run --from graphics). Without an agent the deterministic drafter
 # and fixer converge on a defect-free basic-tier edit.
 set -euo pipefail
+export PYTHONUTF8=1   # review listings print "└"/"→"; a logged run on a cp1252 console crashed on them
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY=python3
 JOB=""; LANE=""; FROM="transcript"; TO="export"; AUTOFIX=1; MAX_ROUNDS=3
@@ -24,7 +25,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 [[ -n "$JOB" && -f "$JOB/RUN.md" ]] || { echo "usage: run.sh <job-dir> (create one with workflows/new-job.py)" >&2; exit 64; }
-JOB="$(cd "$JOB" && pwd)"
+JOB="$(cd "$JOB" && (pwd -W 2>/dev/null || pwd))"   # -W: a Windows path Git Bash's python can open
 [[ -n "$LANE" ]] || LANE="$(grep -E '^lane:' "$JOB/RUN.md" | awk '{print $2}')"
 ORDER=(transcript rough_cut captions graphics audio pacing export)
 idx() { local i; for i in "${!ORDER[@]}"; do [[ "${ORDER[$i]}" == "$1" ]] && { echo "$i"; return; }; done; echo -1; }
@@ -43,17 +44,31 @@ fi
 if run_node rough_cut; then
   log rough_cut
   $PY workflows/rough-cut.py "$JOB" --review
+  $PY workflows/remap-plan.py "$JOB"   # an existing graphics plan follows the new EDL (cuts.prev.json → cuts.json)
   $PY workflows/validate-edl.py "$JOB"
   $PY lanes/ffmpeg/assemble.py "$JOB" --stage spine --quiet
-  n=$(ffmpeg -i "$JOB/preview/spine.mp4" -af "silencedetect=n=$(jq -r .audio.silence_db presets/vertical/default/numbers.json)dB:d=$(jq -r .audio.silence_max_s presets/vertical/default/numbers.json)" -f null - 2>&1 | grep -c silence_start || true)
-  echo "spine silences ≥ threshold: $n"
+  read -r SIL_DB SIL_S < <($PY -c "import sys; sys.path.insert(0,'workflows'); from _lib import Job; a=Job(sys.argv[1]).numbers['audio']; print(a['silence_db'], a['silence_max_s'])" "$JOB")
+  [[ -n "$SIL_DB" && -n "$SIL_S" ]] || { echo "FAIL: could not read audio.silence_db / silence_max_s" >&2; exit 1; }
+  # a silence inside an authored hold (cuts.json keep.hold — b-roll audio plays there) is not dead air
+  n=$(ffmpeg -i "$JOB/preview/spine.mp4" -af "silencedetect=n=${SIL_DB}dB:d=${SIL_S}" -f null - 2>&1 | $PY -c "
+import re, sys; sys.path.insert(0, 'workflows'); from _lib import Job, Timeline
+h = Timeline(Job(sys.argv[1]).read_json('cuts.json')).holds(); t = sys.stdin.read()
+ss = [float(x) for x in re.findall(r'silence_start: (-?[0-9.]+)', t)]; ee = [float(x) for x in re.findall(r'silence_end: ([0-9.]+)', t)]
+ee += [1e9] * (len(ss) - len(ee))
+print(sum(1 for s, e in zip(ss, ee) if not any(a - 0.6 <= s and e <= b + 0.6 for a, b in h)))" "$JOB")
+  echo "spine silences ≥ threshold: $n (holds exempt)"
   [[ "$n" == "0" ]] || { echo "FAIL: dead air survived the cut" >&2; exit 1; }
+  $PY workflows/check-joins.py "$JOB" || { echo "FAIL: whitespace in the cut (cut.join_gap_max_s / pause_gate_s)" >&2; exit 1; }
   if [[ "$LANE" == "premiere" ]]; then
-    node lanes/premiere/replay-edl.mjs "$JOB" || { echo "premiere lane unavailable — continuing on ffmpeg lane"; LANE=ffmpeg; sed -i '' 's/^lane: premiere/lane: ffmpeg/' "$JOB/RUN.md"; }
+    node lanes/premiere/replay-edl.mjs "$JOB" || { echo "premiere lane unavailable — continuing on ffmpeg lane"; LANE=ffmpeg; sed -i.bak 's/^lane: premiere/lane: ffmpeg/' "$JOB/RUN.md" && rm -f "$JOB/RUN.md.bak"; }
   fi
 fi
 if run_node captions; then
   log captions
+  [[ -f "$JOB/preview/spine.mp4" ]] || $PY lanes/ffmpeg/assemble.py "$JOB" --stage spine --quiet
+  $PY workflows/build-broll.py "$JOB"                  # windowed b-roll (box/title) → renders/broll/*.mov
+  $PY workflows/transcribe.py "$JOB" --spine          # words in timeline time — what the viewer hears
+  $PY workflows/verify-cut.py "$JOB"                   # the cut says every kept word once: nothing clipped, nothing doubled
   $PY workflows/plan-captions.py "$JOB"
   $PY workflows/build-captions.py "$JOB"
   $PY lanes/ffmpeg/assemble.py "$JOB" --stage captions --quiet
@@ -96,11 +111,16 @@ import sys; sys.path.insert(0, "workflows"); from _lib import Job
 Job(sys.argv[1]).mark("audio", "done", out="sfx-plan.json")
 EOF
   $PY lanes/ffmpeg/assemble.py "$JOB" --stage audio --quiet
+  if [[ "$LANE" == "premiere" ]]; then
+    node lanes/premiere/place-layers.mjs "$JOB" || echo "premiere lane: overlays/gain not placed — see premiere/layers-verify.json (ffmpeg lane continues)"
+  fi
 fi
 if run_node pacing; then
   log pacing
   $PY workflows/pacing-audit.py "$JOB" --fix
   $PY lanes/ffmpeg/assemble.py "$JOB" --stage spine --quiet   # zoom punches live in the EDL
+  $PY workflows/match-cuts.py "$JOB"   # measured on the spine: trims each cut to the same face size
+  $PY workflows/check-framing.py "$JOB" || { echo "FAIL: framing / zoom punches off the face" >&2; exit 1; }
 fi
 if run_node export; then
   log export

@@ -1,0 +1,115 @@
+{% extends "_base.html" %}
+{% block style %}
+  .pc { position: relative; width: 920px; height: 424px; margin: 0 auto; }
+  .pc canvas { position: absolute; left: 0; top: 0; width: 920px; height: 424px; image-rendering: pixelated; image-rendering: crisp-edges; }
+  .pc .pcav { position: absolute; left: 16px; top: 16px; width: 128px; height: 128px; image-rendering: pixelated; opacity: 0; }
+{% endblock %}
+{% block body %}
+        <div class="pc">
+          <canvas id="pcScene" width="115" height="53"></canvas>
+          <canvas id="pcHud" width="115" height="53"></canvas>
+          {% if avatar %}<img class="pcav" id="pcAv" src="{{ avatar }}" alt="" />{% endif %}
+        </div>
+{% endblock %}
+{% block tl %}
+{% include "_pixel.html" %}
+      tl.addLabel("in", 0);
+      // the following grows: the hero stands on the ledge, tiny pixel followers run in from both edges and pack in around
+      // them while the follower count climbs to the REAL value; on the landing the crowd jumps and hearts float up
+      const LOOK = {{ look | tojson }}, PAL = PX.heroPal(LOOK);
+      const TARGET = {{ value }}, DEC = {{ decimals }}, UNIT = {{ unit | tojson }}, LABEL = {{ label | tojson }};
+      const C0 = {{ color_from | tojson }}, C1 = {{ color_to | tojson }}, BRICK = {{ ledge | tojson }};
+      const HAS_AV = {{ 'true' if avatar else 'false' }};
+      const COUNT0 = at(0, 0.15), LAND = at(1, D - 0.5);
+      const W = 115, H = 53, GROUND = 47, HX = 78, HY = GROUND - 28;
+      const sc = document.getElementById("pcScene").getContext("2d"), hc = document.getElementById("pcHud").getContext("2d");
+      const hud = document.getElementById("pcHud"), av = document.getElementById("pcAv");
+      const TX = HAS_AV ? 21 : 3, TY = 1;
+      const fmt = (v) => Math.max(0, v).toFixed(DEC) + UNIT;
+
+      // the crowd: two rows of tiny followers, every one a different person (seeded), back row a little higher and darker
+      const FOL = {
+        a: ["..KKK..", ".KHHHK.", ".KSSSK.", ".KSSSK.", "..KKK..", ".KTTTK.", "KSTTTSK", ".KTTTK.", ".KJ.JK.", ".KK.KK."],
+        b: ["..KKK..", ".KHHHK.", ".KSSSK.", ".KSSSK.", "..KKK..", ".KTTTK.", "KSTTTSK", ".KTTTK.", "..KJK..", "..KKK.."],
+      };
+      const rnd = prng(73);
+      const HAIRS = ["#1E1A1C", "#3B2618", "#6B4A2B", "#C9A15A", "#8A3B22", "#101010"];
+      const SKINS = ["#F2C9A5", "#D9A27A", "#B87A52", "#8C5638", "#5E3A26"];
+      const TEES = ["#FF4D8D", "#3BA8FF", "#FFC531", "#3BFF7A", "#B36BFF", "#FF7A3B", "#FFFFFF", "#26D7C4"];
+      const people = [];
+      const heroC = HX + 9.5;
+      for (let x = 3; x <= 108; x += 7) people.push({ x, row: 0 });
+      for (let x = 1; x <= 110; x += 8) if (Math.abs(x + 3.5 - heroC) > 11) people.push({ x, row: 1 });
+      const N = people.length, WALK = 0.32;
+      const order = people.map((_, i) => i).sort(() => rnd() - 0.5);
+      order.forEach((pi, k) => {
+        const p = people[pi];
+        p.pal = { K: PX.OUT, H: HAIRS[Math.floor(rnd() * HAIRS.length)], S: SKINS[Math.floor(rnd() * SKINS.length)],
+                  T: TEES[Math.floor(rnd() * TEES.length)], J: "#2E3440" };
+        if (p.row === 0) Object.keys(p.pal).forEach((c) => { if (c !== "K") p.pal[c] = PX.mix(p.pal[c], "#0B0D14", 0.28); });
+        p.arrive = COUNT0 + 0.12 + k * (LAND - COUNT0 - 0.12) / (N - 1);
+        p.from = (p.x + 3.5 < heroC) ? -8 : W + 1;
+        p.hop = rnd() * 0.12;
+      });
+      const value = (t) => { if (t < COUNT0) return 0; const u = PX.clamp((t - COUNT0) / (LAND - COUNT0), 0, 1); return TARGET * (1 - Math.pow(1 - u, 1.7)); };
+
+      function drawPerson(g, p, t) {
+        if (t < p.arrive - WALK) return;
+        const y0 = GROUND - 10 - (p.row === 0 ? 3 : 0);
+        let x = p.x, y = y0, fr = FOL.a;
+        if (t < p.arrive) { const u = (t - (p.arrive - WALK)) / WALK; x = PX.lerp(p.from, p.x, u); fr = (Math.floor(t * 18) % 2) ? FOL.b : FOL.a; y -= (Math.floor(t * 18) % 2); }
+        else if (t >= LAND + p.hop && t < LAND + p.hop + 0.24) { const u = (t - LAND - p.hop) / 0.24; y -= Math.round(4 * Math.sin(Math.PI * u)); }
+        else if (t >= p.arrive && t < p.arrive + 0.06) y += 1;      // lands with a squash
+        PX.sprite(g, fr, p.pal, x, y, p.x + 3.5 > heroC);
+      }
+      function drawHero(g, t) {
+        let y = HY, pose = "stand";
+        if (t < 0.1) { y += Math.round((0.1 - t) / 0.025) * 2; }
+        if (t >= LAND) { const u = PX.clamp((t - LAND) / 0.24, 0, 1); y -= Math.round(4 * Math.sin(Math.PI * u)); pose = "win"; }
+        PX.sprite(g, PX.heroRows(pose), PAL, HX, y);
+      }
+      function drawHud(g, t) {
+        if (t < 0.04) return;
+        const boot = t < 0.16 ? Math.round((0.16 - t) / 0.04) * 2 : 0;
+        if (HAS_AV) {
+          g.fillStyle = PX.OUT; g.fillRect(1, 1 - boot, 18, 18);
+          g.fillStyle = "#FFFFFF"; g.fillRect(1, 1 - boot, 18, 1); g.fillRect(1, 1 - boot, 1, 18);
+          av.style.opacity = 1; av.style.transform = `translateY(${-boot * 8}px)`;
+        }
+        const v = value(t), u = TARGET ? v / TARGET : 1, done = t >= LAND;
+        const col = done ? (Math.floor((t - LAND) / 0.06) % 2 === 0 && t < LAND + 0.12 ? "#FFFFFF" : C1) : PX.mix(C0, C1, Math.pow(u, 0.8));
+        const w = PX.text(g, fmt(v), TX, TY - boot, 2, col);
+        if (LABEL) PX.text(g, LABEL, TX + 1, TY + 16 - boot, 1, "#FFFFFF");
+        // every arrival ticks the counter with a spark
+        for (const p of people) if (t >= p.arrive && t < p.arrive + 0.05) { PX.plus(g, TX + w + 4, TY + 6, 2, C1); break; }
+        const pk = done ? [1.14, 1.08, 1.04, 1.0][PX.clamp(Math.floor((t - LAND) / 0.05), 0, 3)] : 1;
+        hud.style.transformOrigin = `${((TX + w / 2) / W * 100).toFixed(1)}% ${((TY + 7) / H * 100).toFixed(1)}%`;
+        hud.style.transform = `scale(${pk})`;
+      }
+      function drawHearts(g, t) {
+        if (t < LAND) return;
+        const r = prng(9);
+        for (let i = 0; i < 12; i++) {
+          const s = LAND + r() * 0.3, x = 6 + r() * 100, life = 0.55 + r() * 0.3;
+          if (t < s || t > s + life) { r(); continue; }
+          const u = (t - s) / life, y = GROUND - 14 - u * (22 + r() * 8) + Math.sin(u * 9 + i) * 0.8;
+          if (u > 0.8 && Math.floor(t * 30) % 2) continue;          // blink out, game-style
+          PX.heart(g, x + Math.sin(u * 6 + i) * 2, y, i % 3 ? C1 : "#FF4D8D");
+        }
+      }
+      function render(t) {
+        sc.clearRect(0, 0, W, H); hc.clearRect(0, 0, W, H);
+        const upto = Math.floor(PX.clamp(t / 0.2, 0, 1) * 15) * 8;
+        PX.ledge(sc, 1, 114, GROUND, 6, upto, BRICK);
+        people.filter((p) => p.row === 0).forEach((p) => drawPerson(sc, p, t));
+        drawHero(sc, t);
+        people.filter((p) => p.row === 1).forEach((p) => drawPerson(sc, p, t));
+        drawHearts(sc, t);
+        drawHud(hc, t);
+      }
+      const S = { t: 0 };
+      tl.to(S, { t: D, duration: D, ease: "none", onUpdate: () => render(S.t) }, 0);
+      tl.eventCallback("onUpdate", () => render(tl.time()));
+      render(0);
+      tl.addLabel("landed", LAND);
+{% endblock %}

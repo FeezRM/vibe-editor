@@ -9,13 +9,13 @@ and say so in `RUN.md`.
 | Step | ffmpeg (default, verification lane) | premiere (refinement lane) |
 |---|---|---|
 | 02 transcript | ✅ `workflows/transcribe.py` (lane-independent) | ✅ same |
-| 03 rough cut | ✅ `lanes/ffmpeg/assemble.py --stage spine` | ⚠️ `lanes/premiere/replay-edl.mjs` — `add_to_timeline_batch` with source in/out, read back with `get_clip_properties`; bridge was down on this Mac (Premiere 2022, no CEP panel started) |
-| 04 captions | ✅ `renders/captions*.mov` overlaid | ✋ import the same `.mov` on the caption track (`import_media` + `add_to_timeline`, `linkAudio:false`) |
-| 05 graphics | ✅ every `renders/g*.mov` overlaid at its cue | ✋ import each render on V3 at `graphics-plan.json` cue; never scale or reposition in Premiere |
-| 06 audio | ✅ gain + limiter + sfx `adelay` + optional music bed | ⚠️ `adjust_audio_levels` + `add_audio_keyframes` from `audio/voice-gain.json` and `sfx-plan.json` (script not written yet) |
+| 03 rough cut | ✅ `lanes/ffmpeg/assemble.py --stage spine` · or adopt the creator's own cut: `lanes/premiere/import-edl.mjs <job> --sequence "<name>"` writes cuts.json from V1 | ✅ `lanes/premiere/replay-edl.mjs` — sequence set to the preset canvas, clips placed one at a time at Premiere's own reported end (a computed 574/30 lands a frame late), A-roll scaled canvas/source, read back with `get_clip_properties` (verified Windows / Premiere 25.3, 2026-09-20) |
+| 04 captions | ✅ `renders/captions*.mov` overlaid | ✅ `lanes/premiere/place-layers.mjs` — the caption `.mov` on V2 at 0, `linkAudio:false`, read back |
+| 05 graphics | ✅ every `renders/g*.mov` overlaid at its cue | ✅ `place-layers.mjs [--sequence <name>] [--no-gain]` — each render on V3 at its cue (V4 while V3 is busy); onto `<job>__CUT` or a `duplicate_sequence` of the creator's cut; tracks added and their output forced on; scaled to the sequence (200 % on a 4K sequence), never repositioned |
+| 06 audio | ✅ gain + limiter + sfx `adelay` + optional music bed | ⚠️ `place-layers.mjs` applies `audio/voice-gain.json` with `adjust_audio_levels` on every A1 clip (no limiter, no SFX/music placement yet) |
 | 07 pacing | ✅ zoom punches from `cuts.json` (`scale` eval=frame + `crop`) | ⚠️ `add_keyframe` on Scale, read back with `get_keyframes` (script not written yet) |
 | 08 export | ✅ `lanes/ffmpeg/assemble.py --stage final` | ⚠️ `lanes/premiere/export.mjs` → `export_sequence`; `finalize.sh` proves the file and falls back |
-| stills / QA | ✅ `lanes/ffmpeg/frame.py` only | ⛔ `export_frame` lies (returns success, writes nothing) — use the ffmpeg lane |
+| stills / QA | ✅ `lanes/ffmpeg/frame.py` only | ⛔ `export_frame` lies (returns success, writes nothing) — use the ffmpeg lane; on Windows, `PrintWindow` of the program monitor is the only pixel check of the sequence itself |
 
 ## Universal targets (from `presets/vertical/default/numbers.json`)
 

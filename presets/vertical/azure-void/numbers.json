@@ -1,0 +1,17 @@
+{
+  "$comment": "Azure Void look on the vertical/default numbers. Only what changes lives here; everything else (cut, captions geometry, graphics geometry, audio, export, fonts/, sfx/) is inherited from the preset it extends. Palette: azure-void-image-style/SKILL.md.",
+  "extends": "vertical/default",
+  "captions": {
+    "colors": {
+      "ink": "#FFFFFF",
+      "bad": "#DCE3E8",
+      "good": "#1F84ED",
+      "hot": "#54B3E9",
+      "em": "#54B3E9"
+    },
+    "glow": "0 0 14px rgba(17,75,195,.55), 0 4px 22px rgba(0,0,0,.6)"
+  },
+  "graphics": {
+    "skin": "azure-void"
+  }
+}

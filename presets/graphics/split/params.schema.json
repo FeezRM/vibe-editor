@@ -1,0 +1,27 @@
+{
+  "title": "split — 'it depends 40% on X, 30% on Y, 30% on Z': the parts land one by one on their words, then each dives into one ring and fills its share of the whole on its number while the total counts to 100",
+  "type": "object",
+  "required": ["items", "source"],
+  "properties": {
+    "items": {
+      "type": "array", "minItems": 2, "maxItems": 4, "x-real": true,
+      "items": {
+        "type": "object", "required": ["icon", "label", "share"],
+        "properties": {
+          "icon": { "type": "string", "description": "an icon from _icons.html (bulb, hook, gem, doc, film, …)" },
+          "label": { "type": "string", "maxLength": 12, "description": "the speaker's word for the part" },
+          "share": { "type": "number", "minimum": 1, "maximum": 100, "description": "the spoken share, in percent" },
+          "color": { "type": "string", "description": "optional override; default gold, azure, white, light azure" }
+        }
+      },
+      "description": "the parts in spoken order; shares should total 100"
+    },
+    "total_label": { "type": "string", "default": "results", "maxLength": 12, "x-real": true, "description": "the speaker's word for the whole" },
+    "source": { "type": "string", "x-real": true, "description": "where the shares come from — required by validate-plan" },
+    "reveal_at": { "type": "array", "items": { "type": "number" }, "description": "[land_0 … land_n-1, gather (the ring rises), fill_0 … fill_n-1 (on each number)]" }
+  },
+  "x-placements": ["inline", "top"],
+  "x-default-placement": "inline",
+  "x-events": ["reveal_at"],
+  "x-needs-provenance": true
+}

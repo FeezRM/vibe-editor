@@ -1,0 +1,59 @@
+{
+  "title": "shatter \u00e2\u20ac\u201d 'this hook is OVERPOWERED', 'it broke', 'destroyed': the named thing lands, strains (shake, cracks, red heat), then blows apart into shards that spin out red and burn off",
+  "type": "object",
+  "required": [
+    "object"
+  ],
+  "properties": {
+    "object": {
+      "type": "object",
+      "description": "{icon: hook|bulb|doc|\u00e2\u20ac\u00a6} or {image: assets/x.png} (a real still) or {text: 'HOOK'} \u00e2\u20ac\u201d the thing that breaks",
+      "properties": {
+        "icon": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 10
+        }
+      }
+    },
+    "cols": {
+      "type": "integer",
+      "default": 6,
+      "minimum": 3,
+      "maximum": 8
+    },
+    "rows": {
+      "type": "integer",
+      "default": 6,
+      "minimum": 3,
+      "maximum": 8
+    },
+    "reveal_at": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "[cracks start, it explodes \u00e2\u20ac\u201d put this on the stressed word]"
+    },
+    "text_px": {
+      "type": "integer",
+      "default": 130,
+      "minimum": 80,
+      "maximum": 320,
+      "description": "size of a {text} object"
+    }
+  },
+  "x-placements": [
+    "top",
+    "inline"
+  ],
+  "x-default-placement": "top",
+  "x-events": [
+    "reveal_at"
+  ]
+}

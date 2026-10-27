@@ -12,7 +12,10 @@ python lanes/ffmpeg/assemble.py projects/<job> --stage audio
 ```
 
 Numbers: `presets/vertical/default/numbers.json` → `audio`. Verb → file: `presets/vertical/default/sfx.json`;
-the files are the creator's pack in `assets/sfx/` (the preset ships a synthesised default pack).
+the files are the creator's pack in `assets/sfx/`. `presets/vertical/default/sfx/` holds only a README
+today, so `sfx-plan` resolves 0 hits and the reel ships silent under its graphics (9077, 2026-09-28).
+Check `sfx-plan: N hits` in the run output; with 0, tell the creator. Supplying or generating the pack
+is theirs to approve. Every demonstration preset already declares its verbs in `sfx-plan.py`.
 
 ## Rules that are files, not prose
 

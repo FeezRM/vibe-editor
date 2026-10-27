@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+{% block style %}
+  .bgs { position: absolute; inset: 0; }
+  .bgs video { position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; }
+  /* a light leak sweeps across on every switch — the cut reads as a reveal, not a glitch */
+  .bgs-leak { position: absolute; left: -60%; top: -10%; width: 80%; height: 120%; opacity: 0; transform: skewX(-14deg);
+              background: linear-gradient(90deg, #FFFFFF00 0%, #FFD9A833 25%, #FFFFFFD9 50%, #FFB07A40 75%, #FFFFFF00 100%); mix-blend-mode: screen; }
+{% endblock %}
+{% block body %}
+        <div class="bgs">
+          <video id="plate" class="clip" src="{{ plate }}" data-start="0" data-duration="{{ '%.3f' % duration }}" data-track-index="1" muted playsinline></video>
+          {% for t in reveal_at %}<div class="bgs-leak" id="lk{{ loop.index0 }}"></div>{% endfor %}
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      // the plate is the whole show (bg-plate.py); the preset only marks each switch with a fast leak
+      const SW = {{ reveal_at | tojson }};
+      SW.forEach((t, i) => {
+        if (t < 0.05) return;
+        tl.fromTo("#lk" + i, { opacity: 0, x: 0 }, { opacity: {{ leak }}, x: 1300, duration: 0.32, ease: "power2.inOut", immediateRender: false }, Math.max(0, t - 0.12));
+        tl.to("#lk" + i, { opacity: 0, duration: 0.1 }, t + 0.2);
+      });
+{% endblock %}

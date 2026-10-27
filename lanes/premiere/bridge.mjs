@@ -67,6 +67,15 @@ export class Bridge {
         detail = JSON.stringify(r).slice(0, 400);
       } catch (e) { detail = String(e.message || e); }
       if (!ok) {
+        // verify_premiere_connection keys on bridge-heartbeat.json, which a panel running pre-1.2.8 JavaScript in
+        // memory never writes — while commands still round-trip. The real probe is a read-back, never a flag.
+        try {
+          const r = await b.call("list_sequences", {}, timeoutMs);
+          ok = Array.isArray(r?.sequences);
+          if (ok) console.error("bridge: verify_premiere_connection failed but list_sequences answered — reload the MCP Bridge panel when convenient");
+        } catch (e) { detail += " | list_sequences: " + String(e.message || e); }
+      }
+      if (!ok) {
         await b.close();
         console.error(BRIDGE_CHECKLIST);
         console.error("detail:", detail);
@@ -116,7 +125,13 @@ export class Bridge {
     const r = await this._rpc("tools/call", { name, arguments: args }, timeoutMs);
     const text = (r.content || []).filter((c) => c.type === "text").map((c) => c.text).join("\n");
     if (r.isError) throw new Error(`${name}: ${text.slice(0, 800)}`);
-    try { return JSON.parse(text); } catch { return { text }; }
+    let parsed;
+    try { parsed = JSON.parse(text); } catch { return { text }; }
+    // server ≥ 1.2 wraps results as {success, tool, data:{…}}; lane scripts read the flat shape
+    if (parsed && typeof parsed === "object" && parsed.tool && parsed.data && typeof parsed.data === "object" && !Array.isArray(parsed.data)) {
+      return { success: parsed.success, ...parsed.data };
+    }
+    return parsed;
   }
 
   async close() {
@@ -127,7 +142,7 @@ export class Bridge {
 }
 
 export function readJob(jobDir) {
-  const text = readFileSync(join(jobDir, "RUN.md"), "utf8");
+  const text = readFileSync(join(jobDir, "RUN.md"), "utf8").replace(/\r\n/g, "\n");
   const m = text.match(/^---\n([\s\S]*?)\n---/);
   const state = {};
   for (const line of (m ? m[1] : "").split("\n")) {
@@ -135,4 +150,14 @@ export function readJob(jobDir) {
     if (mm) state[mm[1]] = mm[2].replace(/^"|"$/g, "");
   }
   return state;
+}
+
+/** numbers.json of the job's vertical preset, following `extends` (the same merge as workflows/_lib.load_numbers). */
+export function readNumbers(preset = "vertical/default") {
+  const d = JSON.parse(readFileSync(join(REPO, "presets", preset, "numbers.json"), "utf8"));
+  const parent = d.extends;
+  delete d.extends;
+  if (!parent || parent === preset) return d;
+  const merge = (a, b) => { const o = { ...a }; for (const [k, v] of Object.entries(b)) o[k] = (v && typeof v === "object" && !Array.isArray(v) && o[k] && typeof o[k] === "object") ? merge(o[k], v) : v; return o; };
+  return merge(readNumbers(parent), d);
 }

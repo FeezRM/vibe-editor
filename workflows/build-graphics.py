@@ -28,6 +28,7 @@ ap.add_argument("--preset")
 ap.add_argument("--params")
 ap.add_argument("--golden", action="store_true")
 ap.add_argument("--write-golden", action="store_true")
+ap.add_argument("--vertical", default="vertical/default", help="self-test only: the vertical preset whose numbers (and skin) to render with")
 ap.add_argument("--only", default=None)
 ap.add_argument("--no-render", action="store_true")
 a = ap.parse_args()
@@ -59,9 +60,9 @@ def build_one(job, g: dict, faces: dict, numbers: dict) -> dict:
         die(f"{g['id']}: placement '{placement}' not allowed for preset {g['preset']} (allowed: {allowed})")
     g["placement_resolved"] = placement
     comp_id = f"{g['id']}-{g['preset']}"
-    html = P.fill(preset, params, comp_id, int(job.fps), numbers, placement)
+    html = P.fill(preset, params, comp_id, int(job.fps), numbers, placement, job.dir)
     comp_rel = f"compositions/{comp_id}.html"
-    job.p(comp_rel).write_text(html)
+    job.p(comp_rel).write_text(html, encoding="utf-8")
     ok, out = lint(job, comp_rel)
     if not ok and "error" in out.lower():
         print(f"lint[{g['id']}]:\n{out}", file=sys.stderr)
@@ -75,8 +76,8 @@ if a.preset:
     pdir = Path(a.preset)
     name = pdir.name
     preset = P.load(name)
-    params = json.loads(Path(a.params or (pdir / "example.json")).read_text())
-    numbers = load_numbers()
+    params = json.loads(Path(a.params or (pdir / "example.json")).read_text(encoding="utf-8"))
+    numbers = load_numbers(a.vertical)
     numbers["_handle"] = load_brand().get("creator", {}).get("handle", "")
     errs = P.validate_params(preset, params)
     if errs:
@@ -99,10 +100,10 @@ if a.preset:
                     dst.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(sp, dst)
     placement = params.get("placement", preset["schema"].get("x-default-placement", "beside-r"))
-    comp_id = f"test-{name}"
-    html = P.fill(preset, params, comp_id, 30, numbers, placement)
+    comp_id = f"test-{name}" if a.vertical == "vertical/default" else f"test-{name}-{a.vertical.split('/')[-1]}"
+    html = P.fill(preset, params, comp_id, 30, numbers, placement, pdir)
     comp_rel = f"compositions/{comp_id}.html"
-    (scratch / comp_rel).write_text(html)
+    (scratch / comp_rel).write_text(html, encoding="utf-8")
     ok, out = lint(job, comp_rel)
     print(f"lint[{name}]: {'ok' if ok else 'issues'}")
     if not ok:
@@ -113,7 +114,9 @@ if a.preset:
     frame = scratch / "renders" / f"{comp_id}-t1.png"
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1.0", "-i", str(mov), "-frames:v", "1", str(frame)], check=True)
     golden = pdir / "golden.png"
-    if a.write_golden or not golden.exists():
+    if a.vertical != "vertical/default":
+        pass                                     # a skin has no golden; the default look is the contract
+    elif a.write_golden or not golden.exists():
         shutil.copy2(frame, golden)
         print(f"golden written: {golden}")
     elif a.golden:
@@ -154,7 +157,7 @@ for g in plan["graphics"]:
     if a.no_render:
         continue
     mov = render(job, info["comp"], f"renders/{info['comp_id']}.mov")
-    g["render"] = str(mov.relative_to(job.dir))
+    g["render"] = mov.relative_to(job.dir).as_posix()
     g["render_mtime"] = mov.stat().st_mtime
     g["dirty"] = False
     built += 1

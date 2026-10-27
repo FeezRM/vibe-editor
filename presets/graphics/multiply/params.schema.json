@@ -1,0 +1,17 @@
+{
+  "title": "multiply — one REAL tile becomes N tiles with a counter: the spoken multiple, shown as units",
+  "type": "object", "required": ["image", "count"],
+  "properties": {
+    "image": { "type": "string", "x-asset": true, "description": "the creator's own tile; every copy is a unit of output, not a different item" },
+    "count": { "type": "integer", "minimum": 2, "maximum": 40, "x-real": true },
+    "unit": { "type": "string", "default": "×" },
+    "source": { "type": "string", "x-real": true, "description": "where the number comes from — required by validate-plan" },
+    "cols": { "type": "integer", "default": 10, "minimum": 4, "maximum": 12 },
+    "gap": { "type": "integer", "default": 8 },
+    "one_w": { "type": "integer", "default": 176 },
+    "stage_h": { "type": "integer", "default": 470 },
+    "size": { "type": "integer", "default": 190 },
+    "reveal_at": { "type": "array", "items": { "type": "number" }, "description": "[ring lights, burst]" }
+  },
+  "x-placements": ["inline", "cutaway"], "x-default-placement": "inline", "x-events": ["reveal_at"], "x-needs-provenance": true
+}

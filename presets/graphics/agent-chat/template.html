@@ -1,0 +1,255 @@
+{% extends "_base.html" %}
+{% block style %}
+  .ach { position: absolute; left: 50%; top: -20px; width: 780px; height: 940px; margin-left: -390px; }
+  .ach-ph { position: absolute; inset: 0; border-radius: 80px; padding: 10px; transform: translateY(150px);
+            background: linear-gradient(160deg, #FF2E93 0%, #FF4F6A 40%, #FF8A1F 100%); box-shadow: 0 24px 48px #00000066; }
+  .ach-flash { position: absolute; inset: -6px; border-radius: 86px; border: 6px solid #FFFFFF; opacity: 0; }
+  .ach-scr { position: relative; width: 100%; height: 100%; border-radius: 70px; background: #0B0B0D; overflow: hidden;
+             font-family: 'CapSans', Inter, sans-serif; color: #F5F5F7; }
+  .ach-sb { position: absolute; left: 0; right: 0; top: 0; height: 56px; display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 58px 0 66px; font-weight: 700; font-size: 26px; }
+  .ach-sb .ic { display: flex; gap: 10px; align-items: center; }
+  .ach-hd { position: absolute; left: 0; right: 0; top: 56px; height: 176px; }
+  .ach-hd .side { position: absolute; top: 34px; width: 48px; height: 48px; border-radius: 50%; background: #1F1F23; display: grid; place-items: center; }
+  .ach-hd .side.l { left: 40px; } .ach-hd .side.r { right: 40px; }
+  .ach-av { position: absolute; left: 50%; top: 6px; width: 96px; height: 96px; margin-left: -48px; border-radius: 50%; overflow: hidden;
+            background: #F4EFEA; box-shadow: 0 0 0 4px #0B0B0D, 0 0 0 7px #FF4F6A, 0 0 26px #FF4F6A66; }
+  .ach-av img { width: 100%; height: 100%; object-fit: cover; }
+  .ach-nm { position: absolute; left: 0; right: 0; top: 108px; height: 44px; text-align: center; font-weight: 800; font-size: 38px; letter-spacing: -0.01em; }
+  .ach-nm span { display: inline-block; }
+  .ach-skel { position: absolute; left: 50%; top: 118px; width: 132px; height: 28px; margin-left: -66px; border-radius: 14px;
+              background: linear-gradient(90deg, #26272C 0%, #3A3B42 50%, #26272C 100%); background-size: 300% 100%; }
+  .ach-st { position: absolute; left: 0; right: 0; top: 152px; text-align: center; font-weight: 600; font-size: 26px; color: #A3A6AD; }
+  .ach-ts { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-weight: 600; font-size: 21px; color: #6E7178; }
+  .ach-st b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #2BCB6B; margin-right: 8px; vertical-align: 2px; }
+  .ach-chat { position: absolute; left: 0; right: 0; top: 240px; height: 384px; overflow: hidden; }
+  .ach-pg { position: absolute; inset: 0; padding: 8px 30px 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 14px; opacity: 0; }
+  .ach-ub { align-self: flex-end; max-width: 480px; padding: 16px 24px; border-radius: 30px 30px 8px 30px; background: linear-gradient(135deg, #3797F0 0%, #5B5BF0 100%); color: #FFFFFF;
+            font-weight: 500; font-size: 30px; line-height: 1.28; transform-origin: 100% 100%; }
+  .ach-slot { display: grid; align-self: stretch; }
+  .ach-slot > * { grid-area: 1 / 1; align-self: start; justify-self: start; opacity: 0; transform-origin: 0 0; }
+  .ach-ab { background: #1F1F23; border-radius: 30px 30px 30px 8px; }
+  .ach-dots { padding: 22px 26px; display: flex; gap: 10px; }
+  .ach-dots i { width: 14px; height: 14px; border-radius: 50%; background: #A3A6AD; display: block; }
+  .ach-con { padding: 20px 24px; display: flex; align-items: center; gap: 20px; width: 560px; }
+  .ach-ig { width: 76px; height: 76px; border-radius: 22px; flex: none; display: grid; place-items: center;
+            background: radial-gradient(circle at 30% 107%, #FDF497 0%, #FDF497 5%, #FD5949 45%, #D6249F 60%, #285AEB 90%); }
+  .ach-con .tx { flex: 1; }
+  .ach-con .t1 { font-weight: 800; font-size: 30px; }
+  .ach-con .t2 { font-weight: 500; font-size: 22px; color: #A3A6AD; margin-top: 4px; }
+  .ach-pill { display: flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 22px; background: #0F3B22; color: #3BE07A;
+              font-weight: 800; font-size: 24px; opacity: 0; transform: scale(.5); }
+  .ach-tc { padding: 16px; width: 580px; }
+  .ach-pr { display: flex; align-items: center; gap: 12px; height: 44px; }
+  .ach-pr img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; }
+  .ach-pr .h { font-weight: 800; font-size: 25px; }
+  .ach-pr .h small { font-weight: 500; color: #A3A6AD; font-size: 21px; margin-left: 8px; }
+  .ach-row { position: relative; display: flex; gap: 10px; margin-top: 10px; }
+  .ach-tile { position: relative; flex: 1 1 0; aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; background: #22252B; }
+  .ach-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ach-tile .bx { position: absolute; inset: 0; border: 4px solid #3797F0; border-radius: 12px; opacity: 0; }
+  .ach-tile .ck { position: absolute; right: 6px; top: 6px; width: 30px; height: 30px; border-radius: 50%; background: #3797F0; color: #FFFFFF;
+                  display: grid; place-items: center; opacity: 0; transform: scale(.4); }
+  .ach-tile.hero .bx { border-color: #FFB800; }
+  .ach-scan { position: absolute; top: -10px; bottom: -10px; left: 0; width: 6px; border-radius: 3px; opacity: 0;
+              background: linear-gradient(180deg, #3797F000 0%, #3797F0 25%, #3797F0 75%, #3797F000 100%); box-shadow: 0 0 24px 8px #3797F080; }
+  .ach-rc { padding: 14px 16px; width: 580px; }
+  .ach-fr { display: flex; align-items: center; gap: 14px; height: 54px; padding: 0 10px; border-radius: 16px; }
+  .ach-fr .a { width: 40px; height: 40px; border-radius: 50%; flex: none; filter: blur(1.5px); }
+  .ach-fr .ln { flex: 1; }
+  .ach-fr .ln i { display: block; height: 12px; border-radius: 6px; background: #3A3C43; }
+  .ach-fr .ln i + i { margin-top: 8px; height: 10px; background: #2C2E34; }
+  .ach-chip { padding: 9px 16px; border-radius: 18px; background: #3797F0; color: #FFFFFF; font-weight: 800; font-size: 21px; opacity: 0; transform: scale(.5); white-space: nowrap; }
+  .ach-cmp { position: absolute; left: 24px; right: 24px; top: 636px; height: 96px; border-radius: 48px; background: #1C1C20;
+             display: flex; align-items: center; gap: 14px; padding: 0 14px 0 24px; }
+  .ach-cmp .fld { flex: 1; position: relative; font-weight: 500; font-size: 28px; line-height: 1.22; color: #F5F5F7; max-height: 70px; overflow: hidden; }
+  .ach-cmp .ph { color: #7C7F87; }
+  .ach-car { display: inline-block; width: 3px; height: 30px; background: #3797F0; vertical-align: -6px; margin-left: 2px; opacity: 0; }
+  .ach-btn { position: relative; width: 66px; height: 66px; border-radius: 50%; flex: none; background: #F5F5F7; display: grid; place-items: center; }
+  .ach-btn .snd { position: absolute; inset: 0; border-radius: 50%; background: #3797F0; display: grid; place-items: center; opacity: 0; }
+{% endblock %}
+{% block body %}
+        <div class="ach">
+          <div class="ach-ph" id="ph"><div class="ach-flash" id="flash"></div>
+            <div class="ach-scr">
+              <div class="ach-sb"><span>9:41</span><span class="ic">
+                <svg width="34" height="22" viewBox="0 0 34 22"><rect x="0" y="14" width="6" height="8" rx="2" fill="#F5F5F7"/><rect x="9" y="10" width="6" height="12" rx="2" fill="#F5F5F7"/><rect x="18" y="5" width="6" height="17" rx="2" fill="#F5F5F7"/><rect x="27" y="0" width="6" height="22" rx="2" fill="#F5F5F7"/></svg>
+                <svg width="48" height="24" viewBox="0 0 48 24"><rect x="1" y="1" width="40" height="22" rx="7" fill="none" stroke="#F5F5F7" stroke-width="2" opacity=".45"/><rect x="4" y="4" width="34" height="16" rx="4" fill="#F5F5F7"/><rect x="43" y="8" width="3" height="8" rx="1.5" fill="#F5F5F7" opacity=".45"/></svg></span></div>
+              <div class="ach-hd">
+                <div class="side l"><svg width="24" height="18" viewBox="0 0 24 18"><path d="M2 2h20M2 9h20M2 16h20" stroke="#F5F5F7" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+                <div class="side r"><svg width="24" height="6" viewBox="0 0 24 6"><circle cx="3" cy="3" r="2.6" fill="#F5F5F7"/><circle cx="12" cy="3" r="2.6" fill="#F5F5F7"/><circle cx="21" cy="3" r="2.6" fill="#F5F5F7"/></svg></div>
+                <div class="ach-av" id="av"><img src="{{ avatar }}" alt="" /></div>
+                {% if name_reveal_at is not none %}<div class="ach-skel" id="skel"></div>{% endif %}
+                <div class="ach-nm" id="nm">{% for ch in agent_name %}<span class="ch">{{ ch }}</span>{% endfor %}</div>
+                <div class="ach-st"><b></b><span id="st"></span></div>
+              </div>
+              <div class="ach-chat"><div class="ach-ts">{{ timestamp }}</div>
+                {% for t in turns %}{% set ti = loop.index0 %}
+                <div class="ach-pg" id="pg{{ ti }}">
+                  {% if t.prompt %}<div class="ach-ub" id="ub{{ ti }}">{{ t.prompt }}</div>{% endif %}
+                  <div class="ach-slot">
+                    {% for r in t.replies %}{% set ri = loop.index0 %}
+                    {% if r.kind == 'dots' %}
+                    <div class="ach-ab ach-dots" id="r{{ ti }}_{{ ri }}"><i></i><i></i><i></i></div>
+                    {% elif r.kind == 'connect' %}
+                    <div class="ach-ab ach-con" id="r{{ ti }}_{{ ri }}">
+                      <div class="ach-ig"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="#FFFFFF" stroke-width="4"><rect x="4" y="4" width="36" height="36" rx="11"/><circle cx="22" cy="22" r="8.5"/><circle cx="32.5" cy="11.5" r="2.4" fill="#FFFFFF" stroke="none"/></svg></div>
+                      <div class="tx"><div class="t1">{{ r.app }}</div><div class="t2">{{ r.sub }}</div></div>
+                      <div class="ach-pill" id="pill{{ ti }}_{{ ri }}"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M4 11.5l4.5 4.5L18 6.5" fill="none" stroke="#3BE07A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ r.label }}</div>
+                    </div>
+                    {% elif r.kind == 'tiles' %}
+                    <div class="ach-ab ach-tc" id="r{{ ti }}_{{ ri }}">
+                      <div class="ach-pr"><img src="{{ profile_avatar }}" alt="" /><div class="h">@{{ handle }}<small>{{ r.sub }}</small></div></div>
+                      <div class="ach-row">
+                        {% for im in images %}<div class="ach-tile{% if r.hero is defined and r.hero == loop.index0 %} hero{% endif %}" id="tl{{ ti }}_{{ loop.index0 }}"><img src="{{ im.src }}" alt="" /><div class="bx"></div>
+                          <div class="ck"><svg width="18" height="18" viewBox="0 0 22 22"><path d="M4 11.5l4.5 4.5L18 6.5" fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>{% endfor %}
+                        <div class="ach-scan" id="scan{{ ti }}"></div>
+                      </div>
+                    </div>
+                    {% elif r.kind == 'rows' %}
+                    <div class="ach-ab ach-rc" id="r{{ ti }}_{{ ri }}">
+                      {% set hues = ['#F58529', '#8A3AB9', '#4C68D7', '#CD486B', '#2BB673'] %}
+                      {% for k in range(r.n) %}<div class="ach-fr" id="fr{{ ti }}_{{ k }}">
+                        <div class="a" style="background: linear-gradient(135deg, {{ hues[k % 5] }}, #FCE38A);"></div>
+                        <div class="ln"><i style="width: {{ [62, 48, 70, 55, 44][k % 5] }}%"></i><i style="width: {{ [38, 30, 44, 34, 28][k % 5] }}%"></i></div>
+                        {% if k in r.picks %}<div class="ach-chip" id="chip{{ ti }}_{{ k }}">{{ r.chip }}</div>{% endif %}
+                      </div>{% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="ach-cmp">
+                <svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 4v22M4 15h22" stroke="#F5F5F7" stroke-width="3" stroke-linecap="round"/></svg>
+                <div class="fld"><span class="ph" id="hint">{{ composer_hint }}</span><span id="typed"></span><span class="ach-car" id="car"></span></div>
+                <div class="ach-btn" id="btn">
+                  <svg width="26" height="30" viewBox="0 0 26 30"><rect x="8" y="2" width="10" height="17" rx="5" fill="#0B0B0D"/><path d="M3 14a10 10 0 0 0 20 0M13 24v4" stroke="#0B0B0D" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>
+                  <div class="snd" id="snd"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 25V6M7 13l8-8 8 8" stroke="#FFFFFF" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      const TURNS = {{ turns | tojson }};
+      const STATUS = {{ status | tojson }};
+      const NAME_AT = {{ name_reveal_at | tojson }};
+      const DROP = {{ drop_at | tojson }};
+      const EXIT = {{ (exit_at if exit_at is not none else duration - 0.34) | tojson }};
+      const N_IMG = {{ images | length }};
+      const ROW_W = 548, CHAT_H = 384;   // tiles card inner width (580 − 2×16): static, a seek-safe render never reads live geometry
+
+      // the phone: already on screen at frame zero, lowered; it slams into place on the drop word
+      tl.fromTo("#ph", { y: 150, rotation: 3 }, { y: -26, rotation: 0, duration: 0.2, ease: "power3.out", immediateRender: true }, DROP);
+      tl.to("#ph", { y: 0, duration: 0.18, ease: "power2.inOut" }, DROP + 0.2);
+      tl.fromTo("#flash", { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.05, duration: 0.45, ease: "power2.out", immediateRender: false }, DROP + 0.02);
+      tl.fromTo("#av", { scale: 0.6 }, { scale: 1, duration: 0.4, ease: "back.out(2.6)", immediateRender: false }, DROP + 0.08);
+
+      // the name: a skeleton until the speaker says it, then it types in, one letter per beat
+      if (NAME_AT !== null) {
+        tl.set(".ach-nm .ch", { opacity: 0 }, 0);
+        tl.to("#skel", { opacity: 0, duration: 0.1 }, NAME_AT);
+        gsap.utils.toArray(".ach-nm .ch").forEach((c, i) => tl.fromTo(c, { opacity: 0, y: 14, scale: 1.5, color: "#FF2E93" },
+          { opacity: 1, y: 0, scale: 1, color: "#F5F5F7", duration: 0.28, ease: "back.out(3)", immediateRender: false }, NAME_AT + i * 0.06));
+        tl.fromTo("#av", { scale: 1 }, { scale: 1.14, duration: 0.14, yoyo: true, repeat: 1, ease: "power2.inOut", immediateRender: false }, NAME_AT);
+      }
+
+      // pages: one turn on screen at a time; a new turn pushes the last one up and out
+      const pageAt = TURNS.map(t => t.prompt ? t.send_at : t.replies[0].at);
+      tl.to(".ach-ts", { opacity: 0, duration: 0.15 }, pageAt[0]);
+      TURNS.forEach((t, i) => {
+        const s = pageAt[i];
+        tl.fromTo("#pg" + i, { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.28, ease: ease.snap, immediateRender: false }, s);
+        if (i > 0) tl.to("#pg" + (i - 1), { opacity: 0, y: -140, duration: 0.24, ease: "power2.in" }, s);
+        if (t.prompt) {
+          tl.fromTo("#ub" + i, { scale: 0.7 }, { scale: 1, duration: 0.3, ease: "back.out(2.2)", immediateRender: false }, s);
+          // send: the button presses
+          tl.to("#btn", { scale: 0.84, duration: 0.07 }, t.send_at - 0.07);
+          tl.to("#btn", { scale: 1, duration: 0.22, ease: ease.snap }, t.send_at);
+        }
+        // a reply taller than what's left below the prompt scrolls the page up, like the real chat does (heights are
+        // the CSS constants above and an estimate of the bubble's wrapped lines — no live geometry)
+        const bubH = t.prompt ? Math.ceil(t.prompt.length / 26) * 38.4 + 32 + 14 : 0;
+        t.replies.forEach((r, j) => {
+          const el = "#r" + i + "_" + j;
+          const cardH = { dots: 58, connect: 116, tiles: 221, rows: 28 + 54 * (r.n || 0) }[r.kind] || 0;
+          const over = 8 + bubH + cardH - CHAT_H;
+          if (over > 0) tl.to("#pg" + i, { y: -(over + 12), duration: 0.3, ease: "power2.out" }, r.at);
+          tl.fromTo(el, { opacity: 0, scale: 0.85, y: 16 }, { opacity: 1, scale: 1, y: 0, duration: 0.28, ease: "back.out(1.8)", immediateRender: false }, r.at);
+          if (j > 0) tl.to("#r" + i + "_" + (j - 1), { opacity: 0, duration: 0.12 }, r.at);
+          if (r.kind === "connect") {
+            tl.to("#pill" + i + "_" + j, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(3)" }, r.check_at);
+          }
+          if (r.kind === "tiles") {
+            gsap.utils.toArray(el + " .ach-tile").forEach((tile, k) => tl.fromTo(tile, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.24, ease: ease.snap, immediateRender: false }, r.at + 0.05 + k * 0.05));
+            const sweep = 0.9;
+            tl.set("#scan" + i, { opacity: 1 }, r.scan_at);
+            tl.fromTo("#scan" + i, { x: 0 }, { x: ROW_W - 6, duration: sweep, ease: "power1.inOut", immediateRender: false }, r.scan_at);
+            tl.to("#scan" + i, { opacity: 0, duration: 0.15 }, r.scan_at + sweep);
+            for (let k = 0; k < N_IMG; k++) {
+              const hit = r.scan_at + sweep * ((k + 0.5) / N_IMG), tile = "#tl" + i + "_" + k;
+              tl.to(tile + " .bx", { opacity: 1, duration: 0.14 }, hit);
+              tl.to(tile + " .ck", { opacity: 1, scale: 1, duration: 0.26, ease: "back.out(3)" }, hit + 0.04);
+              tl.fromTo(tile, { scale: 1 }, { scale: 1.06, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.inOut", immediateRender: false }, hit);
+            }
+            if (r.hero !== undefined && r.hero_at !== undefined) {
+              for (let k = 0; k < N_IMG; k++) {
+                const tile = "#tl" + i + "_" + k;
+                if (k === r.hero) {
+                  tl.to(tile, { scale: 1.1, y: 6, zIndex: 5, boxShadow: "0 0 0 4px #FFB800, 0 0 34px #FFB800", duration: 0.34, ease: "back.out(2)" }, r.hero_at);
+                  tl.to(tile + " .ck", { backgroundColor: "#FFB800", duration: 0.2 }, r.hero_at);
+                } else {
+                  tl.to(tile + " img", { filter: "grayscale(1) brightness(.6)", duration: 0.3 }, r.hero_at);
+                  tl.to(tile + " .bx, " + tile + " .ck", { opacity: 0.2, duration: 0.3 }, r.hero_at);
+                }
+              }
+            }
+          }
+          if (r.kind === "rows") {
+            for (let k = 0; k < r.n; k++) tl.fromTo("#fr" + i + "_" + k, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.22, ease: ease.snap, immediateRender: false }, r.at + 0.04 + k * 0.05);
+            r.picks.forEach((k, n) => {
+              const at = r.picks_at + n * 0.14;
+              tl.to("#fr" + i + "_" + k, { backgroundColor: "#15304F", duration: 0.2 }, at);
+              tl.to("#chip" + i + "_" + k, { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(3)" }, at);
+            });
+          }
+        });
+      });
+
+      // the phone leaves
+      tl.to("#ph", { y: 980, duration: 0.32, ease: "power3.in" }, EXIT);
+
+      // text state is a pure function of time: the composer types the speaker's prompt across the line, the status
+      // flips on its words, the typing dots breathe — every frame renders the same on every seek
+      const typedEl = document.getElementById("typed"), hintEl = document.getElementById("hint"), carEl = document.getElementById("car");
+      const sndEl = document.getElementById("snd"), stEl = document.getElementById("st"), skelEl = document.getElementById("skel");
+      const dotEls = TURNS.map((t, i) => t.replies.map((r, j) => r.kind === "dots" ? document.querySelectorAll("#r" + i + "_" + j + " i") : null));
+      function draw() {
+        const T = tl.time();
+        let txt = "", typing = false;
+        TURNS.forEach(t => {
+          if (!t.prompt || T < t.type_at || T >= t.send_at) return;
+          const dur = Math.max(0.3, t.send_at - 0.12 - t.type_at);
+          txt = t.prompt.slice(0, Math.min(t.prompt.length, Math.floor((T - t.type_at) / dur * t.prompt.length + 1)));
+          typing = true;
+        });
+        typedEl.textContent = txt;
+        hintEl.style.display = txt ? "none" : "inline";
+        carEl.style.opacity = typing ? ((Math.floor(T * 4) % 2) ? 1 : 0.25) : 0;
+        sndEl.style.opacity = txt ? 1 : 0;
+        let s = null;
+        STATUS.forEach(x => { if (T >= x.at) s = x; });
+        stEl.textContent = s ? s.text : "";
+        stEl.style.opacity = s ? Math.min(1, (T - s.at) / 0.15) : 0;
+        if (skelEl) skelEl.style.backgroundPosition = (100 - ((T * 70) % 200)) + "% 0";
+        dotEls.forEach(row => row.forEach(ds => { if (ds) ds.forEach((d, k) => {
+          const v = Math.max(0, Math.sin(T * 7 - k * 0.9));
+          d.style.opacity = 0.35 + 0.65 * v; d.style.transform = "translateY(" + (-6 * v).toFixed(1) + "px)"; }); }));
+      }
+      tl.eventCallback("onUpdate", draw);
+      draw();
+{% endblock %}

@@ -1,0 +1,15 @@
+{
+  "title": "comment — the comment-to-DM CTA performed: the literal word types into a comment box, send, it flies off, and the creator's DM drops in at the top with what they promised",
+  "type": "object",
+  "required": ["word", "reply"],
+  "properties": {
+    "word": { "type": "string", "x-real": true, "maxLength": 16, "description": "the literal CTA word the speaker says" },
+    "reply": { "type": "string", "x-real": true, "maxLength": 40, "description": "the DM text — what the speaker promised, in their words" },
+    "attachments": { "type": "array", "default": [], "maxItems": 2, "x-real": true, "items": { "type": "string", "maxLength": 18 },
+                     "description": "the promised things by their real names" },
+    "reveal_at": { "type": "array", "items": { "type": "number" }, "description": "[typing starts, send, DM lands]" }
+  },
+  "x-placements": ["cutaway"],
+  "x-default-placement": "cutaway",
+  "x-events": ["reveal_at"]
+}

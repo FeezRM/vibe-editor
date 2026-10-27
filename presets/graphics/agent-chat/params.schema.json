@@ -1,0 +1,147 @@
+{
+  "title": "agent-chat \u00e2\u20ac\u201d an AI agent's chat on a phone, played along the line: the phone slams up on the drop word, the agent's name types in when it is said, the speaker's own prompt types into the composer and sends, the agent's status flips on its words, and its replies arrive as dots, an app connection, the creator's real tiles being scanned, or rows getting picked",
+  "type": "object",
+  "required": [
+    "agent_name",
+    "avatar",
+    "turns"
+  ],
+  "properties": {
+    "agent_name": {
+      "type": "string",
+      "x-real": true,
+      "maxLength": 14,
+      "description": "the agent's name as the speaker says it"
+    },
+    "avatar": {
+      "type": "string",
+      "x-asset": true,
+      "description": "the agent's real avatar (cropped from the product's own screenshots)"
+    },
+    "composer_hint": {
+      "type": "string",
+      "default": "Message",
+      "x-real": true,
+      "maxLength": 24
+    },
+    "drop_at": {
+      "type": "number",
+      "default": 0.4,
+      "description": "the phone slams into place (the 'dropped / launched' word)"
+    },
+    "name_reveal_at": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "default": null,
+      "description": "the name is a skeleton until the speaker names it; null = shown from the start"
+    },
+    "status": {
+      "type": "array",
+      "default": [],
+      "x-real": true,
+      "items": {
+        "type": "object",
+        "required": [
+          "at",
+          "text"
+        ],
+        "properties": {
+          "at": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 28
+          }
+        }
+      },
+      "description": "the header status line, flipped on the words that name what the agent is doing"
+    },
+    "turns": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "x-real": true,
+      "items": {
+        "type": "object",
+        "required": [
+          "replies"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 56,
+            "description": "what the speaker says they tell it, in their words"
+          },
+          "type_at": {
+            "type": "number"
+          },
+          "send_at": {
+            "type": "number"
+          },
+          "replies": {
+            "type": "array",
+            "description": "each replaces the last in the same slot: {kind: dots, at} \u00c2\u00b7 {kind: connect, at, app, sub, label, check_at} \u00c2\u00b7 {kind: tiles, at, sub, scan_at, hero?, hero_at?} \u00c2\u00b7 {kind: rows, at, n, picks, picks_at, chip}"
+          }
+        }
+      }
+    },
+    "images": {
+      "type": "array",
+      "default": [],
+      "maxItems": 5,
+      "x-asset": true,
+      "description": "tiles replies: the creator's REAL posts",
+      "items": {
+        "type": "object",
+        "required": [
+          "src"
+        ],
+        "properties": {
+          "src": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "profile_avatar": {
+      "type": "string",
+      "x-asset": true,
+      "description": "tiles replies: the creator's real face/avatar"
+    },
+    "exit_at": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "default": null,
+      "description": "the phone drops away; null = duration \u00e2\u02c6\u2019 0.34"
+    },
+    "reveal_at": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "every internal event, for pacing and SFX (the drop, the name, each send, each reply)"
+    },
+    "timestamp": {
+      "type": "string",
+      "default": "Today",
+      "x-real": true,
+      "maxLength": 20,
+      "description": "the centred chat timestamp"
+    }
+  },
+  "x-placements": [
+    "inline"
+  ],
+  "x-default-placement": "inline",
+  "x-events": [
+    "reveal_at"
+  ]
+}

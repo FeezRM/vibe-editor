@@ -1,0 +1,70 @@
+{% extends "_base.html" %}
+{% block style %}
+  .strip { display: flex; gap: 14px; width: 100%; align-items: stretch; position: relative; }
+  .tile { position: relative; flex: 1 1 0; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: #1a1a1f;
+          box-shadow: 0 18px 40px rgba(0,0,0,.55); transform-origin: center bottom; }
+  .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(1.12) contrast(1.05); }
+  .tile .box { position: absolute; inset: 0; border: 4px solid #FFC531; border-radius: 16px; opacity: 0;
+               box-shadow: 0 0 26px rgba(255,197,49,.55), inset 0 0 26px rgba(255,197,49,.25); }
+  .tile .chk { position: absolute; right: 10px; top: 10px; width: 38px; height: 38px; border-radius: 50%; background: #FFC531; color: #0A0A0B;
+               font-size: 24px; font-weight: 900; display: grid; place-items: center; opacity: 0; transform: scale(.4); }
+  .tile.hero .box { border-color: #FFC531; }
+  .scanline { position: absolute; top: -30px; bottom: -30px; left: 0; width: 8px; border-radius: 4px; opacity: 0;
+              background: linear-gradient(180deg, rgba(255,197,49,0) 0%, #FFC531 30%, #FFC531 70%, rgba(255,197,49,0) 100%);
+              box-shadow: 0 0 40px 12px rgba(255,197,49,.55); }
+  .pl-cutaway .strip { position: absolute; left: 60px; right: 60px; top: 50%; transform: translateY(-50%); }
+{% endblock %}
+{% block body %}
+        <div class="strip">
+          {% for im in images %}
+          <div class="tile t{{ loop.index0 }}{% if hero is not none and loop.index0 == hero %} hero{% endif %}">
+            <img src="{{ im.src }}" alt="" />
+            <div class="box"></div><div class="chk">✓</div>
+          </div>
+          {% endfor %}
+          {% if mode == 'scan' %}<div class="scanline"></div>{% endif %}
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      const tiles = gsap.utils.toArray(".tile"), n = tiles.length;
+      tiles.forEach((t, i) => tl.from(t, { opacity: 0, y: 40, scale: 0.85, filter: "blur(6px)", duration: ENTER, ease: ease.snap }, 0.04 * i));
+      {% if mode == 'dim' %}
+      // the threat: the tiles die one by one, left to right, and sink
+      const dimAt = at(0, 1.2);
+      tl.addLabel("dim", dimAt);
+      tiles.forEach((t, i) => {
+        tl.to(t.querySelector("img"), { filter: "grayscale(1) brightness(.38) contrast(.9)", duration: 0.34, ease: "power2.out" }, dimAt + i * 0.13);
+        tl.to(t, { y: 14, scale: 0.97, boxShadow: "0 6px 14px rgba(0,0,0,.4)", duration: 0.5, ease: "power2.out" }, dimAt + i * 0.13);
+      });
+      {% else %}
+      // the machine: one sweep reads every tile; boxes and checks land as the line passes
+      const scanAt = at(0, 0.6), sweep = 0.9;
+      tl.addLabel("scan", scanAt);
+      const stripW = {{ (inline_width if placement == 'inline' else 960) }};   // static: a seek-safe render never reads live geometry
+      tl.set(".scanline", { opacity: 1 }, scanAt);
+      tl.fromTo(".scanline", { x: 0 }, { x: stripW - 8, duration: sweep, ease: "power1.inOut" }, scanAt);
+      tl.to(".scanline", { opacity: 0, duration: 0.2 }, scanAt + sweep);
+      tiles.forEach((t, i) => {
+        const hit = scanAt + sweep * ((i + 0.5) / n);
+        tl.to(t.querySelector(".box"), { opacity: 1, duration: 0.18 }, hit);
+        tl.to(t.querySelector(".chk"), { opacity: 1, scale: 1, duration: 0.3, ease: ease.snap }, hit + 0.05);
+        tl.fromTo(t, { scale: 1 }, { scale: 1.04, duration: 0.14, yoyo: true, repeat: 1, ease: "power2.inOut" }, hit);
+      });
+      {% if hero is not none %}
+      const heroAt = at(1, scanAt + sweep + 1.0);
+      tl.addLabel("hero", heroAt);
+      tiles.forEach((t, i) => {
+        if (i === {{ hero }}) {
+          tl.to(t, { scale: 1.12, y: -10, zIndex: 5, duration: 0.4, ease: ease.snap }, heroAt);
+          const acc = getComputedStyle(t.querySelector(".box")).borderColor;
+          tl.to(t.querySelector(".box"), { boxShadow: `0 0 50px ${acc}, inset 0 0 26px ${acc}`, duration: 0.4 }, heroAt);
+        } else {
+          tl.to(t.querySelector("img"), { filter: "grayscale(1) brightness(.5)", duration: 0.4 }, heroAt);
+          tl.to(t.querySelector(".box"), { opacity: 0.25, duration: 0.4 }, heroAt);
+          tl.to(t.querySelector(".chk"), { opacity: 0.35, duration: 0.4 }, heroAt);
+        }
+      });
+      {% endif %}
+      {% endif %}
+{% endblock %}

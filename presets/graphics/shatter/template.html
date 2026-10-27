@@ -1,0 +1,69 @@
+{% extends "_base.html" %}
+{% import "_icons.html" as ic %}
+{% set C = cols %}{% set R = rows %}{% set OW = 360 %}{% set OH = 360 %}
+{% block style %}
+  .stg { position: relative; width: 920px; height: 430px; }
+  .obj, .shd { position: absolute; left: {{ 460 - OW / 2 }}px; top: {{ 215 - OH / 2 }}px; width: {{ OW }}px; height: {{ OH }}px; display: grid; place-items: center; }
+  .obj img, .shd img { max-width: 100%; max-height: 100%; border-radius: 24px; }
+  .word { font: 900 {{ text_px }}px/1 'CapSans', Inter, sans-serif; letter-spacing: -0.04em; color: #FFFFFF; white-space: nowrap;
+          text-shadow: 0 0 30px #1F84EDCC, 0 8px 30px #000000B3; }
+  .shd { opacity: 0; }
+  .shd .inner { transition: none; }
+  .glow { position: absolute; left: 50%; top: 50%; width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%; opacity: 0;
+          background: radial-gradient(circle, #FFFFFF 0%, #EB0408 30%, #EB040800 70%); }
+  .crack { position: absolute; left: {{ 460 - OW / 2 }}px; top: {{ 215 - OH / 2 }}px; width: {{ OW }}px; height: {{ OH }}px; }
+  .crack path { stroke: #FFFFFF; stroke-width: 5; fill: none; filter: drop-shadow(0 0 6px #EB0408); stroke-dasharray: 400; stroke-dashoffset: 400; }
+{% endblock %}
+{% macro content() -%}
+  {%- if object.image %}<img src="{{ object.image }}" alt="" />{% elif object.text %}<div class="word">{{ object.text }}</div>{% else %}{{ ic.icon(object.icon, 300) }}{% endif -%}
+{%- endmacro %}
+{% block body %}
+        <div class="stg">
+          <div class="glow" id="glow"></div>
+          <div class="obj" id="obj">{{ content() }}</div>
+          <svg class="crack" id="crack" viewBox="0 0 {{ OW }} {{ OH }}">
+            <path d="M{{ OW * 0.5 }} {{ OH * 0.5 }} L{{ OW * 0.32 }} {{ OH * 0.2 }} L{{ OW * 0.26 }} {{ OH * 0.02 }}"/>
+            <path d="M{{ OW * 0.5 }} {{ OH * 0.5 }} L{{ OW * 0.74 }} {{ OH * 0.38 }} L{{ OW * 0.98 }} {{ OH * 0.3 }}"/>
+            <path d="M{{ OW * 0.5 }} {{ OH * 0.5 }} L{{ OW * 0.44 }} {{ OH * 0.78 }} L{{ OW * 0.58 }} {{ OH * 0.98 }}"/>
+            <path d="M{{ OW * 0.5 }} {{ OH * 0.5 }} L{{ OW * 0.12 }} {{ OH * 0.6 }}"/>
+          </svg>
+          {% for r in range(R) %}{% for c in range(C) %}{% for t in range(2) %}
+          {% set x0 = c * 100 / C %}{% set x1 = (c + 1) * 100 / C %}{% set y0 = r * 100 / R %}{% set y1 = (r + 1) * 100 / R %}
+          <div class="shd" data-c="{{ c }}" data-r="{{ r }}" data-t="{{ t }}"
+               style="clip-path: polygon({% if t == 0 %}{{ x0 }}% {{ y0 }}%, {{ x1 }}% {{ y0 }}%, {{ x0 }}% {{ y1 }}%{% else %}{{ x1 }}% {{ y0 }}%, {{ x1 }}% {{ y1 }}%, {{ x0 }}% {{ y1 }}%{% endif %})">{{ content() }}</div>
+          {% endfor %}{% endfor %}{% endfor %}
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      const C = {{ C }}, R = {{ R }}, OW = {{ OW }}, OH = {{ OH }};
+      const crackAt = at(0, 0.6), boomAt = at(1, crackAt + 0.45);
+      const rand = prng(1337);
+      // it arrives — big, confident
+      tl.from("#obj", { opacity: 0, scale: 0.4, y: 40, duration: ENTER, ease: ease.snap }, 0.05);
+      tl.to("#obj", { scale: 1.06, duration: Math.max(0.2, crackAt - 0.4), ease: "sine.inOut" }, 0.4);
+      // it strains: shakes harder, cracks draw out from the centre, a red heat builds behind it
+      tl.addLabel("crack", crackAt);
+      const shakes = Math.max(3, Math.round((boomAt - crackAt) / 0.05));
+      for (let k = 0; k < shakes; k++) { const a = 3 + k * 1.2; tl.to("#obj, #crack", { x: (k % 2 ? a : -a), y: (rand() - 0.5) * a, duration: 0.05, ease: "none" }, crackAt + k * 0.05); }
+      tl.to("#crack path", { strokeDashoffset: 0, duration: Math.max(0.15, boomAt - crackAt - 0.05), ease: "power2.in", stagger: 0.04 }, crackAt);
+      tl.to("#glow", { opacity: 0.7, scale: 1.1, duration: boomAt - crackAt, ease: "power2.in" }, crackAt);
+      {% if object.text %}// a word heats to red (the red filter turns white type black)
+      tl.to("#obj .word", { color: "#FF2A2A", textShadow: "0 0 40px #EB0408, 0 8px 30px #000000B3", duration: boomAt - crackAt, ease: "power2.in" }, crackAt);
+      {% else %}tl.to("#obj", { filter: "brightness(0.55) sepia(1) hue-rotate(-38deg) saturate(9)", duration: boomAt - crackAt, ease: "power2.in" }, crackAt);{% endif %}
+      // BOOM: the object is shards; they blow outward, spin, go red and burn out
+      tl.addLabel("boom", boomAt);
+      tl.set("#obj, #crack", { opacity: 0 }, boomAt);
+      tl.to("#glow", { opacity: 1, scale: 1.4, duration: 0.08 }, boomAt);
+      tl.to("#glow", { opacity: 0, scale: 1.8, duration: 0.4, ease: "power2.out" }, boomAt + 0.08);
+      gsap.utils.toArray(".shd").forEach(s => {
+        const c = +s.dataset.c, r = +s.dataset.r, t = +s.dataset.t;
+        const dx = ((c + 0.5 + (t ? 0.2 : -0.2)) / C - 0.5), dy = ((r + 0.5 + (t ? 0.2 : -0.2)) / R - 0.5);
+        const len = Math.hypot(dx, dy) || 0.1, sp = 380 + rand() * 420;
+        tl.set(s, {% if object.text %}{ opacity: 1 }{% else %}{ opacity: 1, filter: "brightness(0.55) sepia(1) hue-rotate(-38deg) saturate(9)" }{% endif %}, boomAt);
+        {% if object.text %}tl.set(s.querySelector(".word"), { color: "#FF2A2A" }, boomAt);{% endif %}
+        tl.to(s, { x: dx / len * sp, y: Math.min(dy / len, 0.35) * sp * 0.55 - 40, rotation: (rand() - 0.5) * 540, scale: 0.5 + rand() * 0.4,
+                   duration: 0.7 + rand() * 0.3, ease: "power3.out" }, boomAt);
+        tl.to(s, { opacity: 0, duration: 0.3 }, boomAt + 0.5 + rand() * 0.3);
+      });
+{% endblock %}

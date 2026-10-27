@@ -14,12 +14,24 @@
     "min_word_score": 0.3,
     "max_word_s": 2.5,
     "max_intra_segment_gap_s": 1.5,
-    "min_words_per_s": 1.0
+    "min_words_per_s": 1.0,
+    "clamp_word_s": 1.0,
+    "gap_min_s": 1.0
   },
   "cut": {
     "min_gap_s": 0.35,
-    "lead_s": 0.08,
-    "tail_s": 0.1,
+    "hold_snap_s": 0.5,
+    "lead_s": 0.03,
+    "tail_s": 0.02,
+    "pause_max_s": 0.08,
+    "pause_rel_db": 30,
+    "pause_min_piece_s": 0.06,
+    "breath_rel_db": 14,
+    "closure_max_s": 0.09,
+    "tuck_max_s": 0.3,
+    "join_gap_max_s": 0.1,
+    "join_quiet_db": -50,
+    "pause_gate_s": 0.1,
     "min_clip_s": 0.6,
     "fillers": [
       "um",
@@ -41,10 +53,36 @@
       "honestly"
     ],
     "min_sliver_frames": 8,
-    "remove_false_starts": true
+    "remove_false_starts": true,
+    "remove_retakes": true,
+    "retake_min_words": 3,
+    "retake_window_s": 45.0,
+    "retake_similar_words": 8,
+    "retake_similarity": 0.75,
+    "retake_protect_words": 6,
+    "retake_split_gap_s": 1.0,
+    "fragment_max_words": 2,
+    "fragment_gap_s": 1.0,
+    "coverage_max_run": 2,
+    "restart_max_words": 8,
+    "edge_rel_db": 32,
+    "edge_search_s": 0.3,
+    "mark": {
+      "enabled": true,
+      "at": [
+        0.2,
+        0.5,
+        0.8
+      ],
+      "min_on": 2,
+      "dx": 0.1,
+      "dy": 0.06,
+      "dw": 0.3
+    }
   },
   "captions": {
     "font_family": "Inter",
+    "font_file": "Inter.ttf",
     "size_px": 78,
     "hook_size_px": 104,
     "case": "lower",
@@ -72,6 +110,8 @@
     "chars_per_line": 19,
     "font_weight": 800,
     "accent_family": "Playfair Display",
+    "accent_file": "PlayfairDisplay-Italic.ttf",
+    "accent_style": "italic",
     "accent_weight": 600,
     "accent_scale": 1.2
   },
@@ -89,13 +129,95 @@
     "beside_inset": 40,
     "face_pad_px": 40,
     "inline_top": 1180,
-    "inline_width": 920
+    "inline_width": 920,
+    "text_presets": [
+      "phrase",
+      "list-card",
+      "flow",
+      "metric",
+      "chat"
+    ],
+    "max_text_share": 0.4,
+    "families": {
+      "scan": "wall",
+      "thumb-wall": "wall",
+      "multiply": "tiles",
+      "receipt": "screen",
+      "app-mock": "device",
+      "metric": "number",
+      "phrase": "words",
+      "list-card": "words",
+      "flow": "words",
+      "chat": "thread",
+      "wash": "flood",
+      "rec-frame": "footage",
+      "agent-run": "console",
+      "upgrade": "gauge",
+      "script-cut": "page",
+      "transform": "machine",
+      "drag-drop": "drop",
+      "dead-space": "wave",
+      "layer-stack": "layers",
+      "stamp": "stamp",
+      "phone-play": "device",
+      "comment": "thread",
+      "shatter": "break",
+      "split": "ring",
+      "pixel-quest": "game",
+      "pixel-crowd": "crowd",
+      "agent-chat": "device",
+      "ad-stack": "pile",
+      "bot-team": "scene",
+      "bg-swap": "flood"
+    },
+    "variety": {
+      "min_families": 4,
+      "max_family_uses": 2,
+      "callback_gap": 2,
+      "max_asset_uses": 2,
+      "exempt": [
+        "flood",
+        "footage"
+      ]
+    },
+    "top_top": 210,
+    "top_h": 430
+  },
+  "framing": {
+    "$comment": "the base shot: scale > 1 punches the whole cut in, face centred at face_y (fraction of the height); zoom punches anchor on the face too",
+    "scale": 1.0,
+    "face_y": 0.36,
+    "face_y_tol": 0.06,
+    "min_face_w": 0.0,
+    "anchor_tol": 0.03,
+    "cut_jump_tol": 0.04,
+    "size_match": 0.1,
+    "cut_size_tol": 0.06,
+    "fit_max": 0.08,
+    "match_rounds": 3
   },
   "pacing": {
     "max_static_s": 2.0,
-    "zoom_pct": 3,
-    "zoom_dur_s": 1.2,
+    "zoom_pct": 8,
+    "zoom_dur_s": 0.12,
+    "zoom_hold_s": 1.4,
+    "zoom_out_s": 0.4,
     "hook_hold_s": 8.0
+  },
+  "broll_window": {
+    "cx": 640,
+    "top": 24,
+    "w": 440,
+    "aspect": 0.8,
+    "radius_px": 28,
+    "stroke_px": 6,
+    "stroke_color": "white",
+    "badge": {
+      "size_px": 34,
+      "pad_px": 16,
+      "inset_px": 16,
+      "bg_alpha": 0.62
+    }
   },
   "audio": {
     "voice_lufs": -16.0,

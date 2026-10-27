@@ -41,10 +41,18 @@ def ffprobe(path: Path) -> dict:
     if v and v.get("r_frame_rate"):
         n, d = v["r_frame_rate"].split("/")
         fps = float(n) / float(d) if float(d) else 30.0
+    w, h = (int(v["width"]), int(v["height"])) if v else (0, 0)
+    # iPhone .MOV stores 3840x2160 with a ±90° display matrix; ffmpeg autorotates on decode, so report
+    # the displayed size or a vertical raw is filed as horizontal.
+    rot = next((sd.get("rotation") for sd in (v or {}).get("side_data_list", []) if "rotation" in sd), None)
+    if rot is None:
+        rot = (v or {}).get("tags", {}).get("rotate")
+    if rot is not None and abs(int(float(rot))) % 180 == 90:
+        w, h = h, w
     return {
         "duration": float(info["format"].get("duration", 0)),
-        "width": int(v["width"]) if v else 0,
-        "height": int(v["height"]) if v else 0,
+        "width": w,
+        "height": h,
         "fps": fps,
         "has_audio": a is not None,
     }
@@ -61,16 +69,41 @@ def sha256(path: Path, limit_mb: int = 64) -> str:
 # preset numbers
 # ---------------------------------------------------------------------------
 
+def _deep_merge(base: dict, over: dict) -> dict:
+    out = dict(base)
+    for k, v in over.items():
+        out[k] = _deep_merge(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else v
+    return out
+
+
 def load_numbers(preset: str = "vertical/default") -> dict:
+    """numbers.json of a preset. A preset may carry `"extends": "vertical/default"` and only the keys it changes."""
     p = REPO / "presets" / preset / "numbers.json"
     if not p.exists():
         die(f"preset numbers not found: {p}")
-    return json.loads(p.read_text())
+    d = json.loads(p.read_text(encoding="utf-8"))
+    parent = d.pop("extends", None)
+    if parent:
+        if parent == preset:
+            die(f"preset {preset} extends itself")
+        d = _deep_merge(load_numbers(parent), d)
+    return d
+
+
+def preset_file(preset: str, rel: str) -> Path:
+    """A file (or folder) of a preset — fonts/, sfx.json, transcript-corrections.json… — falling back to the parent
+    the preset extends. Returns the first path that exists, or the preset's own path when nothing does."""
+    own = REPO / "presets" / preset / rel
+    if own.exists():
+        return own
+    np_ = REPO / "presets" / preset / "numbers.json"
+    parent = json.loads(np_.read_text(encoding="utf-8")).get("extends") if np_.exists() else None
+    return preset_file(parent, rel) if parent and parent != preset else own
 
 
 def load_brand() -> dict:
     p = REPO / "brand" / "brand.json"
-    return json.loads(p.read_text()) if p.exists() else {}
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
 
 # ---------------------------------------------------------------------------
@@ -92,12 +125,12 @@ class Job:
         return self.dir.joinpath(*parts)
 
     def read_json(self, *parts):
-        return json.loads(self.p(*parts).read_text())
+        return json.loads(self.p(*parts).read_text(encoding="utf-8"))
 
     def write_json(self, obj, *parts):
         path = self.p(*parts)
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(obj, indent=2, ensure_ascii=False))
+        path.write_text(json.dumps(obj, indent=2, ensure_ascii=False), encoding="utf-8")
         return path
 
     @property
@@ -110,7 +143,7 @@ class Job:
 
     # state ---------------------------------------------------------------
     def _read(self) -> dict:
-        text = self.run_md.read_text()
+        text = self.run_md.read_text(encoding="utf-8")
         m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S)
         if not m:
             die("RUN.md has no front matter")
@@ -118,7 +151,7 @@ class Job:
         return _parse_front(m.group(1))
 
     def save(self):
-        self.run_md.write_text("---\n" + _dump_front(self.state) + "\n---\n" + self._body)
+        self.run_md.write_text("---\n" + _dump_front(self.state) + "\n---\n" + self._body, encoding="utf-8")
 
     def node_status(self, node: str) -> str:
         return self.state.get("nodes", {}).get(node, {}).get("status", "pending")
@@ -229,7 +262,7 @@ def _dump_scalar(v) -> str:
         return "[" + ", ".join(_dump_scalar(x) for x in v) + "]"
     if isinstance(v, float):
         return f"{v:.3f}".rstrip("0").rstrip(".")
-    s = str(v)
+    s = str(v).replace("\\", "/")   # paths are the only backslash source; a Windows path must not be re-escaped on every rewrite
     return s if re.match(r"^[A-Za-z0-9_./:@+-]+$", s) else json.dumps(s)
 
 
@@ -254,7 +287,10 @@ def _dump_front(d: dict, indent: int = 0) -> str:
 # ---------------------------------------------------------------------------
 
 class Timeline:
-    """Map source seconds -> timeline seconds using the EDL's keep ranges."""
+    """Map source seconds -> timeline seconds using the EDL's keep ranges.
+
+    A keep may carry `hold` seconds: its last frame is frozen that long after `out` (a silent beat that
+    b-roll with its own audio fills — cuts.overrides.json "holds"). Hold time maps back to the frozen `out`."""
 
     def __init__(self, cuts: dict):
         self.keep = cuts["keep"]
@@ -262,8 +298,13 @@ class Timeline:
         t = 0.0
         for k in self.keep:
             self.offsets.append(t)
-            t += k["out"] - k["in"]
+            t += k["out"] - k["in"] + k.get("hold", 0.0)
         self.duration = t
+
+    def holds(self) -> list[tuple[float, float]]:
+        """Timeline windows [start, end) that are frozen frames."""
+        return [(off + k["out"] - k["in"], off + k["out"] - k["in"] + k["hold"])
+                for k, off in zip(self.keep, self.offsets) if k.get("hold")]
 
     def to_timeline(self, src_t: float) -> float | None:
         for k, off in zip(self.keep, self.offsets):
@@ -276,4 +317,6 @@ class Timeline:
             d = k["out"] - k["in"]
             if off - 1e-6 <= tl_t <= off + d + 1e-6:
                 return k["in"] + (tl_t - off)
+            if k.get("hold") and off + d < tl_t <= off + d + k["hold"] + 1e-6:
+                return k["out"]
         return None

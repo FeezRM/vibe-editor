@@ -1,0 +1,59 @@
+{# Shared SVG objects for the demonstration presets. Drawn, not clip-art: one stroke weight, rounded caps,
+   azure-void palette by default (currentColor where a preset recolours). Usage:
+     {% import "_icons.html" as ic %} … {{ ic.icon("bulb", 120) }}                                      #}
+{% macro icon(name, size=96, cls="") -%}
+<svg class="ico ico-{{ name }} {{ cls }}" width="{{ size }}" height="{{ size }}" viewBox="0 0 96 96" fill="none" stroke="currentColor"
+     stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{%- if name == "bulb" %}
+  <path d="M48 12c-15.5 0-27 11.6-27 26.6 0 9.7 5 16.4 10.3 21.5 3.2 3 4.7 6.2 4.7 10.2V74h24v-3.7c0-4 1.5-7.2 4.7-10.2C70 55 75 48.3 75 38.6 75 23.6 63.5 12 48 12z" fill="#FFF7D6" stroke="#FFC531"/>
+  <path d="M38 82h20M41 89h14" stroke="#9AA6B2"/>
+  <path d="M40 47l8 8 8-8M48 55v19" stroke="#FFC531" stroke-width="4"/>
+{%- elif name == "doc" %}
+  <path d="M24 10h34l16 16v60H24z" fill="#FFFFFF" stroke="#1F84ED"/>
+  <path d="M58 10v16h16" stroke="#1F84ED"/>
+  <path d="M33 42h32M33 53h32M33 64h22M33 75h28" stroke="#9DBBFF" stroke-width="4"/>
+{%- elif name == "film" %}
+  <rect x="10" y="22" width="76" height="52" rx="8" fill="#114BC3" stroke="#54B3E9"/>
+  <path d="M10 34h76M10 62h76M24 22v12M40 22v12M56 22v12M72 22v12M24 62v12M40 62v12M56 62v12M72 62v12" stroke="#54B3E9" stroke-width="3"/>
+  <path d="M42 41l14 7-14 7z" fill="#FFFFFF" stroke="none"/>
+{%- elif name == "camera" %}
+  <rect x="8" y="28" width="58" height="42" rx="9" fill="#303740" stroke="#DCE3E8"/>
+  <path d="M66 42l22-12v36L66 54z" fill="#303740" stroke="#DCE3E8"/>
+  <circle cx="22" cy="40" r="5" fill="#EB0408" stroke="none"/>
+{%- elif name == "cursor" %}
+  <path d="M20 10l56 34-24 6-10 24z" fill="#FFFFFF" stroke="#0B1628" stroke-width="5"/>
+{%- elif name == "gear" %}
+  <circle cx="48" cy="48" r="31" stroke="#1F84ED" stroke-width="13" stroke-dasharray="9.2 7" stroke-linecap="butt"/>
+  <circle cx="48" cy="48" r="24" fill="#FFFFFF" stroke="#1F84ED" stroke-width="7"/>
+  <circle cx="48" cy="48" r="8" fill="#1F84ED" stroke="none"/>
+{%- elif name == "check" %}
+  <circle cx="48" cy="48" r="38" fill="#1F84ED" stroke="#FFFFFF" stroke-width="5"/>
+  <path d="M30 49l12 12 25-26" stroke="#FFFFFF" stroke-width="9"/>
+{%- elif name == "cross" %}
+  <circle cx="48" cy="48" r="38" fill="#EB0408" stroke="#FFFFFF" stroke-width="5"/>
+  <path d="M34 34l28 28M62 34L34 62" stroke="#FFFFFF" stroke-width="9"/>
+{%- elif name == "heart" %}
+  <path d="M48 80S14 60 14 36c0-11 8-19 18-19 7 0 12 4 16 10 4-6 9-10 16-10 10 0 18 8 18 19 0 24-34 44-34 44z" fill="#FF3040" stroke="none"/>
+{%- elif name == "send" %}
+  <path d="M12 46L84 14 62 84 46 54z" fill="#1F84ED" stroke="#FFFFFF" stroke-width="4"/>
+  <path d="M46 54L84 14" stroke="#FFFFFF" stroke-width="4"/>
+{%- elif name == "spark" %}
+  <path d="M48 6c3 22 12 31 34 34-22 3-31 12-34 34-3-22-12-31-34-34 22-3 31-12 34-34z" fill="#FFFFFF" stroke="#54B3E9" stroke-width="3"/>
+{%- elif name == "play" %}
+  <circle cx="48" cy="48" r="38" fill="#FFFFFF" stroke="none"/>
+  <path d="M40 32l24 16-24 16z" fill="#1F84ED" stroke="none"/>
+{%- elif name == "hook" %}
+  <path d="M58 8v42c0 17-10 30-25 30S10 69 10 56V42l13 10" stroke="#DCE3E8" stroke-width="13"/>
+  <circle cx="58" cy="9" r="8" fill="#DCE3E8" stroke="none"/>
+{%- elif name == "gem" %}
+  <path d="M27 16h42l17 22-38 46L10 38z" fill="#E9F7FF" stroke="#54B3E9"/>
+  <path d="M10 38h76M39 16l-7 22 16 46 16-46-7-22" stroke="#54B3E9" stroke-width="4"/>
+{%- elif name == "wheel" %}
+  <circle cx="48" cy="48" r="37" fill="#303740" stroke="#DCE3E8" stroke-width="8"/>
+  <path d="M48 14v68M14 48h68M24 24l48 48M72 24L24 72" stroke="#9AA6B2" stroke-width="4"/>
+  <circle cx="48" cy="48" r="10" fill="#DCE3E8" stroke="none"/>
+{%- elif name == "folder" %}
+  <path d="M8 24h28l8 10h44v48H8z" fill="#1F84ED" stroke="#54B3E9"/>
+{%- endif %}
+</svg>
+{%- endmacro %}

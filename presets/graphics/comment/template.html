@@ -1,0 +1,63 @@
+{% extends "_base.html" %}
+{% import "_icons.html" as ic %}
+{% block style %}
+  .cmp { position: absolute; left: 70px; right: 70px; top: 1250px; height: 120px; border-radius: 60px; display: flex; align-items: center; gap: 22px; padding: 0 18px 0 22px;
+         background: linear-gradient(180deg, #FFFFFF 0%, #EEF4FC 100%); box-shadow: 0 30px 60px #000000A6, 0 0 60px #54B3E966; }
+  .cmp .av { width: 80px; height: 80px; border-radius: 50%; flex: none; background: linear-gradient(135deg, #DCE3E8, #9AA6B2); }
+  .cmp .fld { flex: 1; font: 700 50px/1 'CapSans', Inter, sans-serif; color: #303740; white-space: nowrap; position: relative; }
+  .cmp .ph { position: absolute; left: 0; top: 50%; transform: translateY(-50%); color: #9AA6B2; font-weight: 500; font-size: 40px; }
+  .cmp .car { display: inline-block; width: 4px; height: 52px; background: #1F84ED; vertical-align: -8px; margin-left: 4px; }
+  .cmp .snd { width: 88px; height: 88px; flex: none; border-radius: 50%; display: grid; place-items: center;
+              background: linear-gradient(180deg, #54B3E9 0%, #1F84ED 100%); box-shadow: 0 10px 20px #1F84ED66; }
+  .fly { position: absolute; left: 300px; top: 1270px; padding: 18px 30px; border-radius: 30px; background: #1F84ED; color: #FFFFFF;
+         font: 800 48px/1 'CapSans', Inter, sans-serif; opacity: 0; box-shadow: 0 0 30px #1F84ED; }
+  .ntf { position: absolute; left: 50px; right: 50px; top: {{ top_top }}px; border-radius: 40px; padding: 26px 30px; display: flex; gap: 24px; align-items: center;
+         background: linear-gradient(180deg, #FFFFFF 0%, #F2F7FF 100%); box-shadow: 0 34px 70px #000000A6, 0 0 70px #54B3E966; opacity: 0; }
+  .ntf .app { width: 100px; height: 100px; flex: none; border-radius: 26px; display: grid; place-items: center;
+              background: linear-gradient(135deg, #54B3E9 0%, #1F84ED 55%, #114BC3 100%); color: #FFFFFF; }
+  .ntf .tx { flex: 1; min-width: 0; }
+  .ntf .who { font: 800 38px/1.1 'CapSans', Inter, sans-serif; color: #303740; }
+  .ntf .who small { font-weight: 500; font-size: 28px; color: #9AA6B2; margin-left: 10px; }
+  .ntf .msg { margin-top: 8px; font: 600 34px/1.2 'CapSans', Inter, sans-serif; color: #303740; }
+  .ntf .att { margin-top: 14px; display: flex; gap: 12px; }
+  .ntf .att span { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px 8px 10px; border-radius: 14px; background: #E6F0FC; color: #1371EB;
+                   font: 700 28px/1 'CapSans', Inter, sans-serif; opacity: 0; }
+{% endblock %}
+{% block body %}
+          <div class="ntf" id="ntf">
+            <div class="app">{{ ic.icon("send", 64) }}</div>
+            <div class="tx"><div class="who">{{ handle }}<small>now</small></div><div class="msg">{{ reply }}</div>
+              {% if attachments %}<div class="att">{% for a in attachments %}<span>{{ ic.icon("doc", 34) }}{{ a }}</span>{% endfor %}</div>{% endif %}</div>
+          </div>
+          <div class="cmp" id="cmp"><div class="av"></div>
+            <div class="fld"><span class="ph" id="ph">Add a comment…</span><span id="typed"></span><span class="car" id="car"></span></div>
+            <div class="snd" id="snd">{{ ic.icon("send", 54) }}</div></div>
+          <div class="fly" id="fly">{{ word }}</div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      const WORD = {{ word | tojson }};
+      const typeAt = at(0, 0.3), sendAt = at(1, typeAt + 0.6), dmAt = at(2, sendAt + 0.5);
+      tl.from("#cmp", { opacity: 0, y: 80, duration: ENTER, ease: ease.snap }, 0);
+      tl.fromTo("#car", { opacity: 1 }, { opacity: 0, duration: 0.2, repeat: Math.max(0, Math.floor(typeAt / 0.4) * 2 - 1), yoyo: true, immediateRender: false }, 0.2);
+      // the viewer types the word
+      tl.addLabel("type", typeAt);
+      tl.set("#ph", { opacity: 0 }, typeAt);
+      tl.set("#car", { opacity: 1 }, typeAt);
+      const P = { n: 0 }, el = document.getElementById("typed"), tD = Math.max(0.2, Math.min(0.5, WORD.length * 0.07));
+      tl.to(P, { n: WORD.length, duration: tD, ease: "none", onUpdate: () => { el.textContent = WORD.slice(0, Math.round(P.n)); } }, typeAt);
+      tl.eventCallback("onUpdate", () => { if (tl.time() < typeAt) el.textContent = ""; });
+      // send: the button presses, the word flies up and away
+      tl.addLabel("send", sendAt);
+      tl.to("#snd", { scale: 0.85, duration: 0.07 }, sendAt);
+      tl.to("#snd", { scale: 1, duration: 0.2, ease: ease.snap }, sendAt + 0.07);
+      tl.set("#typed, #car", { opacity: 0 }, sendAt + 0.05);
+      tl.set("#fly", { opacity: 1, x: 0, y: 0, scale: 1 }, sendAt + 0.05);
+      tl.to("#fly", { x: 540, y: 0, scale: 0.25, rotation: 0, opacity: 0, duration: 0.3, ease: "power2.in" }, sendAt + 0.05);
+      tl.to("#snd", { boxShadow: "0 0 50px #54B3E9", duration: 0.1 }, sendAt + 0.3);
+      // and the DM lands at the top of the screen
+      tl.addLabel("dm", dmAt);
+      tl.fromTo("#ntf", { opacity: 0, y: -200 }, { opacity: 1, y: 0, duration: 0.35, ease: ease.snap, immediateRender: false }, dmAt);
+      gsap.utils.toArray(".ntf .att span").forEach((s, i) => tl.fromTo(s, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.25, ease: ease.snap, immediateRender: false }, dmAt + 0.3 + i * 0.12));
+      tl.to("#cmp", { opacity: 0.35, duration: 0.3 }, dmAt + 0.2);
+{% endblock %}

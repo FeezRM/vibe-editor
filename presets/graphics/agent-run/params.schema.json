@@ -1,0 +1,12 @@
+{
+  "title": "agent-run — an AI system at work: a console where REAL task lines type themselves, spin and check off, then a result lands",
+  "type": "object", "required": ["title", "lines"],
+  "properties": {
+    "title": { "type": "string", "x-real": true, "description": "the real session / tool name, e.g. the chat title" },
+    "lines": { "type": "array", "minItems": 2, "maxItems": 5, "x-real": true,
+               "items": { "type": "object", "required": ["text"], "properties": { "text": { "type": "string", "maxLength": 34 }, "provenance": { "type": "string" } } } },
+    "result": { "type": "string", "x-real": true, "description": "what the run produced — a real artifact name or count" },
+    "reveal_at": { "type": "array", "items": { "type": "number" }, "description": "one per line (typing starts), then one for the result" }
+  },
+  "x-placements": ["inline", "cutaway"], "x-default-placement": "inline", "x-events": ["reveal_at"]
+}

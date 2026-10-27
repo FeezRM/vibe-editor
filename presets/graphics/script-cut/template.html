@@ -1,0 +1,122 @@
+{% extends "_base.html" %}
+{% import "_icons.html" as ic %}
+{% set N = clips %}
+{% set PW = 880 %}{% set PH = 300 %}{% set PX = 20 %}{% set ROWY = 318 %}{% set SY = 0.34 %}{% set SW = PW / N %}
+{% block style %}
+  .stg { position: relative; width: 920px; height: 430px; }
+  .page, .strip { position: absolute; left: {{ PX }}px; top: 0; width: {{ PW }}px; height: {{ PH }}px; }
+  .paper { position: absolute; inset: 0; border-radius: 18px; padding: 30px 34px;
+           background: linear-gradient(180deg, #FFFFFF 0%, #F2F7FF 100%);
+           box-shadow: 0 30px 60px #0B16288C, 0 0 70px #54B3E94D; }
+  .paper .hd { display: flex; align-items: center; gap: 12px; font: 700 22px/1 'CapSans', Inter, sans-serif; letter-spacing: .18em;
+               color: #1371EB; text-transform: uppercase; margin-bottom: 8px; }
+  .paper .hd i { width: 12px; height: 12px; border-radius: 50%; background: #1F84ED; box-shadow: 0 0 12px #54B3E9; }
+  .ln { font: 700 40px/1.15 'CapSans', Inter, sans-serif; color: #303740; white-space: nowrap; overflow: hidden; margin: 12px 0 0;
+        letter-spacing: -0.01em; }
+  .nib { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; opacity: 0;
+         box-shadow: 0 0 14px 6px #54B3E9, 0 0 36px 10px #1F84ED; }
+  .strip { opacity: 0; }
+  .strip .cover { position: absolute; inset: 0; border-radius: 10px; opacity: 0;
+                  background: linear-gradient(180deg, #54B3E9 0%, #1F84ED 45%, #114BC3 100%); }
+  .strip .cover .th { position: absolute; left: 0; top: 50%; height: {{ '%.1f' % ((SW - 8) * 16 / 9 / SY) }}px; width: 100%;
+                      transform: translateY(-50%); object-fit: fill; border-radius: 6px; }
+  .strip .cover .thw { position: absolute; top: 6px; bottom: 6px; overflow: hidden; border-radius: 6px; }
+  .strip .cover::after { content: ""; position: absolute; left: 10%; right: 10%; top: 38%; height: 24%; border-radius: 6px;
+                         background: linear-gradient(90deg, #FFFFFF 0%, #DCEBFF 100%); opacity: .55; }
+  .strip .cover.has-th::after { display: none; }
+  .strip.dead .cover .th { filter: grayscale(1) sepia(1) saturate(6) hue-rotate(-50deg) brightness(.8); }
+  .strip.dead .cover { background: linear-gradient(180deg, #FF5A5A 0%, #EB0408 55%, #9E0205 100%); }
+  .blade { position: absolute; left: 60px; top: -40px; width: 10px; height: 380px; border-radius: 6px; opacity: 0;
+           background: linear-gradient(180deg, #54B3E900 0%, #FFFFFF 25%, #FFFFFF 75%, #54B3E900 100%);
+           box-shadow: 0 0 30px 10px #54B3E9, 0 0 70px 20px #1F84ED; transform: rotate(18deg); }
+  .flash { position: absolute; left: {{ PX }}px; top: 0; width: {{ PW }}px; height: {{ PH }}px; border-radius: 18px; background: #FFFFFF; opacity: 0; }
+  .deb { position: absolute; width: 14px; height: 14px; border-radius: 3px; background: #EB0408; opacity: 0; box-shadow: 0 0 10px #EB0408; }
+  .spk { position: absolute; left: 0; top: {{ ROWY - 30 }}px; color: #FFFFFF; opacity: 0; filter: drop-shadow(0 0 14px #54B3E9) drop-shadow(0 0 30px #1F84ED); }
+  .glowrow { position: absolute; top: {{ ROWY - 8 }}px; height: {{ (PH * SY) | round | int + 16 }}px; border-radius: 16px; opacity: 0;
+             box-shadow: 0 0 0 3px #54B3E9, 0 0 40px 8px #1F84ED; }
+{% endblock %}
+{% macro pagebody() -%}
+  <div class="paper">
+    <div class="hd"><i></i>{{ title }}</div>
+    {% for l in lines %}<div class="ln">{{ l }}</div>{% endfor %}
+  </div>
+{%- endmacro %}
+{% block body %}
+        <div class="stg">
+          <div class="page" id="page">{{ pagebody() }}<div class="nib" id="nib"></div></div>
+          {% for i in range(N) %}
+          <div class="strip s{{ i }}{% if i in remove %} dead{% endif %}"
+               style="clip-path: inset(0 {{ '%.3f' % (100 - (i + 1) * 100 / N) }}% 0 {{ '%.3f' % (i * 100 / N) }}% round 10px)">{{ pagebody() }}<div class="cover{% if thumbs %} has-th{% endif %}">{% if thumbs %}{% set tsrc = thumbs[i % (thumbs | length)] %}<div class="thw" style="left:{{ '%.1f' % (i * SW + 4) }}px; width:{{ '%.1f' % (SW - 8) }}px"><img class="th" src="{{ tsrc.src if tsrc is mapping else tsrc }}" alt="" /></div>{% endif %}</div></div>
+          {% endfor %}
+          <div class="flash" id="flash"></div>
+          <div class="blade" id="blade"></div>
+          {% for i in range(28) %}<div class="deb d{{ i }}"></div>{% endfor %}
+          <div class="glowrow" id="glowrow"></div>
+          <div class="spk" id="spk">{{ ic.icon("spark", 64) }}</div>
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      const N = {{ N }}, PW = {{ PW }}, PH = {{ PH }}, PX = {{ PX }}, ROWY = {{ ROWY }}, SY = {{ SY }};
+      const REMOVE = {{ remove | tojson }};
+      const LN = {{ lines | map('length') | list | tojson }};
+      const rand = prng(9077);
+      // 1. the page lands and the script writes itself, line by line, a glowing nib at the pen tip
+      tl.from("#page", { opacity: 0, y: -30, rotation: -4, scale: 0.94, duration: ENTER, ease: ease.snap }, 0);
+      const wAt = at(0, 0.15), slashAt = at(1, 1.1), snapAt = at(2, slashAt + 0.55);
+      const per = Math.max(0.12, (slashAt - wAt - 0.08) / LN.length);
+      const lines = gsap.utils.toArray("#page .ln");
+      lines.forEach((el, i) => {
+        const w = Math.min(PW - 68, LN[i] * 20.5), t0 = wAt + i * per;
+        tl.fromTo(el, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: per * 0.92, ease: "none" }, t0);
+        tl.set("#nib", { opacity: 1, x: 34, y: 62 + i * 58 + 22 }, t0);
+        tl.to("#nib", { x: 34 + w, duration: per * 0.92, ease: "none" }, t0);
+      });
+      tl.set("#nib", { opacity: 0 }, slashAt - 0.05);
+      // 2. the blade: one diagonal slash of light, a white flash, and the page is clips
+      tl.addLabel("slash", slashAt);
+      tl.set("#blade", { opacity: 1, x: 0 }, slashAt - 0.12);
+      tl.to("#blade", { x: 760, duration: 0.2, ease: "power2.in" }, slashAt - 0.12);
+      tl.set("#blade", { opacity: 0 }, slashAt + 0.08);
+      tl.to("#flash", { opacity: 0.85, duration: 0.05 }, slashAt);
+      tl.to("#flash", { opacity: 0, duration: 0.22, ease: "power2.out" }, slashAt + 0.05);
+      tl.set("#page", { opacity: 0 }, slashAt);
+      tl.set(".strip", { opacity: 1 }, slashAt);
+      const sw = PW / N;
+      let kept = 0;
+      gsap.utils.toArray(".strip").forEach((s, i) => {
+        const dead = REMOVE.includes(i);
+        const spread = (i - (N - 1) / 2) * 14;
+        // burst apart
+        tl.to(s, { x: spread, y: -8 + rand() * 16, rotation: (rand() - 0.5) * 10, duration: 0.16, ease: "power3.out" }, slashAt);
+        // fall into the timeline row as clip blocks
+        tl.to(s.querySelector(".cover"), { opacity: 1, duration: 0.2 }, slashAt + 0.14 + i * 0.02);
+        tl.to(s, { x: spread * 0.6, y: ROWY, scaleY: SY, rotation: 0, transformOrigin: "50% 0%", duration: 0.32, ease: "power3.inOut" },
+              slashAt + 0.14 + i * 0.02);
+        if (dead) {
+          // dead takes go red, drop out of the row and burst
+          tl.to(s, { y: ROWY - 40, scaleX: 0.3, rotation: (rand() - 0.5) * 60, opacity: 0, duration: 0.3, ease: "power2.in" }, snapAt - 0.14);
+        } else {
+          const slot = kept++;
+          tl.to(s, { x: slot * sw - i * sw + ({{ N }} - (N - REMOVE.length)) * sw / 2, duration: 0.3, ease: ease.snap }, snapAt);
+        }
+      });
+      // red debris where the dead clips break
+      gsap.utils.toArray(".deb").forEach((d, k) => {
+        if (!REMOVE.length) return;
+        const i = REMOVE[k % REMOVE.length];
+        const x0 = PX + (i + 0.5) * sw + ((i - (N - 1) / 2) * 8), y0 = ROWY + 30;
+        tl.set(d, { x: x0, y: y0, opacity: 1, scale: 0.6 + rand() * 0.8, rotation: rand() * 90 }, snapAt);
+        tl.to(d, { x: x0 + (rand() - 0.5) * 300, y: y0 - 40 - rand() * 200, rotation: rand() * 540, opacity: 0, duration: 0.5 + rand() * 0.3,
+                   ease: "power2.out" }, snapAt);
+      });
+      // 3. the kept clips lock together: a glow ring around the finished row, and the AI spark crosses it
+      const rowW = (N - REMOVE.length) * sw, rowX = PX + (PW - rowW) / 2 + (N - (N - REMOVE.length)) * 0;
+      tl.addLabel("snap", snapAt);
+      tl.set("#glowrow", { left: PX + (REMOVE.length * sw) / 2 - 8, width: rowW + 16 }, snapAt);
+      tl.fromTo("#glowrow", { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: 0.25, ease: ease.snap }, snapAt + 0.28);
+      tl.set("#spk", { opacity: 1, x: PX + REMOVE.length * sw / 2 - 40, y: 18, rotation: 0, scale: 0.5 }, snapAt + 0.3);
+      tl.to("#spk", { x: PX + REMOVE.length * sw / 2 + rowW - 30, rotation: 180, scale: 1, duration: 0.5, ease: "power2.inOut" }, snapAt + 0.3);
+      tl.to("#spk", { scale: 1.5, opacity: 0, duration: 0.25, ease: "power2.out" }, snapAt + 0.8);
+      tl.to("#glowrow", { opacity: 0.55, duration: 0.4 }, snapAt + 0.9);
+{% endblock %}

@@ -11,7 +11,7 @@
     },
     "width": {
       "type": "integer",
-      "default": 470
+      "default": 440
     },
     "tilt": {
       "type": "number",

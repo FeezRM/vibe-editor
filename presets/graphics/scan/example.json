@@ -1,0 +1,1 @@
+{ "duration": 4.0, "mode": "scan", "hero": 0, "images": [ {"src": "assets/ex-1.png"}, {"src": "assets/ex-2.png"}, {"src": "assets/ex-3.png"}, {"src": "assets/ex-4.png"}, {"src": "assets/ex-5.png"} ], "reveal_at": [0.5, 2.4] }

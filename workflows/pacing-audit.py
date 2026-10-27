@@ -41,6 +41,12 @@ if job.p("graphics-plan.json").exists():
         events.setdefault(round(g["cue"], 2), f"gfx:{g['id']}")
         for r in g.get("reveal_at", []):
             events.setdefault(round(g["cue"] + r, 2), f"reveal:{g['id']}")
+if job.p("broll-plan.json").exists():   # a playing clip is motion: its span is never static
+    for c in job.read_json("broll-plan.json").get("clips", []):
+        t = c["start"]
+        while t < c["end"] - 1e-6:
+            events.setdefault(round(t, 2), f"broll:{c.get('id', '')}")
+            t += P["max_static_s"] / 2
 if job.p("sfx-plan.json").exists():
     for s in job.read_json("sfx-plan.json")["sfx"]:
         events.setdefault(round(s["cue"], 2), "sfx")
@@ -65,6 +71,12 @@ def add_zoom(t, reason):
     if k.get("zoom"):
         return False
     k["zoom"] = {"at": round(t, 3), "pct": P["zoom_pct"], "dur": P["zoom_dur_s"], "reason": reason}
+    # the face at the punch (source frame): the lane zooms around this point so the face grows in place
+    from _faces import FaceFinder
+    fw, fh = job.numbers["canvas"]["width"] // 3, job.numbers["canvas"]["height"] // 3
+    f = FaceFinder(fw, fh).at(job.source, k["in"] + (t - tl.offsets[i]) + P["zoom_dur_s"])
+    if f is not None:
+        k["zoom"]["face"] = [round((f[0] + f[2] / 2) / fw, 4), round((f[1] + f[3] / 2) / fh, 4)]
     return True
 
 

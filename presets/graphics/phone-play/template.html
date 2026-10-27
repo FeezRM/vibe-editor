@@ -1,0 +1,46 @@
+{% extends "_base.html" %}
+{% import "_icons.html" as ic %}
+{% block style %}
+  .stg { position: relative; width: 920px; height: 740px; }
+  .ph { position: absolute; left: 270px; top: 20px; width: 380px; height: 780px; border-radius: 56px; background: #0B0B0F; padding: 12px;
+        box-shadow: 0 0 0 3px #3A3F4A, 0 40px 80px #000000B3, 0 0 90px #1F84ED66; }
+  .scr { position: relative; width: 100%; height: 100%; border-radius: 46px; overflow: hidden; background: #000000; }
+  .scr video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 110px; height: 30px; border-radius: 16px; background: #000000; z-index: 3; }
+  .rail { position: absolute; right: 14px; top: 250px; display: flex; flex-direction: column; gap: 26px; align-items: center; z-index: 3; }
+  .rail .ic { width: 50px; height: 50px; color: #FFFFFF; filter: drop-shadow(0 2px 6px #000000B3); }
+  .hn { position: absolute; left: 22px; top: 520px; z-index: 3; display: flex; align-items: center; gap: 10px; font: 700 24px/1 'CapSans', Inter, sans-serif;
+        color: #FFFFFF; text-shadow: 0 2px 8px #000000B3; }
+  .hn i { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #1F84ED, #54B3E9); border: 2px solid #FFFFFF; }
+  .bigh { position: absolute; left: 50%; top: 250px; margin-left: -80px; opacity: 0; z-index: 4; filter: drop-shadow(0 10px 24px #000000B3); }
+  .ring { position: absolute; left: 270px; top: 20px; width: 380px; height: 780px; border-radius: 56px; opacity: 0; box-shadow: 0 0 0 5px #54B3E9, 0 0 60px 16px #1F84ED; }
+{% endblock %}
+{% block body %}
+        <div class="stg">
+          <div class="ph" id="ph">
+            <div class="scr">
+              <video id="vid" class="clip" src="{{ video }}" data-start="0" data-duration="{{ '%.3f' % duration }}" data-track-index="1" muted playsinline></video>
+              <div class="notch"></div>
+              <div class="rail"><div class="ic">{{ ic.icon("heart", 50) }}</div><div class="ic">{{ ic.icon("send", 50) }}</div></div>
+              <div class="hn"><i></i>{{ handle }}</div>
+              <div class="bigh" id="bigh">{{ ic.icon("heart", 160) }}</div>
+            </div>
+          </div>
+          <div class="ring" id="ring"></div>
+        </div>
+{% endblock %}
+{% block tl %}
+      tl.addLabel("in", 0);
+      const likeAt = at(0, 0.9), ringAt = at(1, likeAt + 0.7);
+      // the phone rises from the bottom edge — it is playing this very moment
+      tl.from("#ph", { y: 520, rotation: -4, duration: 0.45, ease: ease.in }, 0.05);
+      tl.to("#ph", { rotation: 1.5, duration: Math.max(0.5, D - 0.5), ease: "sine.inOut" }, 0.5);
+      // a double-tap heart
+      tl.addLabel("like", likeAt);
+      tl.fromTo("#bigh", { opacity: 0, scale: 0.2, rotation: -15 }, { opacity: 1, scale: 1.1, rotation: 0, duration: 0.22, ease: ease.snap, immediateRender: false }, likeAt);
+      tl.to("#bigh", { scale: 1, duration: 0.15 }, likeAt + 0.22);
+      tl.to("#bigh", { y: -120, opacity: 0, duration: 0.5, ease: "power2.in" }, likeAt + 0.55);
+      // right now: a pulse around the phone
+      tl.addLabel("now", ringAt);
+      tl.fromTo("#ring", { opacity: 1, scale: 1 }, { opacity: 0, scale: 1.12, duration: 0.6, ease: "power2.out", immediateRender: false }, ringAt);
+{% endblock %}

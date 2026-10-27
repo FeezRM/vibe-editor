@@ -5,6 +5,7 @@
 #
 #   tests/regress.sh [--presets-only] [--fixture projects/<job>]
 set -euo pipefail
+export PYTHONUTF8=1
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO"
 PRESETS_ONLY=0; FIXTURE="projects/fixture-summer"
@@ -13,6 +14,7 @@ fail=0
 echo "== presets"
 for p in presets/graphics/*/; do
   n=$(basename "$p")
+  [[ -f "$p/template.html" ]] || continue   # _skins/ and other non-preset folders
   if python3 workflows/build-graphics.py --preset "$p" --golden 2>&1 | grep -E "golden ssim|FAIL"; then :; else echo "FAIL preset $n"; fail=1; fi
 done
 if [[ $PRESETS_ONLY -eq 0 && -f "$FIXTURE/RUN.md" && -f "$FIXTURE/transcript/words.json" ]]; then

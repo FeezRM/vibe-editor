@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Review loop — deterministic remedies for graphics-qa defects. Edits graphics-plan.json, never a preset.
 
-  face-overlap  beside-l ⇄ beside-r; if both sides were tried → inline if allowed → drop
+  face-overlap  beside-l ⇄ beside-r; if both sides were tried (or top) → inline if allowed → drop
   caption-band  → inline if allowed (below the band) → cutaway + mute window if allowed → drop
   luma          → drop
   blank / missing-render / stale-render / no-alpha → mark dirty (rebuild)

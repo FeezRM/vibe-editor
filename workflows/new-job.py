@@ -51,6 +51,8 @@ state = {
     "checksum": sha256(dst),
     "source_duration_s": round(info["duration"], 3),
     "source_fps": round(info["fps"], 3),
+    "source_width": info["width"],
+    "source_height": info["height"],
     "format": fmt,
     "fps": int(round(info["fps"])) if int(round(info["fps"])) in (24, 25, 30, 60) else numbers["canvas"]["fps"],
     "lane": a.lane,

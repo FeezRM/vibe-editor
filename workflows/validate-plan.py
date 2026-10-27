@@ -99,6 +99,58 @@ presence = sum(e - s for s, e in merged) / tl.duration if tl.duration else 0
 if presence < G["min_presence"]:
     warns.append(f"graphic presence {presence:.0%} < {G['min_presence']:.0%} of runtime")
 
+# show, don't caption: graphics that are only words (phrase, list-card, flow, metric, chat) may carry at most
+# graphics.max_text_share of the graphic time. The captions already carry the words; the layer's job is to SHOW.
+text_presets = set(G.get("text_presets", []))
+gfx_time = sum(g["duration"] for g in sorted_g) or 1.0
+text_time = sum(g["duration"] for g in sorted_g if g["preset"] in text_presets)
+text_share = text_time / gfx_time
+if sorted_g and text_share > G.get("max_text_share", 1.0):
+    errs.append(f"text-only presets carry {text_share:.0%} of graphic time (max {G['max_text_share']:.0%}) — show the noun: "
+                f"app-mock / receipt / thumb-wall / rec-frame + zoom / wash, or build nothing")
+
+# variety: the viewer is bored by the same kind of thing twice. Every preset belongs to a visual family
+# (graphics.families); a family never runs twice in a row, appears at most max_family_uses times and only as a
+# callback separated by callback_gap other graphics, no asset file appears in more than max_asset_uses graphics,
+# and a reel with ≥ min_families graphics shows at least that many different families. Floods and footage are exempt.
+FAM = G.get("families", {})
+V = G.get("variety", {})
+if V:
+    exempt = set(V.get("exempt", []))
+    seq = [(g["id"], FAM.get(g["preset"], g["preset"])) for g in sorted_g if FAM.get(g["preset"], g["preset"]) not in exempt]
+    for (a_id, a_f), (b_id, b_f) in zip(seq, seq[1:]):
+        if a_f == b_f:
+            errs.append(f"{a_id} → {b_id}: two '{a_f}' visuals in a row — show a different kind of thing")
+    seen = {}
+    for i, (gid, fam) in enumerate(seq):
+        if fam in seen:
+            uses, last = seen[fam]
+            if uses >= V.get("max_family_uses", 2):
+                errs.append(f"{gid}: '{fam}' used {uses + 1} times — a family returns once, as a callback, not as a habit")
+            elif i - last <= V.get("callback_gap", 2):
+                errs.append(f"{gid}: '{fam}' returns after only {i - last - 1} other graphics — a callback needs ≥ {V.get('callback_gap', 2)} between")
+            seen[fam] = (uses + 1, i)
+        else:
+            seen[fam] = (1, i)
+    fams = {f for _, f in seq}
+    if len(seq) >= V.get("min_families", 4) and len(fams) < V.get("min_families", 4):
+        errs.append(f"only {len(fams)} visual families across {len(seq)} graphics (min {V.get('min_families', 4)}): {sorted(fams)}")
+    # asset reuse, by file
+    def assets_of(v):
+        if isinstance(v, str) and v.startswith("assets/"):
+            yield v
+        elif isinstance(v, dict):
+            for x in v.values(): yield from assets_of(x)
+        elif isinstance(v, list):
+            for x in v: yield from assets_of(x)
+    uses = {}
+    for g in sorted_g:
+        for a in set(assets_of(g.get("params", {}))):
+            uses.setdefault(a, []).append(g["id"])
+    for a, ids in uses.items():
+        if len(ids) > V.get("max_asset_uses", 2):
+            errs.append(f"{a} appears in {len(ids)} graphics ({', '.join(ids)}) — max {V.get('max_asset_uses', 2)}; find other real material")
+
 events = set()
 if job.p("captions.json").exists():
     events.update(round(g["s"], 2) for g in job.read_json("captions.json")["groups"])
@@ -122,4 +174,4 @@ if errs:
     job.gate("validate_plan", "fail")
     sys.exit(1)
 job.gate("validate_plan", "pass")
-print(f"validate-plan: pass · {len(gfx)} graphics · presence {presence:.0%} · {len(mutes)} mute windows · {len(warns)} warnings")
+print(f"validate-plan: pass · {len(gfx)} graphics · presence {presence:.0%} · text {text_share:.0%} · families {len({FAM.get(g['preset'], g['preset']) for g in sorted_g})} · {len(mutes)} mute windows · {len(warns)} warnings")

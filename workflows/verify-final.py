@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Gate — the final file is what the EDL says it is. → review/final-sheet.png for the human.
 
-Checks: exists and newer than the plan · duration = kept_s ± 0.2s · 1080x1920 · loudness within
+Checks: exists and newer than the plan · duration = kept_s + holds ± 0.2s · 1080x1920 · loudness within
 tolerance · zero silences ≥ audio.silence_max_s · caption geometry on 4 hits · 12-frame contact sheet.
 """
 import re
@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from _lib import REPO, Job, ffprobe  # noqa: E402
+from _lib import REPO, Job, Timeline, ffprobe  # noqa: E402
 
 job = Job(sys.argv[1])
 A, C = job.numbers["audio"], job.numbers["captions"]
@@ -19,7 +19,7 @@ errs, warns = [], []
 if not out.exists():
     print("error: final missing"); sys.exit(1)
 info = ffprobe(out)
-kept = float(job.read_json("cuts.json")["stats"]["kept_s"])
+kept = Timeline(job.read_json("cuts.json")).duration   # kept source + authored holds
 if abs(info["duration"] - kept) > 0.25:
     errs.append(f"duration {info['duration']:.2f}s vs EDL {kept:.2f}s")
 if (info["width"], info["height"]) != (job.numbers["canvas"]["width"], job.numbers["canvas"]["height"]):

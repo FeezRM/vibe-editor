@@ -1,0 +1,16 @@
+{
+  "duration": 6.0,
+  "agent_name": "Agent",
+  "avatar": "assets/ex-avatar.png",
+  "composer_hint": "Message Agent",
+  "drop_at": 0.3,
+  "name_reveal_at": 0.8,
+  "status": [{"at": 0.5, "text": "AI assistant"}, {"at": 2.0, "text": "is working"}, {"at": 3.2, "text": "Reading your posts"}],
+  "turns": [
+    {"prompt": "find what works on my account", "type_at": 0.2, "send_at": 0.9, "replies": [{"kind": "dots", "at": 1.0}]},
+    {"replies": [{"kind": "tiles", "at": 3.0, "sub": "5 posts", "scan_at": 3.3, "hero": 1, "hero_at": 4.6}]}
+  ],
+  "images": [{"src": "assets/ex-1.png"}, {"src": "assets/ex-2.png"}, {"src": "assets/ex-3.png"}, {"src": "assets/ex-4.png"}, {"src": "assets/ex-5.png"}],
+  "profile_avatar": "assets/ex-profile.png",
+  "reveal_at": [0.3, 0.8, 0.9, 1.0, 3.0, 3.3, 4.6]
+}

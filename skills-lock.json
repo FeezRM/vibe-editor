@@ -5,7 +5,13 @@
       "source": "hetpatel-11/Adobe_Premiere_Pro_MCP",
       "sourceType": "github",
       "skillPath": "skills/premiere-pro-mcp/SKILL.md",
-      "computedHash": "aa99467d6ee0dccff294c368308c408acd723b8d0f6e1e3e708f8513e9aec127"
+      "computedHash": "42291a38550ba82f4918f70d4c9ef63113a61b4229adf54e782a10f9596b832b"
+    },
+    "watch": {
+      "source": "bradautomates/claude-video",
+      "sourceType": "github",
+      "skillPath": "skills/watch/SKILL.md",
+      "computedHash": "05675ba6e016ce393579e492c033e813e965ad75e21b869cb9e1afbf24fc5e95"
     }
   }
 }

@@ -9,7 +9,11 @@
   .tag { font-size: 22px; color: #8FB4FF; letter-spacing: .1em; text-transform: uppercase; margin-top: 6px; }
   .pl-beside-l .flow, .pl-beside-r .flow { flex-direction: column; gap: 10px; }
   .pl-beside-l .arrow, .pl-beside-r .arrow { transform: rotate(90deg); width: 40px; margin: 12px 0; transform-origin: center; }
-  .pl-inline .flow { flex-wrap: wrap; row-gap: 18px; }
+  .pl-inline .flow { flex-wrap: nowrap; }
+  /* a row that would overflow the slot becomes a column (measured once at load, below) — an arrow never points at a wrap */
+  .pl-inline .flow.col { flex-direction: column; gap: 10px; }
+  .pl-inline .flow.col .node { font-size: 38px; padding: 20px 30px; }
+  .pl-inline .flow.col .arrow { transform: rotate(90deg); width: 40px; margin: 12px 0; transform-origin: center; }
 {% endblock %}
 {% block body %}
         <div class="flow ui">
@@ -21,6 +25,8 @@
 {% endblock %}
 {% block tl %}
       tl.addLabel("in", 0);
+      const flowEl = document.querySelector(".flow");
+      if (flowEl.scrollWidth > flowEl.clientWidth + 2) flowEl.classList.add("col");
       const nodes = gsap.utils.toArray(".node"), arrows = gsap.utils.toArray(".arrow");
       nodes.forEach((n, i) => {
         const t = at(i, i * 0.7);

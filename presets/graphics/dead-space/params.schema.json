@@ -1,0 +1,13 @@
+{
+  "title": "dead-space — the REAL waveform of the raw; one scan turns the silence red, the red breaks apart and flies off, the speech closes up and becomes the real waveform of the cut while the seconds count down",
+  "type": "object",
+  "required": ["wave"],
+  "properties": {
+    "wave": { "type": "string", "x-json": true, "x-asset": true,
+              "description": "assets/waveform.json from workflows/waveform.py <job> — raw + cut envelopes and the EDL keeps; never hand-made" },
+    "reveal_at": { "type": "array", "items": { "type": "number" }, "description": "[scan (the silence goes red), break (red flies off, speech closes up), tight (the cut's own waveform)]" }
+  },
+  "x-placements": ["inline", "top"],
+  "x-default-placement": "inline",
+  "x-events": ["reveal_at"]
+}

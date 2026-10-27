@@ -1,0 +1,16 @@
+{
+  "title": "layer-stack — 'it makes the captions, the graphics, everything': the edit as layers — the REAL footage frame, a captions layer with the REAL caption, a graphics layer with a REAL render — fanned out in 3D, landing on their words, then slammed into one frame",
+  "type": "object",
+  "required": ["base", "caption"],
+  "properties": {
+    "base": { "type": "string", "x-asset": true, "description": "a real frame of the footage" },
+    "caption": { "type": "array", "x-real": true, "maxItems": 4, "items": { "type": "object", "properties": { "t": { "type": "string" }, "acc": { "type": "boolean" } } },
+                 "description": "the real caption words from captions.json, one accent max" },
+    "graphic": { "type": "string", "x-asset": true, "description": "optional: a real still of one of this reel's graphics (alpha PNG from a render)" },
+    "labels": { "type": "array", "default": ["footage", "captions", "graphics"], "x-real": true, "items": { "type": "string", "maxLength": 12 } },
+    "reveal_at": { "type": "array", "items": { "type": "number" }, "description": "[captions layer lands, graphics layer lands, everything merges]" }
+  },
+  "x-placements": ["top", "inline"],
+  "x-default-placement": "top",
+  "x-events": ["reveal_at"]
+}

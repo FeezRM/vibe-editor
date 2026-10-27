@@ -15,13 +15,13 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from _lib import REPO, Job, Timeline  # noqa: E402
+from _lib import REPO, Job, Timeline, preset_file  # noqa: E402
 
 job = Job(sys.argv[1])
 job.require("audio")
 A = job.numbers["audio"]
-preset_dir = REPO / "presets" / job.state.get("preset", "vertical/default")
-verb_map = __import__("json").loads((preset_dir / "sfx.json").read_text())
+_preset = job.state.get("preset", "vertical/default")
+verb_map = __import__("json").loads(preset_file(_preset, "sfx.json").read_text())
 plan = job.read_json("graphics-plan.json")
 tl = Timeline(job.read_json("cuts.json"))
 
@@ -37,6 +37,23 @@ VERBS = {
     "wash":       (None,      None,     1),
     "receipt":    ("shutter", None,     2),
     "rec-frame":  ("click",   None,     1),
+    # demonstration presets: the entrance, then one hit per reveal (slash, feed, drop, break, merge, stamp, send)
+    "script-cut": ("whoosh",  "slide",  3),
+    "transform":  ("pop",     "whoosh", 2),
+    "drag-drop":  ("click",   "pop",    2),
+    "dead-space": ("whoosh",  "wrong",  3),
+    "layer-stack":("slide",   "pop",    2),
+    "stamp":      ("tick",    "ding",   3),
+    "phone-play": ("whoosh",  "pop",    2),
+    "comment":    ("pop",     "click",  3),
+    "shatter":    ("riser",   "wrong",  3),
+    "split":      ("pop",     "tick",   3),
+    "pixel-quest":("pop",     "ding",   3),   # spawn pop; the bonk and the landing ding
+    "pixel-crowd":("pop",     "ding",   3),
+    "agent-chat": ("whoosh",  "pop",    3),
+    "ad-stack":   ("pop",     "whoosh", 3),   # each ad slams onto the pile
+    "bot-team":   ("pop",     "pop",    3),
+    "bg-swap":    (None,      "whoosh", 3),   # every background switch whooshes   # the team scene: a plan's sfx_events picks a verb per beat   # the phone slams up; each send / reply pops (a plan's sfx_events can vary it)
 }
 
 sfx_dir = job.p("assets", "sfx")
@@ -49,7 +66,7 @@ def resolve(verb):
         return None
     dst = sfx_dir / fn
     if not dst.exists():
-        src = preset_dir / "sfx" / fn
+        src = preset_file(_preset, "sfx") / fn
         if src.exists():
             shutil.copy2(src, dst)
         else:
@@ -66,11 +83,14 @@ for g in plan["graphics"]:
         f = resolve(enter)
         if f:
             events.append({"cue": round(g["cue"], 3), "verb": enter, "file": f, "graphic": g["id"], "prio": prio, "db": A["sfx_db"]})
-    if per_event:
+    ev_verbs = g.get("sfx_events")   # optional: one verb (or null) per reveal_at entry, for presets with mixed events
+    if per_event or ev_verbs:
         for i, r in enumerate(g.get("reveal_at", [])):
             if i == 0 and r < 0.2:
                 continue  # coincides with the entrance
-            verb = per_event
+            verb = ev_verbs[i] if ev_verbs and i < len(ev_verbs) else per_event
+            if not verb:
+                continue
             if g["preset"] == "metric":
                 # the ding lands when the count finishes
                 r = r + float(g.get("params", {}).get("count_s", 1.2))

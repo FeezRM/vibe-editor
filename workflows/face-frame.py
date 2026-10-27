@@ -8,15 +8,12 @@ turned head), and to a centred default when nothing was ever found.
 Usage: python workflows/face-frame.py <job> [--times 1.0,2.5]  (times = timeline seconds; default = every plan cue)
 """
 import argparse
-import subprocess
 import sys
 from pathlib import Path
 
-import cv2
-import numpy as np
-
 sys.path.insert(0, str(Path(__file__).parent))
 from _lib import Job  # noqa: E402
+from _faces import FaceFinder  # noqa: E402
 
 ap = argparse.ArgumentParser()
 ap.add_argument("job")
@@ -27,26 +24,14 @@ spine = job.p("preview", "spine.mp4")
 if not spine.exists():
     sys.exit("preview/spine.mp4 missing — run lanes/ffmpeg/assemble.py --stage spine first")
 W, H = job.numbers["canvas"]["width"], job.numbers["canvas"]["height"]
-casc = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-
-
-def frame_at(t: float):
-    r = subprocess.run(["ffmpeg", "-loglevel", "error", "-ss", f"{t:.3f}", "-i", str(spine), "-frames:v", "1", "-f", "image2pipe",
-                        "-vcodec", "png", "-"], capture_output=True)
-    arr = np.frombuffer(r.stdout, np.uint8)
-    return cv2.imdecode(arr, cv2.IMREAD_COLOR) if arr.size else None
+finder = FaceFinder(W // 3, H // 3)
 
 
 def face_at(t: float):
-    img = frame_at(t)
-    if img is None:
+    f = finder.at(spine, t)
+    if f is None:
         return None
-    small = cv2.resize(img, (W // 3, H // 3))
-    gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
-    faces = casc.detectMultiScale(gray, scaleFactor=1.15, minNeighbors=5, minSize=(40, 40))
-    if len(faces) == 0:
-        return None
-    x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
+    x, y, w, h = f
     return {"x": int(x * 3), "y": int(y * 3), "w": int(w * 3), "h": int(h * 3)}
 
 

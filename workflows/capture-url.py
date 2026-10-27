@@ -25,7 +25,7 @@ a = ap.parse_args()
 
 cands = sorted(glob.glob(os.path.expanduser("~/.cache/puppeteer/chrome-headless-shell/*/chrome-headless-shell-mac-arm64/chrome-headless-shell"))) + \
         sorted(glob.glob(os.path.expanduser("~/.cache/puppeteer/chrome/*/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"))) + \
-        ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
+        ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"] +         sorted(glob.glob(os.path.expanduser("~/.cache/puppeteer/chrome-headless-shell/*/chrome-headless-shell-win64/chrome-headless-shell.exe"))) +         sorted(glob.glob(os.path.expanduser("~/.cache/puppeteer/chrome/*/chrome-win64/chrome.exe"))) +         [r"C:\Program Files\Google\Chrome\Application\chrome.exe", r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"]
 chrome = next((c for c in cands if Path(c).exists()), None)
 if not chrome:
     sys.exit("no headless chrome found — run `npx hyperframes doctor` once to install it")
