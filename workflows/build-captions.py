@@ -118,6 +118,9 @@ page = f"""<!doctype html>
       .cap em {{ text-transform: {C.get("accent_case", "none")}; }}
       .cap.kw {{ font-family: 'CapSerif', '{C["accent_family"]}', sans-serif; font-style: {C.get("accent_style", "italic")};
                  font-weight: {C["accent_weight"]}; text-transform: {C.get("accent_case", "none")}; font-size: {C["size_px"] * C["accent_scale"]:.0f}px; }}
+      /* a face with no italic file is slanted by hand: the browser will not synthesise one from a declared italic */
+      .cap.kw b, .cap em {{ display: inline-block; transform: skewX({-float(C.get("accent_skew_deg", 0)):.1f}deg); }}
+      .cap.kw b {{ display: block; }}
       .ink  {{ color: {col["ink"]}; }}
       .cyan {{ color: {col.get("cyan", "#13FFFB")}; }}
       .magenta {{ color: {col.get("magenta", "#E300F6")}; }}

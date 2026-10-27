@@ -16,9 +16,9 @@
     "glow": "0 3px 6px rgba(0,0,0,.55), 0 0 14px rgba(0,0,0,.35)",
     "accent_family": "TikTok Sans",
     "accent_file": "TikTokSans-Black.ttf",
-    "accent_style": "italic",
+    "accent_style": "normal",
     "accent_weight": 900,
-    "accent_scale": 1.12,
+    "accent_scale": 1.25,
     "accent_case": "uppercase",
     "colors": {
       "ink": "#FFFFFF",
@@ -28,7 +28,8 @@
       "em": "#FFFFFF",
       "cyan": "#13FFFB",
       "magenta": "#E300F6"
-    }
+    },
+    "accent_skew_deg": 11
   },
   "audio": {
     "voice_lufs": -13.0,

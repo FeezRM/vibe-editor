@@ -12,7 +12,8 @@ shorter than cut.min_clip_s.
 
 --review prints every removal with an id; vetoes go in cuts.overrides.json as {"keep": [{"in", "out", "why"}]} (by
 range — stable) or {"keep_ids": [..]} (ids shift when the transcript changes),
-review removals (judgment the rules cannot make) as {"remove": [{"in", "out", "why"}]},
+review removals (judgment the rules cannot make) as {"remove": [{"in", "out", "why"}]}, a keep with "exact": true pins
+its edges as written (a cut between run-together words, placed on the quietest frame by hand),
 deliberate frozen beats as {"holds": [{"at", "s", "why"}]} (the keep ending nearest `at` freezes its last
 frame `s` seconds — b-roll with its own audio plays over it), {"mark": false} when the speaker moves on purpose (a
 standing take is not a slate), and are re-applied deterministically on the next run.
@@ -316,10 +317,12 @@ if wav.exists():
             if (e - j) * HOP <= pmax:
                 j = e
                 continue
-            if inside and qb >= inside[-1]["e"] - 0.03 and float(env.db[e: env.i(k["out"]) + 1].max()) < weak:
+            # the quiet run must lie AFTER the last word (BEFORE the first): testing its far end let a softly spoken last
+            # word ("…viral videos for you", 9278-v2) read as a breath and be cut with its pause
+            if inside and qa >= inside[-1]["e"] - 0.03 and float(env.db[e: env.i(k["out"]) + 1].max()) < weak:
                 k = dict(k, out=round(min(k["out"], cut_in), 3))
                 break
-            if inside and qa <= inside[0]["s"] + 0.03 and float(env.db[env.i(cur): j + 1].max()) < weak:
+            if inside and qb <= inside[0]["s"] + 0.03 and float(env.db[env.i(cur): j + 1].max()) < weak:
                 cur = round(max(cur, cut_out), 3)
                 j = e
                 continue
@@ -332,6 +335,32 @@ if wav.exists():
             j = e
         tight.append(dict(k, **{"in": cur}))
     keep = tight
+    # an editor's {"keep": [...]} range is protected from every rule, the audio edges included: a word inside it that
+    # the edge steps trimmed (a swallowed last word the envelope reads as silence — 9278-v2 "…videos for you") is put
+    # back, up to the range and never into the neighbouring clip
+    for f in overrides.get("keep", []):
+        lo, hi = float(f["in"]), float(f["out"])
+        for n, k in enumerate(keep):
+            if k["out"] <= lo or k["in"] >= hi:
+                continue
+            ws = [w for w in words if w["s"] >= lo - 0.02 and w["e"] <= hi + 0.02]
+            nxt = keep[n + 1]["in"] if n + 1 < len(keep) else duration
+            prv = keep[n - 1]["out"] if n else 0.0
+            tail = [w for w in ws if w["s"] >= k["out"] - 0.05 and w["s"] < nxt]
+            if tail and k["out"] < hi:
+                k["out"] = round(min(hi, nxt, max(k["out"], tail[-1]["e"] + cfg["tail_s"])), 3)
+            head = [w for w in ws if w["e"] <= k["in"] + 0.05 and w["e"] > prv]
+            if head and k["in"] > lo:
+                k["in"] = round(max(lo, prv, min(k["in"], head[0]["s"] - cfg["lead_s"])), 3)
+            # "exact": true — the editor's edge stands as written: a cut between words that run together (no silence to
+            # snap to) is placed by hand on the quietest frame, and validate-edl skips its inside-speech check
+            if f.get("exact"):
+                if abs(k["out"] - hi) <= 0.12 and (n + 1 == len(keep) or hi < keep[n + 1]["in"]):
+                    k["out"] = round(hi, 3)
+                    k.setdefault("exact", []).append("out")
+                if abs(k["in"] - lo) <= 0.12 and (n == 0 or lo > keep[n - 1]["out"]):
+                    k["in"] = round(lo, 3)
+                    k.setdefault("exact", []).append("in")
     # every clip a whole number of frames (the lane cuts by frame count), so the EDL's timeline IS the spine's: an
     # unquantised 34-clip cut drifted 0.17 s and every offset-based check read the wrong frames (9287)
     for n, k in enumerate(keep):
@@ -340,7 +369,7 @@ if wav.exists():
         while nf > 1 and k["in"] + nf / fps > nxt + 1e-6:
             nf -= 1
         k["out"] = round(k["in"] + nf / fps, 4)
-    hot_edges = [round(t, 3) for k in keep for t in (k["in"], k["out"]) if env.hot(t)]
+    hot_edges = [round(k[s_], 3) for k in keep for s_ in ("in", "out") if s_ not in k.get("exact", []) and env.hot(k[s_])]
 
 # 8. the speaker on the mark: leading / trailing clips where the face is missing or far from where it sits for the
 #    rest of the video are a slate — walking to the chair, sitting down ("Idea, hook, value" on 9078) — not content.
@@ -466,8 +495,9 @@ for o in off_mark:
 # words, a wrong fact corrected later, an aside to the camera person all pass them. The editor reads this file and
 # decides the takes in cuts.overrides.json.
 def _kept(w):
-    m = (w["s"] + w["e"]) / 2
-    return any(k["in"] <= m < k["out"] for k in keep)
+    """kept when most of the word is heard — a stop closure shortened inside a word ("out|reach") does not cut it"""
+    heard = sum(max(0.0, min(k["out"], w["e"]) - max(k["in"], w["s"])) for k in keep)
+    return heard >= 0.5 * max(w["e"] - w["s"], 1e-3)
 
 
 lines, cur = [], [words[0]]

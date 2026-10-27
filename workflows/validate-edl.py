@@ -37,6 +37,8 @@ if wav.exists():
     env = Envelope(wav, job.read_json("transcript", "words.json"), cfg["edge_rel_db"])
     for i, k in enumerate(cuts["keep"]):
         for side in ("in", "out"):
+            if side in k.get("exact", []):   # an edge the editor pinned between run-together words (cuts.overrides "exact")
+                continue
             if env.hot(k[side]):
                 errs.append(f"clip {i} {side}-point {k[side]:.2f}s is inside speech "
                             f"({env.level(k[side] - 0.03, k[side]):.0f} / {env.level(k[side], k[side] + 0.03):.0f} dB, threshold {env.thr:.0f})")
