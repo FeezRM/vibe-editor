@@ -17,6 +17,7 @@ import json
 import shutil
 import subprocess
 import sys
+import re
 import time
 from pathlib import Path
 
@@ -137,12 +138,26 @@ plan = job.read_json("graphics-plan.json")
 scaffold_hf(job)
 only = set(a.only.split(",")) if a.only else None
 
+
+
+def _stale(job, g) -> bool:
+    """A hand-written composition, or a file it loads from assets/, changed after its render."""
+    if not g.get("html"):
+        return False
+    done = job.p(g["render"]).stat().st_mtime
+    html = job.p(g["html"])
+    if not html.exists():
+        return True
+    srcs = [html] + [job.p(m) for m in re.findall(r'src="(assets/[^"]+)"', html.read_text(encoding="utf-8"))]
+    return any(f.exists() and f.stat().st_mtime > done for f in srcs)
+
+
 t0 = time.time()
 built = 0
 for g in plan["graphics"]:
     if only and g["id"] not in only:
         continue
-    if g.get("render") and job.p(g["render"]).exists() and not g.get("dirty") and not only:
+    if g.get("render") and job.p(g["render"]).exists() and not g.get("dirty") and not only and not _stale(job, g):
         continue
     info = build_one(job, g, numbers)
     if not g.get("html"):

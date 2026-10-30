@@ -6,8 +6,21 @@ description: "The visual layer of an edit: decide which beats (if any) get a gra
 # ig-show — node 05
 
 A graphic earns its place by making the video clearer or more engaging than the face and the words alone. The bar is
-`samples/STYLE.md`: before you plan, re-read its graphics section and open a few full-size frames from the samples so
-the look is in your eyes, not just in words.
+`samples/STYLE.md` and the approved baseline edit `samples/BASELINE.md`. Before you plan, re-read both, watch
+`samples/baseline/9278-muse-v5.mp4`, and open a few full-size frames from the samples so the look is in your eyes,
+not just in words. A new edit should have at least as much going on as the baseline:
+- the hook visual on every line;
+- a visual moment every ~2 s, using several different devices;
+- motion that means something.
+
+The baseline's `compositions/` are working references for each device:
+- a logo under the word;
+- a clip card;
+- tiles that play;
+- a real UI card;
+- an acted-out chat;
+- a ring that draws;
+- a split screen.
 
 ## Decide what the video needs
 
@@ -26,6 +39,16 @@ Show the real thing. In order: on disk (`assets/`, the creator's library) → a 
 real page (`workflows/capture-url.py <url> assets/x.png --mobile`, or the creator's logged-in Chrome for their own
 profiles and tools) → look it up → ask the creator → build nothing. Never invent a number, a screenshot, a comment or
 a result; a number on screen says where it came from in `provenance`.
+
+**Acting a line out is the exception, and often the best visual.** When a line describes a workflow ("tell it to find
+viral content… it'll analyze your account"), build that workflow happening, with each step on the word that says it.
+The baseline's Muse chat is the example: the message is sent, the AI works, it reads the account, the answer lands.
+An acted-out UI must:
+- use the real logo, avatar and handle;
+- carry no numbers or results presented as real;
+- say `illustration … not a captured <product> answer` in `provenance`.
+
+A loosely related stock clip in its place reads as "weird".
 
 ## Write it
 

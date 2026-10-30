@@ -119,7 +119,7 @@
     "entrance_s": 0.35
   },
   "framing": {
-    "$comment": "scale > 1 crops in once for the whole video (one fixed camera on the median face, face at face_y of the height); 1.0 = the source framing",
+    "$comment": "scale > 1 crops in once for the whole video (one fixed camera on the median face, face at face_y of the height); 1.0 = the source framing; face_w (fraction of the frame width) instead sizes the crop so the median face is that wide",
     "scale": 1.0,
     "face_y": 0.36
   },

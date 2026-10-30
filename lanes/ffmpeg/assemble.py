@@ -62,6 +62,10 @@ src_mtime = job.source.stat().st_mtime
 _fc = sorted(k["face"][:2] for k in cuts["keep"] if k.get("face"))
 _mx = sorted(f[0] for f in _fc)[len(_fc) // 2] if _fc else 0.5
 _my = sorted(f[1] for f in _fc)[len(_fc) // 2] if _fc else 0.42
+# framing.face_w sizes the camera by the face instead of a fixed scale: the same look fits a wide raw and a close one
+_fw = sorted(k["face"][2] for k in cuts["keep"] if k.get("face") and len(k["face"]) > 2)
+if FR.get("face_w") and _fw:
+    S = max(1.0, float(FR["face_w"]) / _fw[len(_fw) // 2])
 LX = min(max(_mx - 0.5 / S, 0.0), 1 - 1 / S) if S > 1.0001 else 0.0
 LY = min(max(_my - float(FR.get("face_y", 0.36)) / S, 0.0), 1 - 1 / S) if S > 1.0001 else 0.0
 listing = []

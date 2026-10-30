@@ -15,6 +15,10 @@ saying, and edit it the way the samples would.
 Read `samples/STYLE.md`. If it is missing, empty, or older than any file in `samples/`, run `ig-study` first. Read
 `brand/BRAND.md` for the creator's own rules — they beat everything here.
 
+Then read `samples/BASELINE.md` and watch `samples/baseline/9278-muse-v5.mp4`. It is the edit the creator approved as
+the baseline for everything that follows. Your edit is not done until it holds up next to it, frame for frame: the
+same captions and framing, as much on screen through the hook, and visuals as varied and as tied to the words.
+
 ## 1. Intake → cut
 
 ```bash

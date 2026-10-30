@@ -1,24 +1,24 @@
 {
-  "$comment": "The look measured from the reference reels in samples/ (2026-10-27, see samples/STYLE.md). Captions: one line at the frame's centre, bold lowercase with names kept; keywords as whole groups in heavy caps italic colour. Louder master. Re-measure when samples/ changes.",
+  "$comment": "The look measured from the reference reels in samples/ (2026-10-27, see samples/STYLE.md). Captions: Europa Grotesk SH Bold (the creator's font) one line at the frame's centre, lowercase with names kept; keywords as whole groups in Tactic Sans Ultra Italic caps, in colour. Both fonts are the creator's licensed copies (gitignored): copy them from the system font folder into presets/vertical/default/fonts/. Framing: face width ~0.26 of the frame, face centre at 0.33 of the height. Louder master.",
   "extends": "vertical/default",
   "captions": {
-    "font_family": "TikTok Sans",
-    "font_file": "TikTokSans-Bold.ttf",
+    "font_family": "Europa Grotesk SH",
+    "font_file": "europa-grotesk-sh-bold.otf",
     "font_weight": 700,
-    "size_px": 76,
-    "hook_size_px": 76,
+    "size_px": 84,
+    "hook_size_px": 84,
     "case": "natural",
     "strip_punct": ".,",
     "max_words": 3,
     "band_top": 920,
     "band_bottom": 1000,
-    "tracking_em": -0.02,
+    "tracking_em": -0.01,
     "glow": "0 3px 6px rgba(0,0,0,.55), 0 0 14px rgba(0,0,0,.35)",
-    "accent_family": "TikTok Sans",
-    "accent_file": "TikTokSans-Black.ttf",
-    "accent_style": "normal",
+    "accent_family": "Tactic Sans",
+    "accent_file": "TacticSans-UltIt.otf",
+    "accent_style": "italic",
     "accent_weight": 900,
-    "accent_scale": 1.25,
+    "accent_scale": 1.03,
     "accent_case": "uppercase",
     "colors": {
       "ink": "#FFFFFF",
@@ -29,10 +29,15 @@
       "cyan": "#13FFFB",
       "magenta": "#E300F6"
     },
-    "accent_skew_deg": 11
+    "accent_skew_deg": 0
   },
   "audio": {
     "voice_lufs": -13.0,
     "peak_dbfs": -1.0
+  },
+  "framing": {
+    "$comment": "the samples' face is ~0.255 of the frame wide, centred at 0.33 of the height (measured over all 8): face_w sets the crop from the raw's own median face, so a wide raw is cropped in more",
+    "face_w": 0.255,
+    "face_y": 0.33
   }
 }

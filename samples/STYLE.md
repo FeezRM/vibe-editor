@@ -4,6 +4,9 @@ Measured 2026-10-27 from the 8 reels in `samples/` (see `INDEX.md`): seated talk
 24–30 fps. Every number below was read off the files; where something is a judgement it says so. The mechanical
 values are in the look `presets/vertical/samples` — start every job with `--preset vertical/samples`.
 
+**The approved baseline edit is `samples/BASELINE.md`** (9278 v5, 2026-10-28). This file describes the reference
+reels; that one shows the level a finished edit from this pipeline has to reach. Read both.
+
 ---
 
 ## The shape of a reel
@@ -37,8 +40,10 @@ values are in the look `presets/vertical/samples` — start every job with `--pr
 
 ## The camera
 
-- **Framing is the source framing**: seated, head-and-chest to waist-up, face centre at 0.31–0.38 of the height,
-  face width 0.22–0.33 of the frame. Never re-cropped per clip.
+- **Framing**: seated, head-and-chest, **face width 0.22–0.30 of the frame (median 0.255), face centre at 0.29–0.37 of
+  the height (median 0.33)** — measured on all 8 with the face finder. A raw shot wider than that is cropped in once
+  for the whole video to match (`framing.face_w` 0.255, `face_y` 0.33 in the look). Never re-cropped per clip. The
+  9278 raw at source framing had the face at 0.20 wide and 0.43 down: "the frame and default zoom is off".
 - **No zoom punches in the body.** Across all 8 reels the face size never steps up mid-video.
 - **The one move: an opening zoom-out.** 4 of 8 (03, 04, 06, 07) open ~1.35× punched in and ease out to 1.0× over
   the first 6–8 frames (0.2–0.27 s), on the first word. It is fast enough to read as an impact, not a camera move.
@@ -52,12 +57,13 @@ values are in the look `presets/vertical/samples` — start every job with `--pr
   periods or commas; `?`, `!` and `…` only where they add tone ("INDIANS???", "THIS…").
 - **Position: the exact centre of the frame** (block centre y 960–968 of 1920, baseline ~990), over the chest.
   Width 28–55 % of the frame.
-- **Size**: ascender-to-baseline 45–60 px → ~76 px font. Bold geometric sans (TikTok Sans Bold is the closest on
-  disk), tight tracking.
+- **Font: Europa Grotesk SH Bold** (the creator's own font; TikTok Sans is the fallback), ~84 px (line widths of
+  "you lowkey" / "will get you" / "he takes a" fit 86–89 px at zero tracking), tracking −0.01 em. Confirmed by the
+  creator 2026-10-27 after TikTok Sans read as wrong.
 - **Case**: lowercase, but names keep their capitals ("and Instagram", "PS5", "for Tony", "cuz ChatGPT") — `case:
   natural`.
-- **Keywords** (roughly 1 group in 6–10): the whole group switches to heavy wide italic caps, ~12 % bigger, in one
-  colour — cyan "PROFILE PICTURE" / "RIZZ UP" / "MCPs", green "BLEW UP" / "GOATED" / "YOUR NAME", yellow "YOUR BIO",
+- **Keywords** (roughly 1 group in 6–10): the whole group switches to **Tactic Sans Ultra Italic** caps (wide, heavy,
+  true italic — "INSTAGRAM" is ~600 px wide → ~87 px), in one colour — cyan "PROFILE PICTURE" / "RIZZ UP" / "MCPs", green "BLEW UP" / "GOATED" / "YOUR NAME", yellow "YOUR BIO",
   red "COOKED" / "THIS…", white "THE ALGORITHM" / "3 LINE FORMAT". A single word can go red caps inside a lowercase
   line ("does NOT"). Set them in `captions.overrides.json` → `{"keywords": {"profile picture": "cyan"}}` and
   `{"accents": {"not": "bad"}}`.
@@ -82,11 +88,11 @@ by how often:
 | **Full-screen cutaway** | rounded-corner card (~60 px inset, ~30 px radius) on black, or edge to edge | 1–4 s, captions continue on top | screen recordings of the tool/site (Google Trends, a script timer with the cursor dragging a doc in), a meme reaction (anime "taking notes" for "save this"), his own b-roll |
 | **Verdict stamp** | big red ✗ or green ✓ (~600 px) over his torso, footage desaturated underneath | pops in on the verdict word, 0.5–0.75 s, with a hit SFX | 05 (every comparison), 02 ("afford them") |
 | **Numbered list card** | full screen on a deep purple gradient, items stacked at y 0.3/0.5/0.7, yellow/cyan/green caps | builds item by item on the words, then fills with a real example | 03 (bio "3 line format") |
-| **Light-leak flash** | full frame warm orange/pink | ~0.25 s, on a punchline word or into b-roll | 04 "STUPID", 08 into b-roll |
+| **Light-leak flash** | full frame warm orange/pink | ~0.25 s, on a punchline word or into b-roll | 04 "STUPID", 08 into b-roll. **Rejected as "tacky" when the pipeline did it (9278 v4): don't use it** |
 | **Cut-out reaction image** | under the caption, ~40 % width | 0.5–1 s | a person cut-out for "INDIANS", a streamer screaming for "INDIANS???" (02) |
 
-How often: a new visual every ~2–4 s on average, but **stretches of 3–6 s with only the face and captions are normal
-in every reel** (04: 11.0–16.0 s; 08: 23.8–27.3 s). Nothing is decorative: every visual is the noun or verb being said
+How often: **a new real visual every ~2–3 s** — three visuals in an 18 s reel read as "barely any visuals" to the
+creator (2026-10-27). Stretches of 2–4 s with only the face and captions are normal in every reel (04: 11.0–16.0 s; 08: 23.8–27.3 s). Nothing is decorative: every visual is the noun or verb being said
 at that moment.
 
 Motion style: almost everything **hard-cuts in on the word** and hard-cuts out with the caption. The only eased moves
@@ -103,6 +109,11 @@ bouncing, no spinning, no elastic overshoot, no text typing animations except th
 - Example clips play with their own audio while he is silent.
 
 ## Never (absent from all 8)
+
+- Light-leaks, glows or flashes as emphasis. The samples have two, and the creator rejected ours. Emphasis is a
+  keyword caption.
+- A stand-in clip that only loosely matches the line (stock typing for "tell it to…"). Show the thing itself, or
+  act it out (see BASELINE.md).
 
 - Text boxes or cards that restate what he is saying (the only text-only screens are the list card and section
   labels, both structural).

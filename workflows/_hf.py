@@ -38,7 +38,7 @@ def scaffold_hf(job) -> None:
     fonts_src = preset_file(job.state.get("preset", "vertical/default"), "fonts")
     (d / "fonts").mkdir(exist_ok=True)
     if fonts_src.exists():
-        for f in fonts_src.glob("*.ttf"):
+        for f in [*fonts_src.glob("*.ttf"), *fonts_src.glob("*.otf")]:
             if not (d / "fonts" / f.name).exists():
                 shutil.copy2(f, d / "fonts" / f.name)
     (d / "compositions").mkdir(exist_ok=True)

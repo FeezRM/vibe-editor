@@ -283,6 +283,9 @@ for phrase, cls in ov.get("keywords", {}).items():
 for g in groups:
     g["words"] = [{"w": x["w"], "s": x["s"], "e": x["e"], "end_punct": x.get("end_punct", "")} for x in g["words"]]
 
+# speech starts on frame 1 in every sample and so does the hook caption: no empty first frames before the first word
+if groups and groups[0]["s"] < 0.15:
+    groups[0]["s"] = 0.0
 out = {"duration": round(tl.duration, 3), "groups": groups, "mute_windows": []}
 job.write_json(out, "captions.json")
 n_acc = sum(1 for g in groups if g["accent"])

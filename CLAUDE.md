@@ -36,7 +36,8 @@ the EDL onto a Premiere sequence and falls back to ffmpeg when the bridge is dow
 ## Where things live
 
 ```
-samples/                    reference reels (gitignored) + STYLE.md — the bar every decision is checked against
+samples/                    reference reels (gitignored) + STYLE.md — the bar every decision is checked against;
+                            BASELINE.md + baseline/ — the approved pipeline edit (9278 v5) every edit has to match
 presets/vertical/default/   numbers.json (mechanical defaults: canvas, cut, caption look, audio, export), captions.md, sfx.json + sfx/, fonts/
 presets/vertical/<look>/    a look: numbers.json `extends` default, overrides only what differs; `samples` = measured from samples/ (use it)
 presets/graphics/           four reusable presets (app-mock, receipt, thumb-wall, comment) + _base.html, _icons.html
@@ -70,7 +71,7 @@ compositions.
 - A `class="stage"` wrapper renders a silently empty composition (HyperFrames reserves it) → a blank render with a clean lint is a name collision first. archive#stage-class
 - GSAP `keyframes` arrays mis-seek in renders, and a visible-start `fromTo` paints from frame 0 → consecutive `tl.to`; `immediateRender: false`. archive#gsap-seek
 - Captions under a graphic that carries words are dropped, not hidden (the glow still draws) → `mute_captions` makes a mute window. archive#mute-windows
-- Never invent a metric, a screenshot, or a comparison → `validate-plan.py` refuses placeholders; numbers need provenance. archive#no-fabrication
+- Never invent a metric, a screenshot, or a comparison → `validate-plan.py` refuses placeholders; numbers need provenance. An acted-out UI (no numbers, provenance says illustration) is allowed: samples/BASELINE.md. archive#no-fabrication
 - Handles from `samples/` never appear in an edit → `creator.handle` only; `validate-plan.py` greps for them. archive#sample-handles
 - Captions from the raw's transcript lose and shift words at every cut on a multi-take raw → captions read `transcript/spine-words.json`. archive#spine-captions
 - Renders are 1080×1920; a creator's 4K sequence shows them at half size → `place-layers.mjs` scales overlays to the sequence. archive#overlay-scale
@@ -88,7 +89,7 @@ compositions.
 
 Does: study the samples when they change; read every line of `review/takes.md` and listen to the spine before moving
 on; decide what each video needs on screen and write it for that video with real material (on disk → the footage →
-capture the real page → look it up → ask → build nothing); watch the final at full size next to a sample; hand the
+capture the real page → look it up → ask → build nothing); watch the final at full size next to a sample and next to `samples/baseline/9278-muse-v5.mp4`; hand the
 user the file with what it decided and why.
 Does not: ship an edit it has not watched, invent material, trust a tool's success flag, re-render onto an open file,
 put the plan in chat instead of the file.

@@ -32,6 +32,12 @@ def _sample_handles() -> set[str]:
     if s.exists():
         for f in s.glob("*.md"):
             out.update(re.findall(r"@([A-Za-z0-9_.]{3,})", f.read_text(errors="ignore")))
+    # the samples may be the creator's own reels: their own handle is not someone else's
+    try:
+        own = json.loads((REPO / "brand" / "brand.json").read_text(encoding="utf-8")).get("creator", {}).get("handle", "")
+    except (OSError, ValueError):
+        own = ""
+    out.discard(own.lstrip("@"))
     return out
 
 

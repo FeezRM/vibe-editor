@@ -46,6 +46,7 @@ analysis/*
 samples/*
 !samples/README.md
 !samples/STYLE.md
+!samples/BASELINE.md
 # Rendered graphics live in projects/<slug>/renders/ and are ignored with it.
 renders/
 exports/*

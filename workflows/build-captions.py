@@ -40,9 +40,9 @@ for g in groups:
     mid = (g["s"] + g["e"]) / 2
     (dropped if any(m[0] <= mid < m[1] for m in mute) else kept).append(g)
 
-# timing gate: first word onset == group start (within one frame)
+# timing gate: first word onset == group start (within one frame); the reel's first caption may start on frame 0
 for g in kept:
-    if abs(g["s"] - g["words"][0]["s"]) > 1.0 / fps + 1e-6:
+    if abs(g["s"] - g["words"][0]["s"]) > 1.0 / fps + 1e-6 and not (g["s"] == 0.0 and g["words"][0]["s"] < 0.15):
         die(f"caption {g['idx']} '{g['text']}' starts {g['s']} but its first word is at {g['words'][0]['s']}")
     if len(g["words"]) > C["max_words"] + 1:
         die(f"caption {g['idx']} has {len(g['words'])} words")
@@ -89,6 +89,7 @@ for i, g in enumerate(kept):
     rows.append({"i": i, "s": round(g["s"], 3), "e": round(g["e"], 3)})
 
 duration = caps["duration"] + 0.1
+_fmt = lambda f: "opentype" if f.lower().endswith(".otf") else "truetype"
 page = f"""<!doctype html>
 <html lang="en">
   <head>
@@ -97,8 +98,8 @@ page = f"""<!doctype html>
     <link rel="stylesheet" href="tokens.css" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
-      @font-face {{ font-family: 'CapSans'; src: url('fonts/{C.get("font_file", "Inter.ttf")}') format('truetype'); font-weight: 100 900; font-display: block; }}
-      @font-face {{ font-family: 'CapSerif'; src: url('fonts/{C.get("accent_file", "PlayfairDisplay-Italic.ttf")}') format('truetype'); font-weight: 100 900; font-style: {C.get("accent_style", "italic")}; font-display: block; }}
+      @font-face {{ font-family: 'CapSans'; src: url('fonts/{C.get("font_file", "Inter.ttf")}') format('{_fmt(C.get("font_file", "Inter.ttf"))}'); font-weight: 100 900; font-display: block; }}
+      @font-face {{ font-family: 'CapSerif'; src: url('fonts/{C.get("accent_file", "PlayfairDisplay-Italic.ttf")}') format('{_fmt(C.get("accent_file", "PlayfairDisplay-Italic.ttf"))}'); font-weight: 100 900; font-style: {C.get("accent_style", "italic")}; font-display: block; }}
       * {{ margin: 0; padding: 0; box-sizing: border-box; }}
       html, body {{ width: {W}px; height: {H}px; overflow: hidden; background: transparent; }}
       .cap {{
