@@ -20,6 +20,9 @@ const rawPath = resolve(jobDir, state.source);
 const seqName = `${state.job}__CUT`;
 const canvas = readNumbers(state.preset || "vertical/default").canvas;
 const fps = Number(state.fps || canvas.fps || 30);
+// lav.json: the untouched lav recording ({file, offset}: video_time = wav_time + offset). Then V1 carries picture only
+// and A1 is the WAV itself, cut to the same ranges — no re-encode, no gain (the creator finishes the sound in Premiere)
+const lav = existsSync(join(jobDir, "lav.json")) ? JSON.parse(readFileSync(join(jobDir, "lav.json"), "utf8")) : null;
 
 const b = await Bridge.connect();
 try {
@@ -75,7 +78,7 @@ try {
     const fin = Math.round(k.in * fps), fout = Math.round(k.out * fps);
     expected.push(frames / fps);
     const r = await b.call("add_to_timeline_batch", { sequenceId, clips: [
-      { projectItemId: itemId, trackIndex: 0, time: next, sourceInPoint: fin / fps, sourceOutPoint: fout / fps }] }, 120000);
+      { projectItemId: itemId, trackIndex: 0, time: next, linkAudio: !lav, sourceInPoint: fin / fps, sourceOutPoint: fout / fps }] }, 120000);
     if (r?.success === false) { placed = r; break; }
     frames += fout - fin;
     const now = await b.call("list_sequence_tracks", { sequenceId });
@@ -112,6 +115,27 @@ try {
     expectedEnd.push(frames / fps);
   }
 
+  // 5b. the lav on A1: one piece per V1 clip, same timeline span, source shifted by the offset
+  let lavPlaced = null;
+  if (lav) {
+    const lname = lav.file.split(/[\/]/).pop();
+    const lf = await b.call("find_project_item_by_name", { name: lname }).catch(() => null);
+    const lh = lf?.items || lf?.results || (Array.isArray(lf) ? lf : []);
+    let lid = lh[0]?.id || lh[0]?.projectItemId || lh[0]?.nodeId;
+    if (!lid) { const imp = await b.call("import_media", { filePath: lav.file }); const it = imp.item || imp.projectItem || imp; lid = it.id || it.projectItemId || it.nodeId; }
+    const v1now = ((await b.call("list_sequence_tracks", { sequenceId })).videoTracks || [])[0]?.clips || [];
+    const pieces = cuts.keep.map((k, i) => {
+      const c = v1now[i] || {};
+      const start = c.startTime ?? c.start ?? expected[i], end = c.endTime ?? c.end ?? expectedEnd[i];
+      const sin = Math.round(k.in * fps) / fps - lav.offset;
+      return { projectItemId: lid, trackIndex: 0, time: start, sourceInPoint: +sin.toFixed(6), sourceOutPoint: +(sin + (end - start)).toFixed(6) };
+    });
+    const r = await b.call("add_to_timeline_batch", { sequenceId, clips: pieces }, 180000);
+    const a1 = ((await b.call("list_sequence_tracks", { sequenceId })).audioTracks || [])[0]?.clips || [];
+    lavPlaced = { requested: pieces.length, onA1: a1.length, status: r?.status ?? r?.success, file: lname, offset: lav.offset };
+    if (a1.length !== pieces.length) throw new Error(`lav: ${a1.length}/${pieces.length} pieces on A1 — ${JSON.stringify(r).slice(0, 300)}`);
+  }
+
   // 6. fit the A-roll: a source larger than the canvas lands at 100 % (a 2x punch-in on a 4K vertical). Premiere does
   //    not re-fit clips placed by script, so scale = canvas / source. motion.scale reads back as a boolean from this
   //    server, so the tool's `applied.scale` is recorded and the frame is checked on the program monitor, not here.
@@ -121,16 +145,37 @@ try {
   const readback = [];
   const holdNames = new Set(holdsPlaced.map((h) => h.name));
   const holdClips = (v1.clips || []).filter((c) => holdNames.has(c.name));
+  // the ffmpeg lane's camera (preview/framing.json, written by assemble.py): one fixed crop on the median face, so the
+  // sequence frames him exactly as the export does — Motion scale = fit × crop, position puts the crop's centre mid-frame
+  const fr = existsSync(join(jobDir, "preview", "framing.json")) ? JSON.parse(readFileSync(join(jobDir, "preview", "framing.json"), "utf8")) : { scale: 1, left: 0, top: 0 };
+  const S = fr.scale || 1;
+  const fit = srcW ? canvas.width / srcW * 100 : 100;
+  const cx = S > 1.0001 ? fr.left + 0.5 / S : 0.5, cy = S > 1.0001 ? fr.top + 0.5 / S : 0.5;
+  const motion = (Z, px, py) => {     // scale Z (× fit) with source point (px,py) held where the base framing shows it
+    const fx = canvas.width / 2 + (px - cx) * canvas.width * S, fy = canvas.height / 2 + (py - cy) * canvas.height * S;
+    return { scale: +(fit * Z).toFixed(3), position: { x: +(fx + (0.5 - px) * canvas.width * Z).toFixed(2), y: +(fy + (0.5 - py) * canvas.height * Z).toFixed(2) } };
+  };
+  const base = motion(S, cx, cy);
   for (const c of (v1.clips || []).filter((c) => !holdNames.has(c.name))) {
     const r = await b.call("get_clip_properties", { clipId: c.id || c.clipId, sequenceId }).catch(() => ({}));
     const p = r.properties || r;
     let scaled = null;
-    if (srcW && srcW !== canvas.width) {
-      const sr = await b.call("set_clip_properties", { clipId: c.id || c.clipId, properties: { scale: +(canvas.width / srcW * 100).toFixed(3) } }).catch(() => ({}));
+    if (srcW && (srcW !== canvas.width || S > 1.0001)) {
+      const sr = await b.call("set_clip_properties", { clipId: c.id || c.clipId, properties: base }).catch(() => ({}));
       scaled = sr?.applied?.scale ?? sr?.success ?? false;
     }
     readback.push({ id: c.id || c.clipId, start: p.start ?? p.startTime ?? c.startTime, end: p.end ?? p.endTime ?? c.endTime,
                     inPoint: p.inPoint ?? p.sourceIn, outPoint: p.outPoint ?? p.sourceOut, scaled });
+  }
+  // the opening zoom-out (pacing-audit --zoom-out-open): keyframes on the first clip, anchored on the face
+  if (fr.open && (v1.clips || []).length) {
+    const c0 = v1.clips[0], [px, py] = fr.open.face, Z0 = S * (1 + fr.open.pct / 100);
+    const from = motion(Z0, px, py);
+    for (const [t, m] of [[0, from], [fr.open.dur, base]]) {
+      await b.call("add_keyframe", { clipId: c0.id || c0.clipId, componentName: "Motion", paramName: "Scale", time: t, value: m.scale }).catch((e) => console.error("keyframe", e.message));
+      await b.call("add_keyframe", { clipId: c0.id || c0.clipId, componentName: "Motion", paramName: "Position", time: t,
+                                     value: [m.position.x / canvas.width, m.position.y / canvas.height] }).catch((e) => console.error("keyframe", e.message));
+    }
   }
   const tol = 1.5 / fps;
   let mismatches = 0;
@@ -146,9 +191,9 @@ try {
   for (const h of holdsPlaced) {
     const c = holdClips.find((x) => x.name === h.name && Math.abs((x.startTime ?? x.start) - h.time) <= tol);
     if (!c) { mismatches++; continue; }
-    if (srcW && srcW !== canvas.width) await b.call("set_clip_properties", { clipId: c.id || c.clipId, properties: { scale: +(canvas.width / srcW * 100).toFixed(3) } }).catch(() => {});
+    if (srcW && srcW !== canvas.width) await b.call("set_clip_properties", { clipId: c.id || c.clipId, properties: base }).catch(() => {});
   }
-  const verify = { sequenceId, sequenceName: seqName, expected: cuts.keep.length, placed: readback.length, holds: holdsPlaced, mismatches,
+  const verify = { sequenceId, sequenceName: seqName, lav: lavPlaced, expected: cuts.keep.length, placed: readback.length, holds: holdsPlaced, mismatches,
                    placedResult: placed?.status || placed?.success, readback };
   writeFileSync(join(jobDir, "premiere", "replay-verify.json"), JSON.stringify(verify, null, 2));
   console.log(`replay-edl: ${readback.length}/${cuts.keep.length} clips on ${seqName}, ${mismatches} mismatches → premiere/replay-verify.json`);

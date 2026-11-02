@@ -33,7 +33,13 @@ const bplan = existsSync(join(jobDir, "broll-plan.json")) ? JSON.parse(readFileS
 const broll = bplan.clips || [];
 const titles = bplan.titles || [];   // hook titles: own layer on the top graphics track (V5) — no graphics share it here
 // 0-based. With B-roll: V2 B-roll, V3 captions, V4/V5 graphics; without: V2 captions, V3/V4 graphics
-const TRACK = broll.length ? { broll: 1, captions: 2, gfx: 3, gfx2: 4 } : { captions: 1, gfx: 2, gfx2: 3 };
+// a "wash" graphic (a replaced background, a re-graded stretch) is part of the picture: its own track UNDER the captions
+const hasWash = (plan.graphics || []).some((g) => g.placement === "wash" && g.render);
+const TRACK = broll.length ? { broll: 1, captions: 2, gfx: 3, gfx2: 4 }
+            : hasWash ? { wash: 1, captions: 2, gfx: 3, gfx2: 4 } : { captions: 1, gfx: 2, gfx2: 3 };
+const cuts = JSON.parse(readFileSync(join(jobDir, "cuts.json"), "utf8"));
+const sfx = existsSync(join(jobDir, "sfx-plan.json")) ? (JSON.parse(readFileSync(join(jobDir, "sfx-plan.json"), "utf8")).sfx || []) : [];
+const SFX_TRACK = 2;   // A3 (A1 voice, A2 b-roll audio)
 
 const b = await Bridge.connect();
 try {
@@ -52,7 +58,7 @@ try {
   before = await tracksNow();
 
   // the overlay tracks must be empty: a second run would stack duplicates
-  for (const ti of [TRACK.broll, TRACK.captions, TRACK.gfx, TRACK.gfx2].filter((t) => t != null)) {
+  for (const ti of [TRACK.broll, TRACK.wash, TRACK.captions, TRACK.gfx, TRACK.gfx2].filter((t) => t != null)) {
     for (const c of (vtracks(before)[ti] || {}).clips || []) {
       await b.call("remove_from_timeline", { clipId: c.id || c.clipId, sequenceId, deleteMode: "lift" }).catch(() => {});
     }
@@ -105,16 +111,31 @@ try {
     wanted.push({ id: c.id, track: TRACK.broll, time, file: basename(c.file), cover: true });
   }
 
-  // 1. captions
+  // 1. captions — one piece per A-roll clip, cut where V1 is cut: with sync lock on, a ripple trim on a take moves the
+  //    captions after it along with it, and the take's own piece trims with it (one long caption clip would drift)
   if (caps.render) {
-    await placeVideo(caps.render, TRACK.captions, 0);
-    wanted.push({ id: "captions", track: TRACK.captions, time: 0, file: basename(caps.render) });
+    const capId = await importItem(caps.render);
+    let t = 0;
+    const pieces = [];
+    for (const k of cuts.keep) {
+      const fa = Math.round(t * fps), fb = Math.round((t + (k.out - k.in) + (k.hold || 0)) * fps);
+      pieces.push({ projectItemId: capId, trackIndex: TRACK.captions, time: fa / fps, linkAudio: false, sourceInPoint: fa / fps, sourceOutPoint: fb / fps });
+      t += (k.out - k.in) + (k.hold || 0);
+    }
+    const r = await b.call("add_to_timeline_batch", { sequenceId, clips: pieces }, 180000);
+    if (r?.success === false) throw new Error(`captions: ${JSON.stringify(r).slice(0, 300)}`);
+    for (const pc of pieces) wanted.push({ id: "captions", track: TRACK.captions, time: pc.time, file: basename(caps.render) });
   }
 
   // 2. graphics — V3, or V4 while V3 is still busy
   let busyUntil = -1;
+  for (const g of plan.graphics.filter((g) => g.render && g.placement === "wash")) {
+    const time = Math.round(g.cue * fps) / fps;
+    await placeVideo(g.render, TRACK.wash, time);
+    wanted.push({ id: g.id, track: TRACK.wash, time, file: basename(g.render) });
+  }
   for (const g of plan.graphics) {
-    if (!g.render) continue;
+    if (!g.render || g.placement === "wash") continue;
     const time = Math.round(g.cue * fps) / fps;
     const track = time < busyUntil - 1e-6 ? TRACK.gfx2 : TRACK.gfx;
     if (track === TRACK.gfx) busyUntil = time + g.duration;
@@ -130,7 +151,21 @@ try {
   }
 
   // 2b. the overlay tracks must OUTPUT: a hidden track (eye off) shows nothing and every read-back still says "found"
-  for (const ti of [TRACK.broll, TRACK.captions, TRACK.gfx, TRACK.gfx2].filter((t) => t != null)) {
+  // 2c. SFX on A3 at their cues (sfx-plan.json), at the plan's level
+  if (sfx.length) {
+    for (let i = atracks(await tracksNow()).length; i <= SFX_TRACK; i++) await b.call("add_track", { sequenceId, trackType: "audio" });
+    for (const c of (atracks(await tracksNow())[SFX_TRACK] || {}).clips || []) {
+      await b.call("remove_from_timeline", { clipId: c.id || c.clipId, sequenceId, deleteMode: "lift" }).catch(() => {});
+    }
+    for (const e of sfx) {
+      const projectItemId = await importItem(e.file);
+      const time = Math.round(e.cue * fps) / fps;
+      const r = await b.call("add_to_timeline_batch", { sequenceId, clips: [{ projectItemId, trackIndex: SFX_TRACK, time }] }, 120000);
+      if (r?.success === false) console.error(`sfx ${e.verb} @${e.cue}: ${JSON.stringify(r).slice(0, 200)}`);
+      wanted.push({ id: `sfx-${e.verb}`, track: SFX_TRACK, time, file: basename(e.file), sfx: true, db: e.db });
+    }
+  }
+  for (const ti of [TRACK.broll, TRACK.wash, TRACK.captions, TRACK.gfx, TRACK.gfx2].filter((t) => t != null)) {
     await b.call("toggle_track_visibility", { sequenceId, trackIndex: ti, visible: true }).catch(() => {});
   }
 
@@ -150,10 +185,11 @@ try {
   const readback = [];
   let missing = 0;
   for (const w of wanted) {
-    const clips = (vtracks(after)[w.track] || {}).clips || [];
+    const clips = ((w.sfx ? atracks(after) : vtracks(after))[w.track] || {}).clips || [];
     const hit = clips.find((c) => Math.abs((c.startTime ?? c.start ?? -99) - w.time) <= tol && (c.name || "").startsWith(w.file.replace(/\.(mov|mp4)$/, "")));
     readback.push({ ...w, found: !!hit, start: hit?.startTime ?? hit?.start ?? null, end: hit?.endTime ?? hit?.end ?? null, clipId: hit?.id ?? null });
     if (!hit) missing++;
+    if (w.sfx && hit) await b.call("adjust_audio_levels", { clipId: hit.id || hit.clipId, level: w.db }).catch(() => {});
     if (w.audio) {   // its audio must be on the timeline too, at the same time
       const ah = ((atracks(after)[w.track] || {}).clips || []).find((c) => Math.abs((c.startTime ?? c.start ?? -99) - w.time) <= tol);
       readback[readback.length - 1].audio_found = !!ah;
@@ -166,7 +202,7 @@ try {
   let scaled = 0;
   if (Math.abs(scale - 100) > 0.01) {
     for (const r of readback) {
-      if (!r.clipId || r.cover) continue;
+      if (!r.clipId || r.cover || r.sfx) continue;
       const res = await b.call("set_clip_properties", { clipId: r.clipId, properties: { scale } }).catch(() => ({ success: false }));
       if (res?.success !== false) scaled++;
     }

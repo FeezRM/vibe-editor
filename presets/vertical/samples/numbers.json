@@ -39,5 +39,15 @@
     "$comment": "the samples' face is ~0.255 of the frame wide, centred at 0.33 of the height (measured over all 8): face_w sets the crop from the raw's own median face, so a wide raw is cropped in more",
     "face_w": 0.255,
     "face_y": 0.33
+  },
+  "cut": {
+    "$comment": "2026-10-31, the creator on the first batch: 'some of the cuts are slightly harsh, they cut off what I'm saying'. The default's 0.08 s internal pause trim split sentences into 0.1–0.3 s pieces and chopped consonants ('content', 'this is all free'); only a real pause (>0.14 s) is cut now, and every edge keeps a little more of the word.",
+    "lead_s": 0.03,
+    "tail_s": 0.03,
+    "pause_max_s": 0.14,
+    "closure_max_s": 0.14,
+    "pause_gate_s": 0.15,
+    "join_gap_max_s": 0.12,
+    "edge_rel_db": 38
   }
 }

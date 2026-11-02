@@ -118,6 +118,10 @@ class Job:
             die(f"no RUN.md in {self.dir} — create the job with workflows/new-job.py")
         self.state = self._read()
         self.numbers = load_numbers(self.state.get("preset", "vertical/default"))
+        # a job may override the look for its own footage (projects/<job>/numbers.json, same shape): a standing, roaming
+        # shot needs a wider camera than the look's seated framing (9287-v2)
+        if (self.dir / "numbers.json").exists():
+            self.numbers = _deep_merge(self.numbers, json.loads((self.dir / "numbers.json").read_text(encoding="utf-8")))
         self.brand = load_brand()
 
     # paths ---------------------------------------------------------------

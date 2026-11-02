@@ -68,6 +68,11 @@ if FR.get("face_w") and _fw:
     S = max(1.0, float(FR["face_w"]) / _fw[len(_fw) // 2])
 LX = min(max(_mx - 0.5 / S, 0.0), 1 - 1 / S) if S > 1.0001 else 0.0
 LY = min(max(_my - float(FR.get("face_y", 0.36)) / S, 0.0), 1 - 1 / S) if S > 1.0001 else 0.0
+# the same camera for the Premiere lane (replay-edl.mjs sets it as Motion scale/position, the opening zoom as keyframes)
+_z0 = (cuts["keep"][0].get("zoom") or {}) if cuts["keep"] else {}
+job.write_json({"scale": round(S, 5), "left": round(LX, 5), "top": round(LY, 5),
+                "open": ({"pct": _z0["pct"], "dur": _z0["dur"], "face": (_z0.get("face") or cuts["keep"][0].get("face") or [0.5, 0.42])[:2]}
+                         if _z0.get("out") else None)}, "preview", "framing.json")
 listing = []
 for i, k in enumerate(cuts["keep"]):
     dur = k["out"] - k["in"]

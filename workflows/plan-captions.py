@@ -178,7 +178,7 @@ while i < len(groups):
         nxt["s"] = g["s"]
         groups.pop(i)
         continue
-    if prv and fits([x["w"] for x in prv["words"] + g["words"]]):
+    if prv and not ends(prv) and fits([x["w"] for x in prv["words"] + g["words"]]):   # 9287-v2 "1000 followers. This"
         prv["words"] += g["words"]
         prv["e"] = g["e"]
         groups.pop(i)
@@ -272,7 +272,8 @@ if ov.get("accents"):
             last_accented = i
 # keywords: {"keywords": {"profile picture": "cyan"}} — the whole group that says the phrase is set as a keyword (the
 # accent face, caps, in that colour), the way the reference reels set "PROFILE PICTURE" or "BLEW UP".
-flat = [(gi, x["w"].lower().strip(".,!?’'")) for gi, g in enumerate(groups) for x in g["words"]]
+# a token can hold two words ("comment green" — WhisperX merged them in 9280-v2): match word by word
+flat = [(gi, t.strip(".,!?’'")) for gi, g in enumerate(groups) for x in g["words"] for t in x["w"].lower().split()]
 for phrase, cls in ov.get("keywords", {}).items():
     p = [w.strip(".,!?’'") for w in phrase.lower().split()]
     for k in range(len(flat) - len(p) + 1):

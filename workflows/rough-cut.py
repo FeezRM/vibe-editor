@@ -213,14 +213,22 @@ for r in merged:
 if cursor < duration:
     keep.append({"in": round(cursor, 3), "out": round(duration, 3)})
 
+# a merge must never re-include an editor's review removal (9280-v2: the short "not anymore" merged back across the
+# removed "Yeah"); a short piece walled in by review removals stays its own clip (drop_slivers pads it)
+review_cut = [(r["in"], r["out"]) for r in removals if r["id"].startswith("o")]
+_crosses = lambda a, b: any(lo < b and hi > a for lo, hi in review_cut)
+walled = set()
 changed = True
 while changed:
     changed = False
     for i, k in enumerate(keep):
-        if k["out"] - k["in"] < cfg["min_clip_s"] and len(keep) > 1:
+        if k["out"] - k["in"] < cfg["min_clip_s"] and len(keep) > 1 and (k["in"], k["out"]) not in walled:
             has_word = any(w["s"] < k["out"] and w["e"] > k["in"] for w in words)
-            cost_prev = k["in"] - keep[i - 1]["out"] if i > 0 else None
-            cost_next = keep[i + 1]["in"] - k["out"] if i + 1 < len(keep) else None
+            cost_prev = k["in"] - keep[i - 1]["out"] if i > 0 and not _crosses(keep[i - 1]["out"], k["in"]) else None
+            cost_next = keep[i + 1]["in"] - k["out"] if i + 1 < len(keep) and not _crosses(k["out"], keep[i + 1]["in"]) else None
+            if has_word and cost_prev is None and cost_next is None:
+                walled.add((k["in"], k["out"]))
+                continue
             if not has_word:
                 pass                                   # a word-less sliver between two removals: just drop it
             elif cost_next is not None and (cost_prev is None or cost_next <= cost_prev):
@@ -353,12 +361,13 @@ if wav.exists():
             if head and k["in"] > lo:
                 k["in"] = round(max(lo, prv, min(k["in"], head[0]["s"] - cfg["lead_s"])), 3)
             # "exact": true — the editor's edge stands as written: a cut between words that run together (no silence to
-            # snap to) is placed by hand on the quietest frame, and validate-edl skips its inside-speech check
+            # snap to) is placed by hand on the quietest frame, and validate-edl skips its inside-speech check. It may also
+            # widen into the gap beside it or pull in by up to 0.3 s, for a word the transcript timed wrong (9279-v2 "It's" 0.3 s early, 9287-v2 "This")
             if f.get("exact"):
-                if abs(k["out"] - hi) <= 0.12 and (n + 1 == len(keep) or hi < keep[n + 1]["in"]):
+                if (abs(k["out"] - hi) <= 0.12 or k["out"] < hi < nxt or k["out"] - 0.3 < hi < k["out"]) and (n + 1 == len(keep) or hi < keep[n + 1]["in"]):
                     k["out"] = round(hi, 3)
                     k.setdefault("exact", []).append("out")
-                if abs(k["in"] - lo) <= 0.12 and (n == 0 or lo > keep[n - 1]["out"]):
+                if (abs(k["in"] - lo) <= 0.12 or prv < lo < k["in"] or k["in"] < lo < k["in"] + 0.3) and (n == 0 or lo > keep[n - 1]["out"]):
                     k["in"] = round(lo, 3)
                     k.setdefault("exact", []).append("in")
     # every clip a whole number of frames (the lane cuts by frame count), so the EDL's timeline IS the spine's: an

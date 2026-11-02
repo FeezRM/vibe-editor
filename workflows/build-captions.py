@@ -68,6 +68,26 @@ def _rgba(hex_: str, a: float) -> str:
     return f"rgba({int(h[0:2], 16)},{int(h[2:4], 16)},{int(h[4:6], 16)},{a:.2f})"
 
 
+def _fit(g, parts) -> str:
+    """A line wider than the caption box would run off the frame (9279-v2 'FOR THE PROPAGANDA' in keyword caps): measure it
+    with the font it renders in and shrink that one caption to fit."""
+    try:
+        from PIL import ImageFont
+    except ImportError:
+        return ""
+    kw = bool(g.get("keyword"))
+    fname = C.get("accent_file") if kw else C.get("font_file", "Inter.ttf")
+    size = C["size_px"] * C["accent_scale"] if kw else C["size_px"]
+    f = job.p("fonts", fname)
+    if not f.exists():
+        return ""
+    text = html.unescape(" ".join(parts))
+    text = text.upper() if kw and C.get("accent_case") == "uppercase" else text
+    width = ImageFont.truetype(str(f), 100).getlength(text) * size / 100
+    room = max_w * 0.94
+    return f' style="font-size: {size * room / width:.0f}px"' if width > room else ""
+
+
 divs = []
 rows = []
 for i, g in enumerate(kept):
@@ -85,7 +105,7 @@ for i, g in enumerate(kept):
             used = True
         else:
             parts.append(tok)
-    divs.append(f'      <div class="{cls}" id="c{i}"><b>{" ".join(parts)}</b></div>')
+    divs.append(f'      <div class="{cls}" id="c{i}"{_fit(g, parts)}><b>{" ".join(parts)}</b></div>')
     rows.append({"i": i, "s": round(g["s"], 3), "e": round(g["e"], 3)})
 
 duration = caps["duration"] + 0.1

@@ -76,7 +76,7 @@ right — use `"preset"` and `"params"` (the preset's `params.schema.json`) inst
 }
 ```
 
-`cue` is a timeline second read from `captions.json`. `mute_captions: true` when the graphic carries its own words.
+`cue` is a timeline second read from `captions.json`. A full-frame picture layer (a replaced background, a re-graded stretch of the footage) takes `"placement": "wash"` so it goes UNDER the captions; every other graphic sits above them. `mute_captions: true` when the graphic carries its own words.
 `sfx` / `sfx_events` only where a sound helps (`presets/vertical/default/sfx.json` lists the verbs). A preset graphic
 takes `"placement"` (its schema lists them) or `"box": {"x", "y", "w"}` anywhere on the canvas.
 
