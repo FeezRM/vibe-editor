@@ -1,0 +1,99 @@
+# File format parity
+
+> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-30 · **Change:** minor (AVI import #650 and VP8 WebM #1064 ship; GIF export binary transparency retained) · **Target:** Adobe Premiere Pro 2026 (26.5.2) and Media Encoder 2026
+
+Containers, stills, audio files, project and interchange files, captions and presets. Codecs inside
+the containers are in [codec-parity.md](codec-parity.md). Our import list is
+`filmcraft_media::{VIDEO,AUDIO,STILL}_EXTENSIONS` plus the openers in `filmcraft_codecs::openers()`;
+our export list is `filmcraft_export::Format`. Premiere's list is from Adobe's supported-formats
+documentation and the exporter folders in the installed bundle's `MediaIO/systempresets` (names
+only). "Tested" names the evidence.
+
+## Project and interchange
+
+| Format | Premiere | Read | Write | Tested | % |
+|---|---|---|---|---|---|
+| **Premiere project `.prproj`** | native | **no** | **no** | — | **0%** ([G2](gaps.md#g2-premieres-prproj-cannot-be-opened)) |
+| Our project `.fcproj` | — | yes, schema migrations | yes, atomic, auto-save, recovery journal | migration tests | — |
+| FCP7 XML (`xmeml`) | read + write | yes | yes | round-trip tests; Premiere-exported XML slow (#461) | 75% |
+| FCPXML | read (via XtoCC) | yes | yes | round-trip tests | 80% |
+| AAF (Edit Protocol) | read + write | yes | yes (embedded / linked / consolidated) | own CFB; **never opened in Media Composer / Pro Tools** | 55% |
+| OMF 2.0 | write | no | yes | never opened in Pro Tools | 50% |
+| EDL (CMX 3600) | read + write | yes | yes | tests | 85% |
+| OpenTimelineIO | read + write (26.0) | yes | yes | tests | 80% |
+| Avid Log Exchange (ALE) | write | no | yes | — | 70% |
+| Marker CSV / text | write | — | yes (#454) | — | 80% |
+| Selection as project | Premiere project | — | `.fcproj` only | — | 50% |
+| Templates (`.prproj` templates) | yes | — | our templates | — | 70% |
+| Motion Graphics templates `.mogrt` | read + write | **refused by design** (clean-room, AGENTS.md §1); our `.fcgt` instead | `.fcgt` | — | n/a |
+| Effect presets `.prfpset` | read + write | no | our JSON presets | — | 40% |
+| Keyboard shortcuts `.kys` | read + write | no | our presets incl. a Premiere layout | — | 60% |
+| Export presets `.epr` | read + write | no | our presets (import / export) | — | 50% |
+| LUTs `.cube`, `.3dl` | read | yes (1D / 3D / shaper) | — | tetrahedral CPU = WGSL | 95% |
+
+## Video containers
+
+| Container | Premiere | Read | Write | Tested | % |
+|---|---|---|---|---|---|
+| MP4 / M4V / 3GP | read + write | yes | yes (H.264, HEVC + AAC) | ffprobe, round trips | 90% |
+| QuickTime MOV | read + write | yes | yes (H.264, HEVC, ProRes, DNxHR, APV, MJPEG, PCM) | ffprobe | 90% |
+| MXF OP1a / OP-Atom | read + write (XDCAM, AVC-Intra, P2, AS-10 / AS-11, JPEG 2000, DNx) | yes (AVC, DNx, ProRes, MPEG-2, PCM / AES3, timecode) | OP1a (DNxHR, ProRes, H.264), OP-Atom | index-table seeking tests | 70% |
+| MPEG TS / PS (AVCHD `.mts`, `.m2ts`, `.ts`, `.mpg`, `.vob`, `.mod`) | read; write MPEG-2 / Blu-ray / DVD | yes | **no** | fixtures | 65% |
+| Matroska / WebM | read (limited) | yes (H.264, HEVC, VP8 (#1064, fixes the black WebM of #432), VP9, AV1, ProRes, MJPEG + AAC, Opus, FLAC, MP3, Vorbis, PCM); MKV multi-audio (#601) | no | fixtures; audio sample-aligned with the encoded signal (#790) | 75% |
+| AVI | read + write | yes: AVI 1.0 and OpenDML (`crates/avi`, #650); Motion JPEG, H.264, HEVC, uncompressed RGB / YUV with PCM, MP3, MP2 or AC-3; no DivX / Xvid or DV | no | `cargo test -p filmcraft-avi` (hand-built index paths, truncation, mutation); `tests/ffmpeg_oracle.rs` (MJPEG, H.264 B-frames, BGR24, YUY2, PCM, MP3 vs ffprobe) | read only |
+| WMV / ASF | read; write on Windows | no | no | — | 0% |
+| FLV / F4V | read + write | no | no | — | 0% |
+| DCP | write (Wraptor) | no | no | — | 0% |
+| APV raw / Y4M | — | yes | APV in MOV | — | ahead |
+| Ogg (Opus / Vorbis) | — | yes | no | granule-seek tests | ahead |
+| Camera folder structures (XDCAM, P2, AVCHD, Canon XF, RED) | Media Browser reads them | AVCHD files yes; spanned clips and metadata no | — | — | 30% |
+
+## Stills and image sequences
+
+| Format | Premiere | Read | Write (frame / sequence) | % |
+|---|---|---|---|---|
+| PNG, JPEG, TIFF, BMP, GIF | read + write | yes; EXIF Orientation 1–8 applied to JPEG, PNG (`eXIf`) and TIFF (#1583), not yet to uncompressed / PackBits YCbCr TIFF or DNG | PNG / TIFF / BMP / JPEG sequences; GIF with optional binary transparency (alpha 0–127 transparent, 128–255 opaque, #3396) | 90% |
+| WebP | — | yes, EXIF Orientation applied (#1583) | no | ahead |
+| **PSD** (layers as sequence) | read (layered) | the flattened composite (Merge All Layers): Grayscale / RGB, 8 / 16-bit (kept at 8), raw or PackBits, merged transparency (unblended from white); files saved without Maximize Compatibility refused; no layers, PSB, CMYK, Lab, indexed, 32-bit or ZIP | — | 30% |
+| **OpenEXR** | read + write | stills and sequences: scan-line, none / RLE / ZIPS / ZIP / PXR24, half / float / uint, RGB(A) or Y, kept as linear float (#828); no PIZ, B44, DWA, tiled, multi-part or deep | sequences (half float, linear RGB / premultiplied RGBA; uncompressed, RLE, ZIPS or ZIP; #806, #874) | 70% |
+| **DPX** | read + write | yes: luma / RGB / RGBA, 8–16-bit, filled 10/12-bit, either byte order (#821); packed 10/12-bit, Y'CbCr 4:2:2 / 4:4:4 with or without alpha (#841); no RLE | sequences (10-bit RGB, BT.709; #779) | 90% |
+| Targa | read + write | yes: every image type, RLE, colour maps, 15–32-bit (#821) | sequences (24-bit, 32-bit with alpha; #779) | 95% |
+| HEIF / HEIC | read | no | — | 0% |
+| **Radiance HDR** | read | yes: RGBE, flat, old and new run-length scan lines, every axis order, kept as linear float (#1407); no XYZE, EXPOSURE / PRIMARIES lines ignored | — | 70% |
+| AI / EPS, ICO, PTL | read | no | — | 0% |
+
+## Audio files
+
+| Format | Premiere | Read | Write | % |
+|---|---|---|---|---|
+| WAV / BWF (timecode, iXML partial) | read + write | yes | yes | 90% |
+| AIFF / AIFC | read + write | yes | yes | 95% |
+| MP3 | read + write | read | **no** | 60% |
+| AAC / M4A | read + write | yes | yes (in MP4 / MOV, and AAC Audio: `.m4a` or ADTS `.aac`, #814) | 95% |
+| FLAC, Ogg, Opus | partial | yes | no | ahead on read |
+| WMA | read (Windows) | no | no | 0% |
+
+## Captions and subtitles
+
+| Format | Premiere | Read | Write | Tested | % |
+|---|---|---|---|---|---|
+| SRT, WebVTT, SCC | read + write | yes | yes | frame-exact, property-tested | 95% |
+| MCC (608 + 708), EBU STL, TTML / IMSC1, DFXP | read + write | yes | yes | frame-exact | 90% |
+| 608 / 708 embedded in the video stream | write (MXF, H.264 SEI) | no | **no** | — | 0% |
+| Burn-in | yes | — | yes | golden tests | 95% |
+
+## Summary
+
+**File formats dimension: ~60%, 140–240 h** (codecs counted separately). The beta blocker is
+`.prproj`. After it, by user impact: WMV import, AVI export and DivX / Xvid / DV, EXR / PSD stills, AAF / OMF
+validation in Avid and Pro Tools, DVD / Blu-ray / DCP / broadcast MXF delivery.
+
+## Revision history
+
+| Date | Change | Summary |
+|---|---|---|
+| 2026-10-13 | minor | Stills: EXIF Orientation applied to JPEG, PNG, WebP and TIFF (#1583); YCbCr TIFF and DNG not yet |
+| 2026-10-12 | minor | VP8 WebM decodes (#1064, closes #432): Matroska row no longer lists the black-picture report. AVI import ships (#650, merged 2026-10-12): row changed from "no demuxer" to read via `crates/avi`; summary no longer lists AVI import as missing; the row's percentage and the dimension figure (~60%, 140-240 h) were not re-measured |
+| 2026-10-10 | major | Created: format-by-format comparison with Premiere 26.5.2 from the import / export registries, crate READMEs, the installed bundle's exporter listings and open issues |
+| 2026-10-21 | minor | PSD stills: 8/16-bit grayscale and RGB import of the flattened composite, merged transparency unblended from white (#2116) |
+| 2026-10-26 | minor | GIF exports preserve binary transparency when requested; synthetic decode tests cover alpha threshold and animation disposal (#3396); estimates unchanged |
