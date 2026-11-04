@@ -27,7 +27,7 @@ hand edits live in `<job>/vibe/<slug>.fcproj` and survive later opens and export
 | 03–07 | ⚠️ `lanes/vibe/open.sh <job>` (takes on V1/A1, framing and zoom punches as Motion keyframes, captions on C1, graphics on V3/V4, SFX on A3, voice gain) — verified on a synthetic job 2026-11-04, not yet on a real one |
 | 08 export | ⚠️ `lanes/vibe/export.sh <job> <out>` (headless, captions burned in) · `./finalize.sh <job> --lane vibe` falls back to the ffmpeg lane |
 | stills / QA | ⚠️ `filmcraft-cli render --seconds S --out f.png`, or the Assistant's `look` — rendered by the engine itself (no `export_frame` that lies) |
-| agents | ⚠️ `filmcraft-cli mcp --bridge 127.0.0.1:9876` with `FILMCRAFT_CONTROL_TOKEN`; every command lands in Assistant ▸ Activity |
+| agents | ✅ the Assistant panel runs Claude Code with a private link · any other Claude Code session in this folder: the `vibe-studio` server in `.mcp.json` (`lanes/vibe/setup.sh`), which finds the open app through `~/.vibe-studio/live.json`; every command lands in Assistant ▸ Activity (verified 2026-11-04) |
 
 ## Universal targets (from `presets/vertical/default/numbers.json`)
 

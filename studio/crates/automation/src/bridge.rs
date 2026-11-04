@@ -27,6 +27,22 @@ pub struct BridgeClient {
     /// never holds up the others or leaves its late reply for the next one to read (#1538).
     idle: Mutex<Vec<Conn>>,
     next_id: AtomicU64,
+    /// Vibe Studio: `--bridge vibe-studio` finds the running app through this file (written by the
+    /// app while it is open, readable by the user only), read again on every connect, so the
+    /// client works whichever of the two started first and follows an app restart.
+    live: Option<std::path::PathBuf>,
+    /// The address and token last read from `live`.
+    current: std::sync::Mutex<Option<(String, String)>>,
+}
+
+/// Where a running Vibe Studio says how to reach it: `VIBE_STUDIO_LIVE`, else
+/// `~/.vibe-studio/live.json`.
+pub fn vibe_studio_live_file() -> Option<std::path::PathBuf> {
+    if let Some(p) = std::env::var_os("VIBE_STUDIO_LIVE").filter(|v| !v.is_empty()) {
+        return Some(p.into());
+    }
+    let home = std::env::var_os("HOME").or_else(|| std::env::var_os("USERPROFILE")).filter(|v| !v.is_empty())?;
+    Some(std::path::PathBuf::from(home).join(".vibe-studio").join("live.json"))
 }
 
 impl BridgeClient {
@@ -34,11 +50,29 @@ impl BridgeClient {
     /// from the environment; the desktop app requires this credential on every request.
     pub fn new(addr: impl Into<String>) -> Result<Self, AutomationError> {
         let addr = addr.into();
+        if addr == "vibe-studio" {
+            let live = vibe_studio_live_file().ok_or_else(|| AutomationError::BadRequest("no home folder to find Vibe Studio in".into()))?;
+            return Ok(Self {
+                addr,
+                token: None,
+                idle: Mutex::new(Vec::new()),
+                next_id: AtomicU64::new(1),
+                live: Some(live),
+                current: std::sync::Mutex::new(None),
+            });
+        }
         let host = addr.rsplit_once(':').map(|(h, _)| h).unwrap_or(&addr);
         if !matches!(host, "127.0.0.1" | "localhost" | "[::1]" | "::1") {
             return Err(AutomationError::BadRequest(format!("bridge address must be loopback, got `{addr}`")));
         }
-        Ok(Self { addr, token: std::env::var("FILMCRAFT_CONTROL_TOKEN").ok(), idle: Mutex::new(Vec::new()), next_id: AtomicU64::new(1) })
+        Ok(Self {
+            addr,
+            token: std::env::var("FILMCRAFT_CONTROL_TOKEN").ok(),
+            idle: Mutex::new(Vec::new()),
+            next_id: AtomicU64::new(1),
+            live: None,
+            current: std::sync::Mutex::new(None),
+        })
     }
 
     /// Run engine command `id` in the app. A blocking export (`file.exportMedia` with
@@ -88,7 +122,8 @@ impl BridgeClient {
                 None => self.connect().await?,
             };
             let id = self.next_id.fetch_add(1, Ordering::Relaxed);
-            let line = format!("{}\n", json!({"id": id, "token": self.token, "method": method, "params": params}));
+            let token = self.token_now();
+            let line = format!("{}\n", json!({"id": id, "token": token, "method": method, "params": params}));
             let res: Result<Value, AutomationError> = async {
                 conn.1.write_all(line.as_bytes()).await.map_err(|e| AutomationError::Bridge(e.to_string()))?;
                 let mut buf = String::new();
@@ -119,7 +154,40 @@ impl BridgeClient {
         Err(AutomationError::Bridge("unreachable".into()))
     }
 
+    /// The token for the next request: the one `live` gave with the address, else the environment's.
+    fn token_now(&self) -> Option<String> {
+        if self.live.is_some() {
+            return self.current.lock().unwrap_or_else(std::sync::PoisonError::into_inner).as_ref().map(|(_, t)| t.clone());
+        }
+        self.token.clone()
+    }
+
+    /// Vibe Studio: read the running app's address and token from `live`.
+    fn read_live(&self, live: &std::path::Path) -> Result<String, AutomationError> {
+        let not_open = || {
+            AutomationError::Bridge(
+                "Vibe Studio isn't open. Open a job in it with `lanes/vibe/open.sh projects/<job>` (or start the app), then try again.".into(),
+            )
+        };
+        let bytes = std::fs::read(live).map_err(|_| not_open())?;
+        let v: Value = serde_json::from_slice(bytes.get(..bytes.len().min(64 * 1024)).unwrap_or_default()).map_err(|_| not_open())?;
+        let port = v.get("port").and_then(Value::as_u64).and_then(|p| u16::try_from(p).ok()).filter(|p| *p > 0).ok_or_else(not_open)?;
+        let token = v.get("token").and_then(Value::as_str).map(str::to_string).ok_or_else(not_open)?;
+        let addr = format!("127.0.0.1:{port}");
+        *self.current.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = Some((addr.clone(), token));
+        Ok(addr)
+    }
+
     async fn connect(&self) -> Result<Conn, AutomationError> {
+        if let Some(live) = &self.live {
+            let addr = self.read_live(live)?;
+            let s = tokio::time::timeout(Duration::from_secs(5), TcpStream::connect(&addr))
+                .await
+                .map_err(|_| AutomationError::Bridge(format!("timed out connecting to Vibe Studio at {addr}")))?
+                .map_err(|_| AutomationError::Bridge("Vibe Studio isn't open (it closed or quit). Open it again, then try again.".into()))?;
+            let (r, w) = s.into_split();
+            return Ok((BufReader::new(r), w));
+        }
         let s = tokio::time::timeout(Duration::from_secs(5), TcpStream::connect(&self.addr))
             .await
             .map_err(|_| AutomationError::Bridge(format!("timed out connecting to {}", self.addr)))?
@@ -137,6 +205,37 @@ mod tests {
     use super::*;
     use std::sync::Arc;
     use tokio::net::TcpListener;
+
+    /// Vibe Studio: `--bridge vibe-studio` reads the app's port and token from the live file on
+    /// connect, sends that token, and says plainly when the app isn't open.
+    #[tokio::test]
+    async fn vibe_studio_bridge_follows_the_live_file() {
+        let dir = std::env::temp_dir().join(format!("vibe-live-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let live = dir.join("live.json");
+        let mut b = BridgeClient::new("vibe-studio").unwrap();
+        b.live = Some(live.clone());
+        let err = b.call("ui.inspect", json!({})).await.unwrap_err().to_string();
+        assert!(err.contains("Vibe Studio isn't open"), "{err}");
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let port = listener.local_addr().unwrap().port();
+        std::fs::write(&live, json!({"port": port, "token": "t0k", "pid": 1}).to_string()).unwrap();
+        let seen = Arc::new(Mutex::new(None));
+        let log = seen.clone();
+        tokio::spawn(async move {
+            let (s, _) = listener.accept().await.unwrap();
+            let (r, mut w) = s.into_split();
+            let mut lines = BufReader::new(r).lines();
+            if let Ok(Some(line)) = lines.next_line().await {
+                let req: Value = serde_json::from_str(&line).unwrap();
+                *log.lock().await = Some(req["token"].clone());
+                w.write_all(format!("{}\n", json!({"id": req["id"], "ok": true, "result": 7})).as_bytes()).await.unwrap();
+            }
+        });
+        assert_eq!(b.call("ui.inspect", json!({})).await.unwrap(), json!(7));
+        assert_eq!(seen.lock().await.clone(), Some(json!("t0k")));
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 
     /// A stand-in for the app's control server: the export starts job 7, which `jobs.list` reports
     /// running twice and then finished with `result`. Every request is recorded.

@@ -162,6 +162,7 @@ fn main() -> eframe::Result {
     };
     // However it ended, this start no longer counts as one that died.
     graphics.finish();
+    vibe::unpublish_live();
     // The window could not be created (no usable GPU / graphics driver, no display): say so
     // instead of exiting silently, and keep the reason in the crash log.
     if let Err(e) = &started {
@@ -251,6 +252,9 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
         // take that step first, or the recovered work is lost (#3436).
         let control = control_port.map(|port| control_server::start(port, cc.egui_ctx.clone()));
         let (control, agent_link) = agent_control(control, control_port, &cc.egui_ctx);
+        if let Some(link) = &agent_link {
+            vibe::publish_live(link);
+        }
         if control_input_only && let Some((_, _, Some(why))) = &control {
             return Err(Box::new(control_server::ControlServerRequired(why.reason())));
         }

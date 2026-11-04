@@ -24,6 +24,7 @@ CV_REPO="https://github.com/bradautomates/claude-video.git"
 
 SKIP_HYPERFRAMES=false
 SKIP_PREMIERE=false
+SKIP_STUDIO=false
 SKIP_WATCH=false
 SKIP_SKILLS=false
 SKIP_DOCTOR=false
@@ -54,6 +55,7 @@ Usage: scripts/setup-macos.sh [options]
 Options:
   --skip-hyperframes   Don't clone HyperFrames or install its skills
   --skip-premiere      Don't clone/build the Premiere Pro MCP bridge
+  --skip-studio        Don't build Vibe Studio (the editor) or register its MCP server
   --skip-watch         Don't clone Claude Video or install the /watch skill
   --skip-skills        Clone the repos, but don't install any agent skills
   --skip-doctor        Don't run the post-install diagnostics
@@ -66,6 +68,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --skip-hyperframes) SKIP_HYPERFRAMES=true ;;
     --skip-premiere)    SKIP_PREMIERE=true ;;
+    --skip-studio)      SKIP_STUDIO=true ;;
     --skip-watch)       SKIP_WATCH=true ;;
     --skip-skills)      SKIP_SKILLS=true ;;
     --skip-doctor)      SKIP_DOCTOR=true ;;
@@ -247,6 +250,20 @@ console.log('  ✓ .mcp.json updated with the "premiere-pro" server');
 NODE
 else
   step "Skipping the Premiere Pro MCP bridge"
+fi
+
+# ------------------------------------------------------------ vibe studio --
+
+if [[ "$SKIP_STUDIO" == false ]]; then
+  step "Building Vibe Studio (the editor) and registering its MCP server"
+  if command -v cargo >/dev/null; then
+    "$REPO_ROOT/lanes/vibe/setup.sh" || warn "Vibe Studio setup failed — retry with lanes/vibe/setup.sh"
+  else
+    warn "Rust isn't installed, so Vibe Studio wasn't built. Install it from https://rustup.rs, then run lanes/vibe/setup.sh"
+    "$REPO_ROOT/lanes/vibe/setup.sh" --no-build || true
+  fi
+else
+  step "Skipping Vibe Studio"
 fi
 
 # ------------------------------------------------------------ claude video --

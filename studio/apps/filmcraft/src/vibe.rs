@@ -73,6 +73,62 @@ pub struct ControlLink {
     pub token: String,
 }
 
+/// Where this app tells other Claude Code sessions how to reach it (`filmcraft-cli mcp --bridge
+/// vibe-studio`, the repository's `.mcp.json`): `VIBE_STUDIO_LIVE`, else `~/.vibe-studio/live.json`.
+fn live_file() -> Option<PathBuf> {
+    if let Some(p) = std::env::var_os("VIBE_STUDIO_LIVE").filter(|v| !v.is_empty()) {
+        return Some(p.into());
+    }
+    let home = std::env::var_os("HOME").or_else(|| std::env::var_os("USERPROFILE")).filter(|v| !v.is_empty())?;
+    Some(PathBuf::from(home).join(".vibe-studio").join("live.json"))
+}
+
+/// Say where this app listens, for a Claude Code session started anywhere else (the Claude app,
+/// a terminal) in the vibe-editor folder. The file holds the control token, so the folder and
+/// the file are the user's only. The last Vibe Studio started wins.
+pub fn publish_live(link: &ControlLink) {
+    let Some(path) = live_file() else { return };
+    let write = || -> std::io::Result<()> {
+        if let Some(dir) = path.parent() {
+            std::fs::create_dir_all(dir)?;
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
+                std::fs::set_permissions(dir, std::fs::Permissions::from_mode(0o700))?;
+            }
+        }
+        let tmp = path.with_extension("json.tmp");
+        let mut opts = std::fs::OpenOptions::new();
+        opts.write(true).create(true).truncate(true);
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::OpenOptionsExt;
+            opts.mode(0o600);
+        }
+        let mut f = opts.open(&tmp)?;
+        f.write_all(json!({"port": link.port, "token": link.token, "pid": std::process::id()}).to_string().as_bytes())?;
+        drop(f);
+        std::fs::rename(&tmp, &path)
+    };
+    match write() {
+        Ok(()) => log::info!("agents in the vibe-editor folder can reach this app (see {})", path.display()),
+        Err(e) => log::warn!("could not write {}: {e}", path.display()),
+    }
+}
+
+/// Remove the live file when this app wrote it (another Vibe Studio may have since).
+pub fn unpublish_live() {
+    let Some(path) = live_file() else { return };
+    let ours = std::fs::read(&path)
+        .ok()
+        .and_then(|b| serde_json::from_slice::<Value>(&b).ok())
+        .and_then(|v| v.get("pid").and_then(Value::as_u64))
+        .is_some_and(|pid| pid == u64::from(std::process::id()));
+    if ours {
+        let _ = std::fs::remove_file(path);
+    }
+}
+
 /// The vibe-editor checkout: `VIBE_EDITOR_REPO`, else the nearest folder above `near` (the open
 /// project or its media), the working directory or the app that has the pipeline in it.
 pub fn repo_root(near: Option<&str>) -> Option<PathBuf> {
@@ -194,6 +250,10 @@ fn claude_args(launch: &AgentLaunch, mcp: Option<&Path>) -> Vec<String> {
     .map(String::from)
     .to_vec();
     if let Some(p) = mcp {
+        // this session gets its own private link to this app; the repository's `.mcp.json` server
+        // of the same name (for sessions started elsewhere) would find the same app another way
+        a.push("--settings".into());
+        a.push(r#"{"disabledMcpjsonServers":["vibe-studio"]}"#.into());
         a.push("--mcp-config".into());
         a.push(p.to_string_lossy().into_owned());
         // looking at the edit never needs a prompt; changing it does (each change is an undo step)

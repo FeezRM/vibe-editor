@@ -48,6 +48,19 @@ it to edit a video as you always have; the difference is that you watch it happe
 - **Scripts:** the control channel has `assistant.send {text}`, `assistant.inspect` and
   `assistant.answer {line, allow, always}`.
 
+### From any Claude Code session (the Claude app, a terminal)
+
+Your usual flow is unchanged: open a Claude Code session on the vibe-editor folder (in the Claude
+app on your Mac or a terminal) and tell it what to make. The pipeline, skills and samples work as
+before, and nothing needs Vibe Studio. With Vibe Studio set up (`lanes/vibe/setup.sh` builds it
+and registers `vibe-studio` in `.mcp.json`), that session can also open the edit in the editor
+(`lanes/vibe/open.sh projects/<job>`) and see and change what is open there. The `vibe-studio` MCP
+server (`lanes/vibe/mcp.sh` → `filmcraft-cli mcp --bridge vibe-studio`) finds the running app
+through `~/.vibe-studio/live.json` (port and token, readable by you only, written while the app is
+open and removed when it quits) each time a tool runs, so it doesn't matter which starts first.
+When the app isn't open, its tools say so and how to open it. Approve the server once when Claude
+Code asks. The Assistant panel's own session gets its private link and skips this one.
+
 Codex is not wired in yet: its non-interactive mode has no equivalent of Claude Code's stream
 protocol for answering permission prompts from a host app.
 

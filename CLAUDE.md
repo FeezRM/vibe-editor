@@ -58,6 +58,16 @@ LANES.md                    step × lane matrix
 `premiere-pro-mcp` bridge setup. HyperFrames skills (`hyperframes-core`, `hyperframes-animation`) for writing
 compositions.
 
+## Vibe Studio — the editor
+
+`studio/` is the user's editor (FilmCraft-based; `studio/VIBE-STUDIO.md`). When an edit is ready, or the user wants to
+look or tweak by hand: `lanes/vibe/open.sh projects/<job>` (returns at once; their hand edits live in
+`<job>/vibe/<job>.fcproj`). While it is open, the `vibe-studio` MCP server is the live app: `sequence_inspect`
+(captions: `command_run captions.list`), `render_frame`, `command_run` / `command_batch` — each change is an undo step
+the user sees in Assistant ▸ Activity. A timeline tweak they ask for goes through those commands, not a pipeline re-run;
+after a pipeline re-run, `vibe.importJob {"dir": "<job>"}` shows the new cut as a new sequence (their hand-edited one
+stays). If they edited by hand, export with `./finalize.sh <job> --lane vibe` so their edits ship.
+
 ## Technical locks — one line each; the story is in the archive
 
 - `export_frame` on Premiere returns success and writes nothing → stills come only from `lanes/ffmpeg/frame.py`. archive#export-frame
