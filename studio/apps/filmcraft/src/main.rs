@@ -182,6 +182,42 @@ fn main() -> eframe::Result {
     started
 }
 
+type ControlStart = (std::sync::mpsc::Receiver<filmcraft_ui_egui::ControlRequest>, Arc<AtomicBool>, Option<control_server::DisabledWhy>);
+
+/// Vibe Studio: the Assistant's agent reaches the app over the control channel, the one
+/// `--control` opened (with its token), else a private one on a free local port.
+fn agent_control(control: Option<ControlStart>, control_port: Option<u16>, ctx: &egui::Context) -> (Option<ControlStart>, Option<vibe::ControlLink>) {
+    match control {
+        Some(c) => {
+            let link = match (control_port, std::env::var("FILMCRAFT_CONTROL_TOKEN"), &c.2) {
+                (Some(port), Ok(token), None) => Some(vibe::ControlLink { port, token }),
+                _ => None,
+            };
+            (Some(c), link)
+        }
+        None if std::env::var_os("VIBE_STUDIO_NO_AGENT").is_none() => match control_server::start_local(ctx.clone()) {
+            Some((rx, ready, port, token)) => (Some((rx, ready, None)), Some(vibe::ControlLink { port, token })),
+            None => (None, None),
+        },
+        None => (None, None),
+    }
+}
+
+/// Vibe Studio: open each vibe-editor job folder given on the command line as a sequence (in a
+/// new project named after the first, unless a project or the demo was asked for).
+fn open_vibe_jobs(session: &mut Session, jobs: &[String], keep_project: bool) {
+    for (i, job) in jobs.iter().enumerate() {
+        if i == 0 && !keep_project {
+            let name = std::path::Path::new(job).file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
+            let _ = session.execute("file.newProject", json!({"name": name}));
+        }
+        match session.execute("vibe.importJob", json!({"dir": job})) {
+            Ok(v) => log::info!("opened vibe job {job}: {v}"),
+            Err(e) => log::error!("vibe job {job}: {e}"),
+        }
+    }
+}
+
 /// The main window's options; built for each start attempt (they hold a one-shot hook).
 fn native_options(agent: bool) -> eframe::NativeOptions {
     eframe::NativeOptions {
@@ -214,6 +250,7 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
         // consumes its candidate, and an input-only session that must abort (no server) may not
         // take that step first, or the recovered work is lost (#3436).
         let control = control_port.map(|port| control_server::start(port, cc.egui_ctx.clone()));
+        let (control, agent_link) = agent_control(control, control_port, &cc.egui_ctx);
         if control_input_only && let Some((_, _, Some(why))) = &control {
             return Err(Box::new(control_server::ControlServerRequired(why.reason())));
         }
@@ -269,18 +306,7 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
         if !media.is_empty() {
             let _ = session.execute("file.import", json!({"paths": media}));
         }
-        for job in &jobs {
-            if !had_project && !demo && jobs.first() == Some(job) {
-                let _ = session.execute(
-                    "file.newProject",
-                    json!({"name": std::path::Path::new(job).file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default()}),
-                );
-            }
-            match session.execute("vibe.importJob", json!({"dir": job})) {
-                Ok(v) => log::info!("opened vibe job {job}: {v}"),
-                Err(e) => log::error!("vibe job {job}: {e}"),
-            }
-        }
+        open_vibe_jobs(&mut session, &jobs, had_project || demo);
         if recover == Some(true) && !session.recovery_candidates().is_empty() {
             let id = session.recovery_candidates()[0].id.clone();
             match session.execute("file.recover", json!({"id": id})) {
@@ -291,7 +317,7 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
         let mut app = FilmcraftApp::new(session);
         // Vibe Studio is a fork: FilmCraft's updater would replace it with FilmCraft
         app.set_startup_update_check(false);
-        app.hooks.claude = Some(vibe::claude_transport());
+        app.hooks.agent = Some(vibe::agent_launcher(agent_link.clone()));
         app.graphics_notice = notice;
         if recover == Some(false) {
             app.dialog = None;

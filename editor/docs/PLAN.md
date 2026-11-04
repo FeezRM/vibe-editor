@@ -12,6 +12,9 @@
   new module and its registration, and the UI and app crates carry the Vibe Studio changes.
 - **Accent:** the creator's brand colour (`brand/brand.json` `palette.accent`; default amber `#FFC531`).
 - **Role:** edit by hand, see what the AI and agents did, ask the AI, **and export**.
+- **The AI is the user's own agent, not an API key** (2026-11-04, second decision): the Assistant runs Claude Code in the
+  checkout, the way the vibe-editor has always been used, with the live app as its MCP server and its prompts as
+  buttons in the panel. Same skills, samples and results; the editor is the interface.
 
 ## Progress
 
@@ -20,7 +23,7 @@
 | M0 spike | ✓ builds on Linux in ~10 min cold (4 cores), ~2 min incremental; runs under Xvfb (software Vulkan); headless export of a 1080×1920 H.264 works |
 | M1 headless bridge | ✓ first cut: `vibe.importJob` (engine command): takes, camera, zoom punches, captions, graphics, SFX, voice gain, transcript. Tested on a synthetic job: 267 frames = the EDL, captions muted under the graphic, gains set. ✗ not yet: holds, per-word accent styling, b-roll, the PSNR gate against a real job's ffmpeg-lane final |
 | M2 desktop shell | ✓ first cut: renamed, own icon, brand accent, flat dark tokens, page tabs, `Vibe` workspace, Export button. ✗ not yet: the CapCut-style inspector tabs, overview strip, safe-zone overlay |
-| M3 agent lane | ✓ first cut: Assistant panel (Ask Claude with tool use over every command + frame look; Activity feed of Claude's and agents' commands); `lanes/vibe/{open,export}.sh`; `finalize.sh --lane vibe` with ffmpeg fallback. ✗ not yet: ig-* skill sections, LANES.md parity runs |
+| M3 agent lane | ✓ first cut: Assistant panel = the user's Claude Code in the checkout (skills, samples, CLAUDE.md), the live app as its MCP server on a private control channel, permission prompts / questions / plans as cards, Activity feed; verified end to end (Claude read the timeline, asked, added a marker); `lanes/vibe/{open,export}.sh`; `finalize.sh --lane vibe` with ffmpeg fallback. ✗ not yet: ig-* skill sections, LANES.md parity runs |
 | M4–M6 | not started |
 
 

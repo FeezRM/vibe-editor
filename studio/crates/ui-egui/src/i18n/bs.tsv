@@ -459,7 +459,7 @@
 	Recover Unsaved Changes	Oporavi nesačuvane promjene
 	Untitled	Bez naslova
 	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft je zatvoren dok je „{name}” imao nesačuvane promjene.
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	FilmCraft se neočekivano zatvorio dok je „{name}” imao nesačuvane promjene.
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio se neočekivano zatvorio dok je „{name}” imao nesačuvane promjene.
 	Recover unsaved changes from {when}?	Oporaviti nesačuvane promjene od {when}?
 	The project had not been saved yet.	Projekat još nije bio sačuvan.
 	{n} sessions have unsaved changes:	Sesije s nesačuvanim promjenama: {n}

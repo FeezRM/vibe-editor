@@ -42,9 +42,8 @@ cpal = "0.16"
 arboard = "3"
 chrono = { workspace = true, features = ["clock"] }
 sys-locale = "0.3"
-# Vibe Studio Assistant: HTTPS to the Claude API (pure-Rust TLS, OS certificate verification; as crates/speech)
-ureq = { version = "3", default-features = false, features = ["rustls-no-provider", "platform-verifier"] }
-rustls-rustcrypto = "0.0.2-alpha"
+# Vibe Studio: the random token of the control channel the Assistant's agent connects to
+getrandom = "0.2"
 # Help menu / About / Discord links in the system browser (MIT; as PhotoCraft).
 open = "5"
 

@@ -21,18 +21,35 @@ cargo build -p filmcraft -p filmcraft-cli          # ~10 min the first time; bin
 target/debug/vibe-studio projects/<job>             # or open a job folder directly (it has a RUN.md)
 ```
 
-In the app, **File ▸ Open Vibe Job…** picks a job folder. **Assistant** (the speech-bubble button
-in the header, or the panel in the Edit page's right column) has two tabs:
+In the app, **File ▸ Open Vibe Job…** picks a job folder.
 
-- **Ask**: talk to Claude (`claude-opus-5-5`) about the edit. Claude inspects the timeline, finds and
-  runs editor commands, and looks at rendered frames. Each command it runs is listed under its
-  answer and is one undo step. It uses `ANTHROPIC_API_KEY` (or `ANTHROPIC_AUTH_TOKEN`) from the
-  environment, or a key pasted into the panel, which is kept in memory only. Requests use the
-  server-side refusal fallback (`fallbacks: "default"`).
-- **Activity**: every command Claude ran, and every command an outside agent sent over the
-  control channel or MCP bridge, newest first, with its result. Claude Code running the vibe
-  pipeline connects with `filmcraft-cli mcp --bridge 127.0.0.1:9876` and the same
-  `FILMCRAFT_CONTROL_TOKEN`.
+## The Assistant: your Claude Code, inside the editor
+
+No API key. The **Assistant** panel (the speech-bubble button in the header, or the Edit page's
+right column) runs your own **Claude Code** the way you use it in a terminal. It starts
+`claude` in the vibe-editor checkout, so `CLAUDE.md`, the skills (ig-reel, ig-cut, ig-show…),
+`samples/` and the project's permission settings all apply, signed in with your own account. Ask
+it to edit a video as you always have; the difference is that you watch it happen and can step in.
+
+- **It sees and edits the timeline.** Vibe Studio hands the session an MCP server that is the live
+  app (`vibe-studio`: `sequence_inspect`, `render_frame`, `command_run`, `ui_*`…), over a private
+  control channel on a random local port with a fresh token. Reading never prompts. Every change is
+  one undo step and is listed in **Activity**.
+- **Prompts are buttons.** Claude Code's permission prompts become cards in the panel (Allow /
+  Always allow / Deny; "Always" saves the rule as the terminal would). Its questions
+  (AskUserQuestion) become option buttons, and a plan (Plan mode) shows with Approve / Keep planning.
+- **Modes:** Ask (your settings decide, the rest prompts), Auto-edit (`acceptEdits`), Plan.
+- **Sessions:** one Claude Code session per conversation (`--resume` if it has to restart);
+  **New session** starts over; "Continue my last Claude Code session" picks up the folder's last
+  terminal session (`--continue`).
+- **Finding things:** `claude` is looked up on your login shell's PATH (an app opened from the
+  Finder has a bare PATH), or set `VIBE_AGENT_CLAUDE`. The checkout is found above the open
+  project, else from where the app started, else `VIBE_EDITOR_REPO`.
+- **Scripts:** the control channel has `assistant.send {text}`, `assistant.inspect` and
+  `assistant.answer {line, allow, always}`.
+
+Codex is not wired in yet: its non-interactive mode has no equivalent of Claude Code's stream
+protocol for answering permission prompts from a host app.
 
 ## What `vibe.importJob` builds
 
@@ -64,7 +81,7 @@ colour; the accent word is upper-cased when the look sets `accent_case: uppercas
 | Look | the design in `../editor/docs/DESIGN.md`: neutral near-black greys, one accent, the creator's brand colour from `brand/brand.json` (`VIBE_BRAND` overrides; default amber `#FFC531`), dark text on accent fills, 4 px radii | `crates/ui-egui/src/theme.rs`, accent buttons in `panels/export_mode/*`, `panels/text.rs`, `panels/timeline.rs` |
 | Header | page tabs Import · Edit · Captions · Color · Audio · Export (Edit = the `Vibe` workspace); Assistant and Export buttons | `crates/ui-egui/src/header.rs` |
 | Workspace | `Vibe` (the default): assets │ Program │ Properties over the Assistant, with the timeline under the first two | `crates/ui-egui/src/dock.rs`, `state.rs`, `menus.rs` |
-| Assistant | Ask Claude (tool use over the command registry, frame look) and Activity (Claude's and agents' commands) | `crates/ui-egui/src/assistant.rs`, `panels/assistant.rs`, `control.rs`, `hooks.rs`; HTTPS in `apps/filmcraft/src/vibe.rs` (ureq + rustls/RustCrypto, as `crates/speech`) |
+| Assistant | the user's Claude Code run in the checkout with this app as its MCP server; permission prompts and questions as cards; Activity | `crates/ui-egui/src/assistant.rs`, `panels/assistant.rs`, `control.rs`, `hooks.rs`; the process and the private control channel in `apps/filmcraft/src/{vibe,control_server,main}.rs` |
 | Vibe jobs | `vibe.importJob`; File ▸ Open Vibe Job…; job folders on the command line | `crates/engine/src/vibe_job.rs`, `commands.rs`, `menus.rs`, `main.rs` |
 
 Upstream crate names (`filmcraft-*`) are unchanged on purpose, so upstream merges stay small.

@@ -448,7 +448,7 @@
 	Recover Unsaved Changes	Recuperar alterações não salvas
 	Untitled	Sem título
 	FilmCraft was closed while “{name}” had unsaved changes.	O FilmCraft foi fechado enquanto “{name}” tinha alterações não salvas.
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	O FilmCraft fechou inesperadamente enquanto “{name}” tinha alterações não salvas.
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	O Vibe Studio fechou inesperadamente enquanto “{name}” tinha alterações não salvas.
 	Recover unsaved changes from {when}?	Recuperar as alterações não salvas de {when}?
 	The project had not been saved yet.	O projeto ainda não tinha sido salvo.
 	{n} sessions have unsaved changes:	{n} sessões têm alterações não salvas:

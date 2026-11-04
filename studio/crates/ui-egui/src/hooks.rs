@@ -46,8 +46,8 @@ pub struct AudioDevices {
 /// Host hooks for native file dialogs etc.
 #[derive(Default)]
 pub struct HostHooks {
-    /// Vibe Studio: sends the Assistant's requests to Claude (native hosts only).
-    pub claude: Option<crate::assistant::ClaudeTransport>,
+    /// Vibe Studio: starts the user's agent (Claude Code) for the Assistant panel (native hosts only).
+    pub agent: Option<crate::assistant::AgentLauncher>,
     /// Optional native custom-color editor; presets and project palette stay in FilmCraft.
     pub pick_color: Option<crate::widgets::color_picker::NativeColorPicker>,
     pub pick_files: Option<Box<dyn FnMut(&[&str]) -> Vec<String>>>,

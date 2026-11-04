@@ -56,7 +56,7 @@ pub fn show_recovery(app: &mut FilmcraftApp, ctx: &egui::Context) -> bool {
             let why = if c["cleanExit"].as_bool() == Some(true) {
                 tlf!("FilmCraft was closed while “{name}” had unsaved changes.", name)
             } else {
-                tlf!("FilmCraft quit unexpectedly while “{name}” had unsaved changes.", name)
+                tlf!("Vibe Studio quit unexpectedly while “{name}” had unsaved changes.", name)
             };
             ui.label(RichText::new(why).size(13.5).color(t.text));
             ui.add_space(4.0);

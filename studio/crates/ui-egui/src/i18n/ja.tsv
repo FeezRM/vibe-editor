@@ -450,7 +450,7 @@
 	Recover Unsaved Changes	未保存の変更を復元
 	Untitled	名称未設定
 	FilmCraft was closed while “{name}” had unsaved changes.	「{name}」に未保存の変更がある状態で FilmCraft が終了しました。
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	「{name}」に未保存の変更がある状態で FilmCraft が予期せず終了しました。
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	「{name}」に未保存の変更がある状態で Vibe Studio が予期せず終了しました。
 	Recover unsaved changes from {when}?	{when} の未保存の変更を復元しますか？
 	The project had not been saved yet.	このプロジェクトはまだ保存されていませんでした。
 	{n} sessions have unsaved changes:	{n} 件のセッションに未保存の変更があります:

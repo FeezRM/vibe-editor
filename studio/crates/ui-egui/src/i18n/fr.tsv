@@ -446,7 +446,7 @@
 	Recover Unsaved Changes	Récupérer les modifications non enregistrées
 	Untitled	Sans titre
 	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft a été fermé alors que « {name} » contenait des modifications non enregistrées.
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	FilmCraft s'est fermé de manière inattendue alors que « {name} » contenait des modifications non enregistrées.
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio s'est fermé de manière inattendue alors que « {name} » contenait des modifications non enregistrées.
 	Recover unsaved changes from {when}?	Récupérer les modifications non enregistrées de {when} ?
 	The project had not been saved yet.	Le projet n'avait pas encore été enregistré.
 	{n} sessions have unsaved changes:	{n} sessions contiennent des modifications non enregistrées :

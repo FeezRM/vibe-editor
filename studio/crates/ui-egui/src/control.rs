@@ -506,6 +506,21 @@ pub fn handle(app: &mut FilmcraftApp, ctx: &egui::Context, req: &ControlRequest)
                 Err(e) => err(e),
             }
         }
+        // Vibe Studio: the Assistant panel from a script (send a message as if typed, read the conversation)
+        "assistant.send" => {
+            let Some(text) = s("text") else { return err("missing `text`") };
+            app.assistant.input = text.to_string();
+            crate::assistant::send(app);
+            ok(json!({"busy": app.assistant.busy()}))
+        }
+        "assistant.inspect" => ok(crate::assistant::inspect(&app.assistant)),
+        "assistant.answer" => {
+            let Some(line) = p.get("line").and_then(Value::as_u64).and_then(|l| usize::try_from(l).ok()) else { return err("missing `line`") };
+            let allow = p.get("allow").and_then(Value::as_bool).unwrap_or(true);
+            let always = p.get("always").and_then(Value::as_bool).unwrap_or(false);
+            app.assistant.answer(line, allow, always);
+            ok(Value::Null)
+        }
         "engine.commands" => match app.session.execute("command.list", json!({})) {
             Ok(v) => ok(v),
             Err(e) => err(e),

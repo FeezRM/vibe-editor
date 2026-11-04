@@ -68,6 +68,25 @@ pub fn start(port: u16, ctx: egui::Context) -> (Receiver<ControlRequest>, Arc<At
     start_with_token(port, ctx, std::env::var("FILMCRAFT_CONTROL_TOKEN").ok())
 }
 
+/// Vibe Studio: a control server for the app's own agent when none was asked for with
+/// `--control`: a fresh random token and a free loopback port, both handed only to the agent's
+/// MCP bridge. `None` when no port or randomness is available (the agent then works without
+/// seeing the timeline).
+pub fn start_local(ctx: egui::Context) -> Option<(Receiver<ControlRequest>, Arc<AtomicBool>, u16, String)> {
+    let mut bytes = [0u8; 32];
+    getrandom::getrandom(&mut bytes).ok()?;
+    let token: String = bytes.iter().map(|b| format!("{b:02x}")).collect();
+    let listener = TcpListener::bind(("127.0.0.1", 0)).ok()?;
+    let port = listener.local_addr().ok()?.port();
+    let (tx, rx) = channel::<ControlRequest>();
+    let ready = Arc::new(AtomicBool::new(false));
+    let loop_ready = Arc::clone(&ready);
+    let loop_token = token.clone();
+    std::thread::spawn(move || accept_loop(listener, tx, ctx, loop_token, loop_ready));
+    log::info!("agent control server listening on 127.0.0.1:{port}");
+    Some((rx, ready, port, token))
+}
+
 fn start_with_token(port: u16, ctx: egui::Context, token: Option<String>) -> (Receiver<ControlRequest>, Arc<AtomicBool>, Option<DisabledWhy>) {
     let (tx, rx) = channel::<ControlRequest>();
     // An inherited environment variable shares the credential with the owner's bridge process

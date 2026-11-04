@@ -429,7 +429,7 @@
 	Recover Unsaved Changes	Восстановить несохранённые изменения
 	Untitled	Без названия
 	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft был закрыт, а в проекте «{name}» оставались несохранённые изменения.
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	FilmCraft неожиданно завершился, а в проекте «{name}» оставались несохранённые изменения.
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio неожиданно завершился, а в проекте «{name}» оставались несохранённые изменения.
 	Recover unsaved changes from {when}?	Восстановить несохранённые изменения от {when}?
 	The project had not been saved yet.	Проект ещё не был сохранён.
 	{n} sessions have unsaved changes:	Сеансов с несохранёнными изменениями: {n}

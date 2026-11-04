@@ -439,7 +439,7 @@
 	Recover Unsaved Changes	Obnovit neuložené změny
 	Untitled	Bez názvu
 	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft byl zavřen, když projekt „{name}“ obsahoval neuložené změny.
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	FilmCraft se neočekávaně ukončil, když projekt „{name}“ obsahoval neuložené změny.
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio se neočekávaně ukončil, když projekt „{name}“ obsahoval neuložené změny.
 	Recover unsaved changes from {when}?	Obnovit neuložené změny z {when}?
 	The project had not been saved yet.	Projekt ještě nebyl uložen.
 	{n} sessions have unsaved changes:	Počet relací s neuloženými změnami: {n}

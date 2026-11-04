@@ -451,7 +451,7 @@
 	Recover Unsaved Changes	Pulihkan Perubahan yang Belum Disimpan
 	Untitled	Tanpa Judul
 	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft ditutup saat “{name}” masih memiliki perubahan yang belum disimpan.
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	FilmCraft keluar secara tak terduga saat “{name}” masih memiliki perubahan yang belum disimpan.
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio keluar secara tak terduga saat “{name}” masih memiliki perubahan yang belum disimpan.
 	Recover unsaved changes from {when}?	Pulihkan perubahan yang belum disimpan dari {when}?
 	The project had not been saved yet.	Proyek ini belum pernah disimpan.
 	{n} sessions have unsaved changes:	{n} sesi memiliki perubahan yang belum disimpan:

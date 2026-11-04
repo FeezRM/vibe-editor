@@ -440,7 +440,7 @@
 	Recover Unsaved Changes	Återställ osparade ändringar
 	Untitled	Namnlös
 	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft stängdes medan “{name}” hade osparade ändringar.
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	FilmCraft avslutades oväntat medan “{name}” hade osparade ändringar.
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio avslutades oväntat medan “{name}” hade osparade ändringar.
 	Recover unsaved changes from {when}?	Vill du återställa osparade ändringar från {when}?
 	The project had not been saved yet.	Projektet hade inte sparats ännu.
 	{n} sessions have unsaved changes:	{n} sessioner har osparade ändringar:

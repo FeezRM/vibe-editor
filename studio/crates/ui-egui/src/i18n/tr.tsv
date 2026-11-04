@@ -437,7 +437,7 @@
 	Recover Unsaved Changes	Kaydedilmemiş Değişiklikleri Kurtar
 	Untitled	Başlıksız
 	FilmCraft was closed while “{name}” had unsaved changes.	“{name}” kaydedilmemiş değişiklikler içerirken FilmCraft kapatıldı.
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	“{name}” kaydedilmemiş değişiklikler içerirken FilmCraft beklenmedik şekilde kapandı.
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	“{name}” kaydedilmemiş değişiklikler içerirken Vibe Studio beklenmedik şekilde kapandı.
 	Recover unsaved changes from {when}?	{when} tarihli kaydedilmemiş değişiklikler kurtarılsın mı?
 	The project had not been saved yet.	Proje henüz kaydedilmemişti.
 	{n} sessions have unsaved changes:	{n} oturumda kaydedilmemiş değişiklikler var:

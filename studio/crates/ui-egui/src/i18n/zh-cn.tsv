@@ -439,7 +439,7 @@
 	Recover Unsaved Changes	恢复未保存的更改
 	Untitled	未命名
 	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft 在“{name}”存在未保存的更改时被关闭。
-	FilmCraft quit unexpectedly while “{name}” had unsaved changes.	FilmCraft 在“{name}”存在未保存的更改时意外退出。
+	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio 在“{name}”存在未保存的更改时意外退出。
 	Recover unsaved changes from {when}?	恢复 {when} 的未保存更改吗？
 	The project had not been saved yet.	该项目尚未保存。
 	{n} sessions have unsaved changes:	{n} 个会话存在未保存的更改：
