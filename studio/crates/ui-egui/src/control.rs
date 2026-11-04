@@ -496,7 +496,12 @@ pub fn handle(app: &mut FilmcraftApp, ctx: &egui::Context, req: &ControlRequest)
             let Some(id) = s("command").or(s("id")) else { return err("missing `command`") };
             let params = p.get("params").cloned().unwrap_or(json!({}));
             let invoke = if req.method == "engine.execute" { crate::menus::invoke_command } else { crate::menus::invoke };
-            match invoke(app, ctx, id, params) {
+            let result = invoke(app, ctx, id, params.clone());
+            if crate::assistant::worth_logging(id) {
+                let at = app.ui_clock;
+                app.assistant.log(at, crate::assistant::Source::Agent, id, &params, &result);
+            }
+            match result {
                 Ok(v) => ok(v),
                 Err(e) => err(e),
             }

@@ -38,6 +38,7 @@ macro_rules! tlf {
     };
 }
 
+pub mod assistant;
 pub mod automation;
 pub mod brand;
 pub mod calc;
@@ -197,6 +198,8 @@ pub enum ControlNotice {
 
 pub struct FilmcraftApp {
     pub session: Session,
+    /// Vibe Studio: the Assistant panel (Ask Claude, Activity).
+    pub assistant: assistant::Assistant,
     pub ui: UiState,
     pub tokens: Tokens,
     pub frames: Arc<FrameServer>,

@@ -33,6 +33,7 @@ impl FilmcraftApp {
         let ime_active_sequence = session.state.active_sequence;
         Self {
             session,
+            assistant: Default::default(),
             ui: UiState { language, ..UiState::default() },
             tokens: Tokens::for_kind(ThemeKind::Dark),
             frames,
@@ -324,6 +325,7 @@ impl FilmcraftApp {
         self.logic_background(ctx, now);
         self.logic_session_events();
         self.logic_command_inbox(ctx);
+        assistant::poll(self, ctx);
         self.advance_playback(ctx);
         self.advance_source_playback(ctx);
         self.poll_jobs(ctx);

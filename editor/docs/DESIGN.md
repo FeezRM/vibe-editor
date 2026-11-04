@@ -35,8 +35,9 @@
 | `text` | `#E7E7EA` | primary text, values |
 | `text.dim` | `#A1A1A8` | labels |
 | `text.faint` | `#6B6B73` | hints, disabled, ruler numbers |
-| `accent` | `#4F8CFF` | selection outline, playhead, focus ring, primary button, keyframes set |
-| `accent.dim` | `#4F8CFF33` | selected range on the ruler, In/Out shading |
+| `accent` | the brand colour, `brand/brand.json` `palette.accent` (default `#FFC531`) | selection outline, playhead, focus ring, primary button, keyframes set |
+| `on.accent` | `#0B0B0C` on a light accent, `#FFFFFF` on a dark one | text and icons on an accent fill |
+| `accent.dim` | accent at 20 % | selected range on the ruler, In/Out shading |
 | `danger` / `warn` / `ok` | `#E5484D` / `#E2A336` / `#3FB97A` | meters, errors, render bar only |
 
 **Clip colours.** Muted and flat, each with a 1 px border 8 % darker. Hue tells you the kind of clip;
@@ -53,8 +54,8 @@ nothing shouts.
 | Selected (any) | the clip's own fill + 1.5 px `accent` outline | never a different fill |
 | Disabled / muted | 40 % opacity | |
 
-Accent alternatives, if the brand wants one (decision §9.4 in PLAN): replace `accent` only. The rest of the
-palette never changes.
+The accent is the creator's brand colour (decided 2026-11-04). Only `accent` changes with the brand; the rest of
+the palette never does. The mockup was drawn with a blue placeholder before that decision.
 
 ## 3. Structure: pages, not workspaces
 
@@ -80,7 +81,7 @@ scattered. Docking stays available under *Window ▸ Custom layout* for power us
 ## 5. Components
 
 - **Buttons:** ghost by default (text or icon, no fill), `bg.hover` on hover. The single primary button per
-  page (Export) is solid `accent` with `#FFFFFF` text. Radius 4 px. Height 28 px.
+  page (Export) is solid `accent` with `on.accent` text. Radius 4 px. Height 28 px.
 - **Fields:** `bg.field`, no border at rest, 1 px `line.strong` on hover, 1 px `accent` on focus. Values are
   scrubbable (drag left/right), as in every NLE.
 - **Tabs:** text only, `text.dim` at rest, `text` and a 2 px `accent` underline when active.

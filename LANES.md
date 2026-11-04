@@ -17,6 +17,18 @@ and say so in `RUN.md`.
 | 08 export | ✅ `lanes/ffmpeg/assemble.py --stage final` | ⚠️ `lanes/premiere/export.mjs` → `export_sequence`; `finalize.sh` proves the file and falls back |
 | stills / QA | ✅ `lanes/ffmpeg/frame.py` only | ⛔ `export_frame` lies (returns success, writes nothing) — use the ffmpeg lane; on Windows, `PrintWindow` of the program monitor is the only pixel check of the sequence itself |
 
+## vibe lane (Vibe Studio, `studio/`)
+
+The pipeline's files open as an editable Vibe Studio sequence (`vibe.importJob`, see `studio/VIBE-STUDIO.md`);
+hand edits live in `<job>/vibe/<slug>.fcproj` and survive later opens and exports.
+
+| Step | vibe |
+|---|---|
+| 03–07 | ⚠️ `lanes/vibe/open.sh <job>` (takes on V1/A1, framing and zoom punches as Motion keyframes, captions on C1, graphics on V3/V4, SFX on A3, voice gain) — verified on a synthetic job 2026-11-04, not yet on a real one |
+| 08 export | ⚠️ `lanes/vibe/export.sh <job> <out>` (headless, captions burned in) · `./finalize.sh <job> --lane vibe` falls back to the ffmpeg lane |
+| stills / QA | ⚠️ `filmcraft-cli render --seconds S --out f.png`, or the Assistant's `look` — rendered by the engine itself (no `export_frame` that lies) |
+| agents | ⚠️ `filmcraft-cli mcp --bridge 127.0.0.1:9876` with `FILMCRAFT_CONTROL_TOKEN`; every command lands in Assistant ▸ Activity |
+
 ## Universal targets (from `presets/vertical/default/numbers.json`)
 
 - voice −16 LUFS integrated, true peak −1.5 dBFS, ±1 LU tolerance

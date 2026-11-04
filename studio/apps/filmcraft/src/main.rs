@@ -1,4 +1,4 @@
-//! FilmCraft desktop app.
+//! Vibe Studio desktop app (built on the FilmCraft desktop app).
 //!
 //! Usage: `filmcraft [--control <port>] [--demo|--empty] [--recover|--no-recover] [--data-dir <dir>]
 //! [project.fcproj | media files…]`; `--help` prints the options, `--version` the version. An
@@ -38,12 +38,13 @@ mod logging;
 mod native_color;
 #[cfg(target_os = "macos")]
 mod native_menu;
+mod vibe;
 mod window_raise;
 
 use args::{Cli, Launch};
 use chrono::TimeZone;
 use filmcraft_engine::Session;
-use filmcraft_engine::autosave::{AutosaveConfig, default_data_dir};
+use filmcraft_engine::autosave::AutosaveConfig;
 use filmcraft_ui_egui::FilmcraftApp;
 use serde_json::json;
 use std::sync::Arc;
@@ -57,9 +58,9 @@ const APP_ID: &str = "ai.storyteller.filmcraft";
 /// size of other Dock icons; Windows and Linux get the full-bleed tile.
 fn app_icon() -> egui::IconData {
     #[cfg(target_os = "macos")]
-    let png: &[u8] = include_bytes!("../../../assets/app-icon/filmcraft-macos-512.png");
+    let png: &[u8] = include_bytes!("../../../assets/app-icon/vibe-studio-macos-512.png");
     #[cfg(not(target_os = "macos"))]
-    let png: &[u8] = include_bytes!("../../../assets/app-icon/hicolor/256x256/apps/ai.storyteller.filmcraft.png");
+    let png: &[u8] = include_bytes!("../../../assets/app-icon/vibe-studio-256.png");
     eframe::icon_data::from_png_bytes(png).unwrap_or_default()
 }
 
@@ -75,7 +76,7 @@ fn tell(text: &str, error: bool) {
     #[cfg(all(target_os = "windows", not(debug_assertions)))]
     {
         let level = if error { rfd::MessageLevel::Error } else { rfd::MessageLevel::Info };
-        let _ = rfd::MessageDialog::new().set_level(level).set_title("FilmCraft").set_description(text).show();
+        let _ = rfd::MessageDialog::new().set_level(level).set_title(vibe::APP_NAME).set_description(text).show();
     }
 }
 
@@ -104,9 +105,9 @@ fn main() -> eframe::Result {
             std::process::exit(2);
         }
     };
-    let data_root = launch.data_dir.clone().or_else(default_data_dir);
+    let data_root = launch.data_dir.clone().or_else(vibe::data_dir);
     let log_dir = data_root.as_ref().map(|d| d.join(logging::LOG_DIR));
-    log::info!("FilmCraft {} ({} {})", env!("CARGO_PKG_VERSION"), std::env::consts::OS, std::env::consts::ARCH);
+    log::info!("Vibe Studio (FilmCraft {}) ({} {})", env!("CARGO_PKG_VERSION"), std::env::consts::OS, std::env::consts::ARCH);
     // The log file lives next to the crash logs; opened after the arguments, so `--help`,
     // `--version` and usage errors leave no file behind. Records logged until now go in first.
     if let Some(logger) = logger {
@@ -120,6 +121,7 @@ fn main() -> eframe::Result {
         }
     }
     app_nap::disable();
+    vibe::apply_brand();
     #[cfg(target_os = "linux")]
     dev_icon::ensure_dev_desktop_entry();
     // Panics anywhere go to <data dir>/Logs/crash-<day>.log with a backtrace; the UI pass and
@@ -143,7 +145,7 @@ fn main() -> eframe::Result {
         // Before eframe creates the wgpu instance (e.g. no OpenGL on Windows, see graphics.rs).
         graphics::apply(&mut options, graphics.mode(), backend_override);
         let app_created = Arc::new(AtomicBool::new(false));
-        let result = eframe::run_native("FilmCraft", options, app_creator(launch.clone(), graphics.clone(), Arc::clone(&app_created)));
+        let result = eframe::run_native(vibe::APP_NAME, options, app_creator(launch.clone(), graphics.clone(), Arc::clone(&app_created)));
         let app_created = app_created.load(Ordering::Relaxed);
         match &result {
             // wgpu reported the failure (no adapter, device creation failed) before the app
@@ -172,10 +174,10 @@ fn main() -> eframe::Result {
             log::error!("{inner}");
             std::process::exit(1);
         }
-        let msg = format!("FilmCraft could not start its window: {e}\n\nUpdating the graphics driver usually fixes this.");
+        let msg = format!("Vibe Studio could not start its window: {e}\n\nUpdating the graphics driver usually fixes this.");
         log::error!("{msg}");
         filmcraft_ui_egui::crash::record(&msg);
-        let _ = rfd::MessageDialog::new().set_title("FilmCraft").set_description(&msg).set_level(rfd::MessageLevel::Error).show();
+        let _ = rfd::MessageDialog::new().set_title(vibe::APP_NAME).set_description(&msg).set_level(rfd::MessageLevel::Error).show();
     }
     started
 }
@@ -184,7 +186,7 @@ fn main() -> eframe::Result {
 fn native_options(agent: bool) -> eframe::NativeOptions {
     eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_title("FilmCraft")
+            .with_title(vibe::APP_NAME)
             .with_inner_size([1600.0, 980.0])
             .with_min_inner_size([900.0, 560.0])
             .with_drag_and_drop(true)
@@ -230,7 +232,7 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
             }),
         );
         let mut session = Session::default();
-        if let Some(dir) = data_dir.clone().or_else(default_data_dir) {
+        if let Some(dir) = data_dir.clone().or_else(vibe::data_dir) {
             let mut cfg = AutosaveConfig::new(dir);
             cfg.local_offset = local_offset;
             if let Err(e) = session.start_autosave(cfg) {
@@ -239,7 +241,10 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
         }
         // voice-over recording reads the microphone through cpal
         session.voiceover.input = Some(Box::new(audio_in::CpalIn::new(&session.prefs.audio_hardware.device_class)));
+        // Vibe Studio: a vibe-editor job folder (it has a RUN.md) opens as a sequence
+        let (jobs, files): (Vec<String>, Vec<String>) = files.into_iter().partition(|f| std::path::Path::new(f).join("RUN.md").is_file());
         let (project, media) = args::project_and_media(&files);
+        let had_project = project.is_some();
         if let Some(p) = project {
             if let Err(e) = session.execute("file.open", json!({"path": p})) {
                 log::error!("{e}");
@@ -264,6 +269,18 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
         if !media.is_empty() {
             let _ = session.execute("file.import", json!({"paths": media}));
         }
+        for job in &jobs {
+            if !had_project && !demo && jobs.first() == Some(job) {
+                let _ = session.execute(
+                    "file.newProject",
+                    json!({"name": std::path::Path::new(job).file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default()}),
+                );
+            }
+            match session.execute("vibe.importJob", json!({"dir": job})) {
+                Ok(v) => log::info!("opened vibe job {job}: {v}"),
+                Err(e) => log::error!("vibe job {job}: {e}"),
+            }
+        }
         if recover == Some(true) && !session.recovery_candidates().is_empty() {
             let id = session.recovery_candidates()[0].id.clone();
             match session.execute("file.recover", json!({"id": id})) {
@@ -272,7 +289,9 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
             }
         }
         let mut app = FilmcraftApp::new(session);
-        app.set_startup_update_check(true);
+        // Vibe Studio is a fork: FilmCraft's updater would replace it with FilmCraft
+        app.set_startup_update_check(false);
+        app.hooks.claude = Some(vibe::claude_transport());
         app.graphics_notice = notice;
         if recover == Some(false) {
             app.dialog = None;

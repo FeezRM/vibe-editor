@@ -1,14 +1,18 @@
 [package]
 name = "filmcraft"
-description = "FilmCraft desktop app"
+description = "Vibe Studio desktop app (FilmCraft-based)"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-default-run = "filmcraft"
+default-run = "vibe-studio"
 build = "build.rs"
 
 [lints]
 workspace = true
+
+[[bin]]
+name = "vibe-studio"
+path = "src/main.rs"
 
 [features]
 default = []
@@ -38,6 +42,9 @@ cpal = "0.16"
 arboard = "3"
 chrono = { workspace = true, features = ["clock"] }
 sys-locale = "0.3"
+# Vibe Studio Assistant: HTTPS to the Claude API (pure-Rust TLS, OS certificate verification; as crates/speech)
+ureq = { version = "3", default-features = false, features = ["rustls-no-provider", "platform-verifier"] }
+rustls-rustcrypto = "0.0.2-alpha"
 # Help menu / About / Discord links in the system browser (MIT; as PhotoCraft).
 open = "5"
 

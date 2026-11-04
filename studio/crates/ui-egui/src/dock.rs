@@ -41,10 +41,12 @@ pub enum PanelKind {
     ReferenceMonitor,
     Timecode,
     ProjectNotes,
+    /// Vibe Studio: Ask Claude, and the Activity of Claude and outside agents.
+    Assistant,
 }
 
 impl PanelKind {
-    pub const ALL: [PanelKind; 28] = [
+    pub const ALL: [PanelKind; 29] = [
         PanelKind::Project,
         PanelKind::MediaBrowser,
         PanelKind::Libraries,
@@ -73,6 +75,7 @@ impl PanelKind {
         PanelKind::ReferenceMonitor,
         PanelKind::Timecode,
         PanelKind::ProjectNotes,
+        PanelKind::Assistant,
     ];
     pub fn title(self) -> &'static str {
         match self {
@@ -104,6 +107,7 @@ impl PanelKind {
             PanelKind::ReferenceMonitor => "Reference Monitor",
             PanelKind::Timecode => "Timecode",
             PanelKind::ProjectNotes => "Project Notes",
+            PanelKind::Assistant => "Assistant",
         }
     }
     pub fn id(self) -> String {
@@ -145,8 +149,8 @@ fn vsplit(size: SplitSize, a: Node<PanelKind>, b: Node<PanelKind>) -> Node<Panel
     Node::Split { axis: SplitAxis::Vertical, size, first: Box::new(a), second: Box::new(b) }
 }
 
-pub const WORKSPACES: [&str; 10] =
-    ["Editing", "Assembly", "Color", "Effects", "Audio", "Captions and Graphics", "Vertical", "Learning", "Review", "All Panels"];
+pub const WORKSPACES: [&str; 11] =
+    ["Vibe", "Editing", "Assembly", "Color", "Effects", "Audio", "Captions and Graphics", "Vertical", "Learning", "Review", "All Panels"];
 
 /// The user's workspaces file, beside `preferences.json` in the data directory.
 pub const WORKSPACES_FILE: &str = "workspaces.json";
@@ -477,6 +481,18 @@ fn workspace_root(name: &str) -> Node<PanelKind> {
                 hsplit(Ratio(0.3), tabs(&[Project, MediaBrowser, Libraries], 0), bottom_editing()),
             ),
             tabs(&[EssentialGraphics, Properties], 0),
+        ),
+        // Vibe Studio's default: assets | Program | Properties over the Assistant, with the timeline
+        // under the first two. The Assistant runs the full right column's lower half so what Claude
+        // or an outside agent does stays in view while editing.
+        "Vibe" => hsplit(
+            Ratio(0.76),
+            vsplit(
+                Ratio(0.58),
+                hsplit(Ratio(0.3), tabs(&[Project, MediaBrowser, Effects, Text, Markers, History], 0), tabs(&[Program, Source], 0)),
+                bottom_editing(),
+            ),
+            vsplit(Ratio(0.5), tabs(&[Properties, EffectControls, LumetriColor, EssentialSound, AudioClipMixer], 0), tabs(&[Assistant], 0)),
         ),
         // Vertical (9:16 editing, #1822): the Program monitor runs the full height on the right, beside
         // the source and project panels and the timeline

@@ -1,0 +1,8 @@
+asset:        vibe-studio-256.png
+title:        Vibe Studio app icon (256 px, full bleed)
+author:       Vibe Studio contributors
+source:       original work (an amber V on a dark tile, drawn in code with Pillow)
+license:      MIT OR Apache-2.0
+license-file: assets/app-icon/LICENSE.txt
+added:        2026-11-04 by Claude (agent) for the vibe-editor owner
+notes:        Embedded in the app by apps/filmcraft/src/main.rs (Vibe Studio). Replaces the FilmCraft owl in the running app; the FilmCraft icon files stay for upstream packaging.

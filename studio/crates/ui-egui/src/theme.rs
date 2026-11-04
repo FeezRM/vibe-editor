@@ -61,6 +61,8 @@ pub struct Tokens {
     pub focus: Color32,
     pub accent: Color32,
     pub accent_hover: Color32,
+    /// Text and icons drawn on an `accent` fill (dark on a light accent such as the default amber).
+    pub on_accent: Color32,
     pub text: Color32,
     pub text_dim: Color32,
     pub text_faint: Color32,
@@ -151,32 +153,36 @@ pub struct Tokens {
 
 impl Tokens {
     pub fn for_kind(kind: ThemeKind) -> Self {
-        // Measured from Premiere 26 "Darkest" (plan/premiere/02-ui-ux.md §1).
+        // Vibe Studio's dark palette (editor/docs/DESIGN.md §2): neutral near-black greys, one
+        // accent (the creator's brand colour, [`brand_accent`]), no tints. Structure follows
+        // FilmCraft's Premiere-measured "Darkest" theme.
+        let accent = brand_accent();
         let dark = Tokens {
             kind,
-            app_bg: Color32::from_rgb(0, 0, 0),
-            header_bg: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            panel_bg: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            tab_bg: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            tab_text: Color32::from_rgb(0xb0, 0xb0, 0xb0),
-            tab_text_active: Color32::from_rgb(0xd1, 0xd1, 0xd1),
-            focus: Color32::from_rgb(0x57, 0x94, 0xec),
-            accent: Color32::from_rgb(0x2f, 0x6b, 0xdf),
-            accent_hover: Color32::from_rgb(0x3f, 0x7c, 0xe8),
-            text: Color32::from_rgb(0xd1, 0xd1, 0xd1),
-            text_dim: Color32::from_rgb(0xb0, 0xb0, 0xb0),
-            text_faint: Color32::from_rgb(0x6e, 0x6e, 0x6e),
-            icon: Color32::from_rgb(0xb0, 0xb0, 0xb0),
-            icon_active: Color32::from_rgb(0xd1, 0xd1, 0xd1),
-            hover: Color32::from_rgb(0x2c, 0x2c, 0x2c),
-            pressed: Color32::from_rgb(0x4b, 0x4b, 0x4b),
-            field_bg: Color32::from_rgb(0x0e, 0x0e, 0x0e),
-            field_border: Color32::from_rgb(0x30, 0x30, 0x30),
-            separator: Color32::from_rgb(0x30, 0x30, 0x30),
-            row_alt: Color32::from_rgb(0x21, 0x21, 0x21),
-            row_selected: Color32::from_rgb(0x33, 0x33, 0x33),
-            hot_text: Color32::from_rgb(0x40, 0x96, 0xf3),
-            pill_active_bg: Color32::from_rgb(0x3a, 0x3a, 0x3a),
+            app_bg: Color32::from_rgb(0x0b, 0x0b, 0x0c),
+            header_bg: Color32::from_rgb(0x18, 0x18, 0x1b),
+            panel_bg: Color32::from_rgb(0x13, 0x13, 0x15),
+            tab_bg: Color32::from_rgb(0x18, 0x18, 0x1b),
+            tab_text: Color32::from_rgb(0xa1, 0xa1, 0xa8),
+            tab_text_active: Color32::from_rgb(0xe7, 0xe7, 0xea),
+            focus: accent,
+            accent,
+            accent_hover: lift(accent, 18),
+            on_accent: on_accent(accent),
+            text: Color32::from_rgb(0xe7, 0xe7, 0xea),
+            text_dim: Color32::from_rgb(0xa1, 0xa1, 0xa8),
+            text_faint: Color32::from_rgb(0x6b, 0x6b, 0x73),
+            icon: Color32::from_rgb(0xa1, 0xa1, 0xa8),
+            icon_active: Color32::from_rgb(0xe7, 0xe7, 0xea),
+            hover: Color32::from_rgb(0x23, 0x23, 0x28),
+            pressed: Color32::from_rgb(0x2a, 0x2a, 0x30),
+            field_bg: Color32::from_rgb(0x1d, 0x1d, 0x21),
+            field_border: Color32::from_rgb(0x34, 0x34, 0x3a),
+            separator: Color32::from_rgb(0x26, 0x26, 0x2b),
+            row_alt: Color32::from_rgb(0x17, 0x17, 0x1a),
+            row_selected: Color32::from_rgb(0x2a, 0x2a, 0x30),
+            hot_text: Color32::from_rgb(0xe7, 0xe7, 0xea),
+            pill_active_bg: Color32::from_rgb(0x2a, 0x2a, 0x30),
             clip_bar_bg: Color32::from_rgb(58, 58, 70),
             control_surface: Color32::from_rgb(0x24, 0x24, 0x24),
             control_well: Color32::from_rgb(0x10, 0x10, 0x10),
@@ -219,23 +225,23 @@ impl Tokens {
             scroll_thumb_hover: Color32::from_gray(0x6a),
             vertical_scroll_thumb: Color32::from_gray(80),
             disabled_clip_bg: Color32::from_gray(0x2a),
-            tl_bg: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            tl_track_bg: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            tl_track_bg_alt: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            tl_header_bg: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            tl_ruler_bg: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            tl_ruler_tick: Color32::from_rgb(0x8d, 0x8d, 0x8d),
-            tl_ruler_text: Color32::from_rgb(0xb0, 0xb0, 0xb0),
-            playhead: Color32::from_rgb(0x58, 0x95, 0xec),
-            track_target: Color32::from_rgb(0x26, 0x5b, 0xc1),
-            in_out_shade: Color32::from_rgb(0x3f, 0x3f, 0x3f),
-            clip_selected_border: Color32::from_rgb(0xeb, 0xeb, 0xeb),
+            tl_bg: Color32::from_rgb(0x13, 0x13, 0x15),
+            tl_track_bg: Color32::from_rgb(0x13, 0x13, 0x15),
+            tl_track_bg_alt: Color32::from_rgb(0x13, 0x13, 0x15),
+            tl_header_bg: Color32::from_rgb(0x18, 0x18, 0x1b),
+            tl_ruler_bg: Color32::from_rgb(0x13, 0x13, 0x15),
+            tl_ruler_tick: Color32::from_rgb(0x4a, 0x4a, 0x52),
+            tl_ruler_text: Color32::from_rgb(0x6b, 0x6b, 0x73),
+            playhead: accent,
+            track_target: lift(accent, -60),
+            in_out_shade: Color32::from_rgb(0x2a, 0x2a, 0x30),
+            clip_selected_border: accent,
             render_red: Color32::from_rgb(0xe3, 0x48, 0x50),
             render_yellow: Color32::from_rgb(0xf0, 0xf0, 0x4f),
             render_green: Color32::from_rgb(0x2d, 0x9d, 0x78),
-            monitor_bg: Color32::from_rgb(0x1d, 0x1d, 0x1d),
-            timecode: Color32::from_rgb(0x40, 0x96, 0xf3),
-            danger: Color32::from_rgb(0xdc, 0x51, 0x3d),
+            monitor_bg: Color32::from_rgb(0x0b, 0x0b, 0x0c),
+            timecode: Color32::from_rgb(0xe7, 0xe7, 0xea),
+            danger: Color32::from_rgb(0xe5, 0x48, 0x4d),
             radius: 0.0,
             radius_sm: 4.0,
             gap: 4.0,
@@ -337,6 +343,9 @@ impl Tokens {
     /// the focus outline, the playhead, timecodes, drag values and track targeting) and accessible
     /// colour contrast (brighter secondary text and borders).
     pub fn with_appearance(mut self, highlight: Option<[u8; 3]>, accessible_contrast: bool) -> Self {
+        // Vibe Studio: FilmCraft's stock highlight (Premiere blue) means "not chosen": keep the brand accent
+        let stock = filmcraft_engine::settings::parse_hex(filmcraft_engine::settings::DEFAULT_HIGHLIGHT);
+        let highlight = highlight.filter(|h| Some(*h) != stock);
         if let Some([r, g, b]) = highlight {
             let c = Color32::from_rgb(r, g, b);
             // A highlight of the user's own also colours the theme's other blues: the same hue, as
@@ -358,6 +367,7 @@ impl Tokens {
             let lift = |v: u8| v.saturating_add(16);
             self.accent = c;
             self.accent_hover = Color32::from_rgb(lift(r), lift(g), lift(b));
+            self.on_accent = on_accent(c);
         }
         if accessible_contrast {
             if self.kind == ThemeKind::Light {
@@ -390,6 +400,48 @@ impl Tokens {
     pub fn timecode() -> FontId {
         FontId::new(16.0, FontFamily::Proportional)
     }
+}
+
+/// Vibe Studio: the accent colour, the creator's brand colour. The host sets it once at start-up
+/// (from `brand/brand.json` `palette.accent`) before the first theme is built; without it, the
+/// brand default amber.
+static BRAND_ACCENT: std::sync::OnceLock<[u8; 3]> = std::sync::OnceLock::new();
+
+/// The brand default accent (`scripts/brand.mjs` STARTER_CONFIG).
+pub const DEFAULT_BRAND_ACCENT: [u8; 3] = [0xff, 0xc5, 0x31];
+
+/// Set the brand accent; only the first call counts.
+pub fn set_brand_accent(rgb: [u8; 3]) {
+    let _ = BRAND_ACCENT.set(rgb);
+}
+
+pub fn brand_accent() -> Color32 {
+    let [r, g, b] = BRAND_ACCENT.get().copied().unwrap_or(DEFAULT_BRAND_ACCENT);
+    Color32::from_rgb(r, g, b)
+}
+
+/// `#RRGGBB` (or `RRGGBB`) to bytes.
+pub fn parse_hex(s: &str) -> Option<[u8; 3]> {
+    let h = s.trim().trim_start_matches('#');
+    if h.len() != 6 || !h.is_ascii() {
+        return None;
+    }
+    let byte = |i: usize| h.get(i..i + 2).and_then(|x| u8::from_str_radix(x, 16).ok());
+    Some([byte(0)?, byte(2)?, byte(4)?])
+}
+
+/// Text on an accent fill: near-black on a light accent, white on a dark one.
+pub fn on_accent(c: Color32) -> Color32 {
+    let [r, g, b, _] = c.to_array();
+    let luma = 0.2126 * f32::from(r) + 0.7152 * f32::from(g) + 0.0722 * f32::from(b);
+    if luma > 150.0 { Color32::from_rgb(0x0b, 0x0b, 0x0c) } else { Color32::WHITE }
+}
+
+/// `c` with every channel moved by `by` (clamped).
+fn lift(c: Color32, by: i16) -> Color32 {
+    let [r, g, b, _] = c.to_array();
+    let m = |v: u8| (i16::from(v) + by).clamp(0, 255) as u8;
+    Color32::from_rgb(m(r), m(g), m(b))
 }
 
 /// Menu text: Premiere's menus are the system's, larger and brighter than panel text, one item
@@ -469,7 +521,7 @@ pub fn apply_visuals(ctx: &egui::Context, t: &Tokens) {
     v.faint_bg_color = t.row_alt;
     v.override_text_color = Some(t.text);
     v.selection.bg_fill = t.accent;
-    v.selection.stroke = Stroke::new(1.0, Color32::WHITE);
+    v.selection.stroke = Stroke::new(1.0, t.on_accent);
     v.hyperlink_color = t.accent;
     v.window_stroke = Stroke::new(1.0, t.field_border);
     v.window_corner_radius = egui::CornerRadius::same(6);
@@ -561,7 +613,8 @@ mod tests {
         for kind in [ThemeKind::Dark, ThemeKind::Medium] {
             let t = Tokens::for_kind(kind);
             // Existing painted colors, recorded independently of the Light palette.
-            assert_eq!(t.pill_active_bg, Color32::from_gray(0x3a));
+            // Vibe Studio's `bg.active` (editor/docs/DESIGN.md §2)
+            assert_eq!(t.pill_active_bg, Color32::from_rgb(0x2a, 0x2a, 0x30));
             assert_eq!(t.clip_bar_bg, Color32::from_rgb(58, 58, 70));
             assert_eq!(t.control_surface, Color32::from_gray(0x24));
             assert_eq!(t.control_well, Color32::from_gray(0x10));

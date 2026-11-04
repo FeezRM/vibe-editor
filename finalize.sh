@@ -2,7 +2,7 @@
 # Promote the lane's render to outputs/<job>.final.mp4 and drop a copy in ~/Downloads.
 # Never reports an export that is not on disk and newer than the run start.
 #
-#   ./finalize.sh <job-dir> [--lane ffmpeg|premiere]
+#   ./finalize.sh <job-dir> [--lane ffmpeg|premiere|vibe]
 set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 JOB=""; LANE="ffmpeg"
@@ -15,6 +15,11 @@ cd "$REPO"
 if [[ "$LANE" == "premiere" ]]; then
   if node lanes/premiere/export.mjs "$JOB" "$OUT"; then :; else
     echo "premiere export failed — rendering on the ffmpeg lane instead" >&2; LANE=ffmpeg
+  fi
+fi
+if [[ "$LANE" == "vibe" ]]; then
+  if lanes/vibe/export.sh "$JOB" "$OUT"; then :; else
+    echo "vibe studio export failed — rendering on the ffmpeg lane instead" >&2; LANE=ffmpeg
   fi
 fi
 if [[ "$LANE" == "ffmpeg" ]]; then

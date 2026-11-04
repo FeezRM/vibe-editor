@@ -117,6 +117,7 @@ pub const UI_COMMANDS: &[UiCommand] = &[
     uic!("view.theme.medium", "Dark", ["View", "Appearance"], None),
     uic!("view.theme.light", "Light", ["View", "Appearance"], None),
     uic!("view.appearanceMode.next", "Next Appearance Mode", ["View", "Appearance"], None),
+    uic!("window.workspace.vibe", "Vibe", ["Window", "Workspaces"], None),
     uic!("window.workspace.editing", "Editing", ["Window", "Workspaces"], Some("Alt+Shift+1")),
     uic!("window.workspace.assembly", "Assembly", ["Window", "Workspaces"], Some("Alt+Shift+2")),
     uic!("window.workspace.color", "Color", ["Window", "Workspaces"], Some("Alt+Shift+3")),
@@ -648,6 +649,21 @@ pub fn invoke_command(app: &mut FilmcraftApp, ctx: &egui::Context, id: &str, mut
         app.session.set_prefs(next).map_err(|e| e.to_string())?;
         return Ok(Value::Null);
     }
+    // Vibe Studio: File ▸ Open Vibe Job… asks for the job folder
+    if id == "vibe.importJob" && params.get("dir").is_none() {
+        let params = params.clone();
+        return app.pick(crate::native_dialogs::FileDialog::Folder { at: None }, move |app, paths| {
+            let Some(dir) = paths.into_iter().next() else { return Ok(Value::Null) };
+            let mut p = params;
+            if let Some(o) = p.as_object_mut() {
+                o.insert("dir".into(), json!(dir));
+            }
+            open_vibe_job(app, p)
+        });
+    }
+    if id == "vibe.importJob" {
+        return open_vibe_job(app, params);
+    }
     // File dialogs for commands that need a path.
     if (id == "file.import" && params.get("paths").is_none() && params.get("path").is_none())
         || (id == "file.importImageSequence" && params.get("path").is_none())
@@ -684,6 +700,32 @@ pub fn invoke_command(app: &mut FilmcraftApp, ctx: &egui::Context, id: &str, mut
     if filled_clipboard {
         remember_stale_clipboard_media(app);
         put_clip_names_on_system_clipboard(app, ctx);
+    }
+    r
+}
+
+/// Run `vibe.importJob` and say what came in (or why not) on the status line.
+pub(crate) fn open_vibe_job(app: &mut FilmcraftApp, params: Value) -> Result<Value, String> {
+    let r = app.session.execute("vibe.importJob", params).map_err(|e| e.to_string());
+    app.ui.status = match &r {
+        Ok(v) => {
+            let warn = v["warnings"].as_array().map_or(0, Vec::len);
+            format!(
+                "Opened the vibe job: {} takes, {} zoom punches, {} captions, {} graphics, {} SFX{}",
+                v["clips"],
+                v["zoomPunches"],
+                v["captions"],
+                v["graphics"],
+                v["sfx"],
+                if warn > 0 { format!(" ({warn} warnings in the Events panel)") } else { String::new() }
+            )
+        }
+        Err(e) => e.clone(),
+    };
+    if let Ok(v) = &r {
+        for w in v["warnings"].as_array().into_iter().flatten().filter_map(Value::as_str) {
+            app.session.log.push(filmcraft_engine::panels::Level::Warning, "vibe.importJob", w.to_string());
+        }
     }
     r
 }

@@ -20,7 +20,7 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
     let t = app.tokens;
     let p = ui.painter().clone();
     p.rect_filled(rect, 0.0, t.header_bg);
-    p.line_segment([rect.left_bottom(), rect.right_bottom()], Stroke::new(1.0, Color32::BLACK));
+    p.line_segment([rect.left_bottom(), rect.right_bottom()], Stroke::new(1.0, t.separator));
     let drag = ui.interact(rect, egui::Id::unique("header-drag"), Sense::click_and_drag());
     if drag.drag_started_by(egui::PointerButton::Primary) {
         ui.ctx().send_viewport_cmd(egui::ViewportCommand::StartDrag);
@@ -30,35 +30,51 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
         ui.ctx().send_viewport_cmd(egui::ViewportCommand::Maximized(!max));
     }
     let mut x = rect.min.x + if app.integrated_titlebar { 104.0 } else { 14.0 };
-    // Home
-    let home = Rect::from_center_size(pos2(x + 10.0, rect.center().y), vec2(26.0, 26.0));
-    let hresp = ui.interact(home, egui::Id::unique("hdr-home"), Sense::click()).on_hover_text(tl!("Home"));
-    app.auto.add("header.home", home, "Home");
-    if hresp.hovered() {
-        p.rect_filled(home, 4.0, t.hover);
-    }
-    icons::paint(&p, home.shrink(5.0), Icon::Home, if hresp.hovered() { t.text } else { t.text_dim });
-    if hresp.clicked() {
-        app.ui.mode = Mode::Import;
-    }
-    x = home.max.x + 16.0;
-    // Mode tabs (14 pt; active = primary text with a 2 pt underline under the label)
-    for (m, label, shown) in [(Mode::Import, "Import", tl!("Import")), (Mode::Edit, "Edit", tl!("Edit")), (Mode::Export, "Export", tl!("Export"))] {
-        let active = app.ui.mode == m;
-        let galley = p.layout_no_wrap(shown.to_string(), Tokens::ui(14.0), if active { t.tab_text_active } else { t.tab_text });
+    // The app's name where FilmCraft has Home (Import is the first page)
+    let name = p.layout_no_wrap("Vibe Studio".to_string(), Tokens::semibold(13.0), t.text);
+    let home = Rect::from_min_size(pos2(x, rect.center().y - name.size().y / 2.0), name.size());
+    app.auto.add("header.appName", home, "Vibe Studio");
+    p.galley(home.min, name, t.text);
+    x = home.max.x + 22.0;
+    // Vibe Studio pages (editor/docs/DESIGN.md §3): Import and Export are modes, the others are
+    // workspaces of Edit mode. 13 pt; the active page in primary text with a 2 pt accent underline.
+    let pages: [(&str, &str, Mode, Option<&str>); 6] = [
+        ("import", "Import", Mode::Import, None),
+        ("edit", "Edit", Mode::Edit, Some("Vibe")),
+        ("captions", "Captions", Mode::Edit, Some("Captions and Graphics")),
+        ("color", "Color", Mode::Edit, Some("Color")),
+        ("audio", "Audio", Mode::Edit, Some("Audio")),
+        ("export", "Export", Mode::Export, None),
+    ];
+    let edit_page_shown = pages.iter().any(|(_, _, _, ws)| ws.is_some_and(|w| w == app.ui.workspace));
+    for (id, label, mode, ws) in pages {
+        let active = app.ui.mode == mode
+            && match ws {
+                Some(w) => app.ui.workspace == w || (w == "Vibe" && !edit_page_shown),
+                None => true,
+            };
+        let galley = p.layout_no_wrap(label.to_string(), Tokens::ui(13.0), if active { t.tab_text_active } else { t.tab_text });
         let r = Rect::from_min_size(pos2(x - 6.0, rect.min.y + 6.0), vec2(galley.size().x + 12.0, rect.height() - 12.0));
-        let resp = ui.interact(r, egui::Id::unique(("mode", label)), Sense::click());
-        app.auto.add(&format!("header.mode.{}", label.to_ascii_lowercase()), r, label);
+        let resp = ui.interact(r, egui::Id::unique(("page", id)), Sense::click());
+        app.auto.add(&format!("header.page.{id}"), r, label);
+        if id == "edit" || id == "import" || id == "export" {
+            // the mode ids FilmCraft agents already use
+            let mode_id = if id == "edit" { "edit" } else { id };
+            app.auto.add(&format!("header.mode.{mode_id}"), r, label);
+        }
         let col = if active || resp.hovered() { t.tab_text_active } else { t.tab_text };
         let gw = galley.size().x;
         p.galley_with_override_text_color(pos2(x, rect.center().y - galley.size().y / 2.0), galley, col);
         if active {
-            p.line_segment([pos2(x, rect.min.y + 29.0), pos2(x + gw, rect.min.y + 29.0)], Stroke::new(2.0, t.tab_text_active));
+            p.line_segment([pos2(x, rect.max.y - 2.0), pos2(x + gw, rect.max.y - 2.0)], Stroke::new(2.0, t.accent));
         }
         if resp.clicked() {
-            app.ui.mode = m;
+            app.ui.mode = mode;
+            if let Some(w) = ws {
+                app.set_workspace(w);
+            }
         }
-        x += gw + 24.0;
+        x += gw + 20.0;
     }
     let mut left_end = x;
     // In-window menus when there is no native menu bar.
@@ -75,6 +91,24 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
     let title = if app.session.is_dirty() { tlf!("{name} - Edited", name = app.session.project.name) } else { app.session.project.name.clone() };
     // Right cluster: icons at ~38 pt pitch, then workspace name in caps.
     let mut rx = rect.max.x - 14.0;
+    // Export: the one primary button, rightmost (Export mode)
+    {
+        let label = tl!("Export");
+        let g = p.layout_no_wrap(label.to_string(), Tokens::semibold(12.0), t.on_accent);
+        let r = Rect::from_min_size(pos2(rx - g.size().x - 24.0, rect.center().y - 13.0), vec2(g.size().x + 24.0, 26.0));
+        let resp = ui.interact(r, egui::Id::unique("hdr-export"), Sense::click()).on_hover_text(tl!("Export"));
+        app.auto.add("header.export", r, "Export");
+        ui.painter().rect_filled(r, 4.0, if resp.hovered() { t.accent_hover } else { t.accent });
+        ui.painter().galley(pos2(r.center().x - g.size().x / 2.0, r.center().y - g.size().y / 2.0), g, t.on_accent);
+        if resp.clicked() {
+            app.ui.mode = Mode::Export;
+        }
+        rx = r.min.x - 10.0;
+    }
+    let busy = app.assistant.busy();
+    let ar = Rect::from_center_size(pos2(rx - 14.0, rect.center().y), vec2(28.0, 28.0));
+    // the Quick Export button is the second icon from the right; its popup hangs under it
+    let qx = rx - 14.0 - 38.0;
     let mut btn = |ui: &mut egui::Ui, icon: Icon, id: &str, tip: &str, app: &mut FilmcraftApp| -> egui::Response {
         let r = Rect::from_center_size(pos2(rx - 14.0, rect.center().y), vec2(28.0, 28.0));
         rx -= 38.0;
@@ -86,21 +120,15 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
         icons::paint(ui.painter(), r.shrink(6.0), icon, if resp.hovered() { t.text } else { t.text_dim });
         resp
     };
-    if btn(ui, Icon::Fullscreen, "fullscreen", tl!("Full screen"), app).clicked() {
-        let fs = ui.ctx().input(|i| i.viewport().fullscreen.unwrap_or(false));
-        ui.ctx().send_viewport_cmd(egui::ViewportCommand::Fullscreen(!fs));
+    // Assistant: show the panel (Ask Claude, Activity); a dot while Claude is working
+    if btn(ui, Icon::Chat, "assistant", "Assistant: ask Claude, see what agents did", app).clicked() {
+        app.ui.mode = Mode::Edit;
+        app.show_panel(crate::dock::PanelKind::Assistant);
     }
-    if btn(ui, Icon::Speaker, "volume", tl!("Volume"), app).clicked() {
-        app.ui.status = tl!("Master volume: use the Audio Track Mixer").into();
-    }
-    if btn(ui, Icon::Search, "search", tl!("Search"), app).clicked() {
-        app.show_panel(crate::dock::PanelKind::Effects);
-    }
-    if btn(ui, Icon::Bell, "notifications", tl!("Progress"), app).clicked() {
-        app.ui.mode = Mode::Export;
+    if busy {
+        ui.painter().circle_filled(ar.right_top() + vec2(-6.0, 6.0), 3.0, t.accent);
     }
     // Quick Export: a popup with File Name & Location, a preset list and Export (Premiere 26)
-    let qx = rect.max.x - 14.0 - 4.0 * 38.0; // the fifth button from the right
     if btn(ui, Icon::Export, "quickExport", tl!("Quick Export"), app).clicked() {
         app.ui.export.quick_open = !app.ui.export.quick_open;
         ui.ctx().data_mut(|d| d.insert_temp(egui::Id::unique("quick-export-toggled"), true));
@@ -126,22 +154,12 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
     let wresp = ui.interact(wr, egui::Id::unique("hdr-ws-name"), Sense::click());
     app.auto.add("header.workspaceName", wr, &ws);
     p.galley_with_override_text_color(pos2(wr.min.x + 4.0, rect.center().y - wg.size().y / 2.0), wg, if wresp.hovered() { t.text } else { t.text_dim });
-    // Community: a labelled Discord button, always one click away.
+    // Document title, centred in the space between the pages and the right cluster
     {
-        let label = "Discord";
-        let g = p.layout_no_wrap(label.to_string(), Tokens::ui(12.0), Color32::WHITE);
-        let w = g.size().x + 34.0;
-        let r = Rect::from_min_size(pos2(wr.min.x - w - 14.0, rect.center().y - 12.0), vec2(w, 24.0));
-        let resp = ui.interact(r, egui::Id::unique("hdr-discord"), Sense::click()).on_hover_text(tl!("Join the ArtCraft Discord (discord.gg/artcraft)"));
-        app.auto.add("header.discord", r, "Join the ArtCraft Discord");
-        ui.painter().rect_filled(r, 12.0, if resp.hovered() { t.accent_hover } else { t.accent });
-        icons::paint(ui.painter(), Rect::from_center_size(pos2(r.min.x + 14.0, r.center().y), vec2(14.0, 14.0)), Icon::Chat, Color32::WHITE);
-        ui.painter().galley(pos2(r.min.x + 25.0, r.center().y - g.size().y / 2.0), g, Color32::WHITE);
-        // Localized menus and user titles can be wider than English. Use the actual gap.
         let left = left_end + 12.0;
-        let right = r.min.x - 12.0;
+        let right = wr.min.x - 12.0;
         if right > left + 40.0 {
-            let mut job = egui::text::LayoutJob::simple_singleline(title, Tokens::ui(14.0), t.tab_text_active);
+            let mut job = egui::text::LayoutJob::simple_singleline(title, Tokens::ui(13.0), t.text_dim);
             job.wrap.max_width = right - left;
             job.wrap.max_rows = 1;
             let galley = p.layout_job(job);
@@ -150,12 +168,8 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
             p.with_clip_rect(Rect::from_min_max(pos2(left, rect.min.y), pos2(right, rect.max.y))).galley(
                 pos2(center - half, rect.center().y - galley.size().y / 2.0),
                 galley,
-                t.tab_text_active,
+                t.text_dim,
             );
-        }
-
-        if resp.clicked() {
-            crate::links::open(app, ui.ctx(), crate::links::DISCORD);
         }
     }
     let popup_id = egui::Id::unique("workspaces-popup");

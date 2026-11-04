@@ -181,8 +181,15 @@ pub(super) fn preview_column(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Re
     } else {
         t.accent
     };
-    ui.painter().rect_filled(go, 15.0, fill_color);
-    ui.painter().text(go.center(), Align2::CENTER_CENTER, button_label, Tokens::semibold(13.0), if go_enabled { Color32::WHITE } else { t.text_faint });
+    ui.painter().rect_filled(go, 4.0, fill_color);
+    let label_color = if !go_enabled {
+        t.text_faint
+    } else if active_job.is_some() {
+        Color32::WHITE
+    } else {
+        t.on_accent
+    };
+    ui.painter().text(go.center(), Align2::CENTER_CENTER, button_label, Tokens::semibold(13.0), label_color);
     reg.add("export.button", go, button_label);
     reg.flush(app);
 

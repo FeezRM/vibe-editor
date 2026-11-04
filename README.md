@@ -75,6 +75,14 @@ Extensions → MCP Bridge (CEP)* → Temp Directory as printed by the installer 
 bridge is down the run continues on the ffmpeg lane and says so. `LANES.md` is the honest step × lane
 matrix of what is scripted, manual, unvalidated, or a gap.
 
+## Vibe Studio (the editor)
+
+`studio/` is **Vibe Studio**, a Premiere-style editor in pure Rust built on
+[FilmCraft](https://github.com/storytold/filmcraft) (MIT/Apache-2.0). It opens any job as a fully editable
+timeline (takes, camera and zoom keyframes, captions, graphics, SFX), shows what Claude or an agent did to the
+edit, lets you ask Claude for changes, and exports. `lanes/vibe/open.sh projects/my-reel` opens a job; see
+`studio/VIBE-STUDIO.md`.
+
 ## Make it yours
 
 - `brand/brand.json` + `brand/BRAND.md` → `node scripts/brand.mjs build` (colours, fonts, handle, voice).

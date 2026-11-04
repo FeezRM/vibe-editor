@@ -59,6 +59,7 @@ pub mod source_monitor;
 pub mod sync;
 pub mod transcript;
 pub mod trim;
+pub mod vibe_job;
 pub mod voiceover;
 
 use std::sync::Arc;

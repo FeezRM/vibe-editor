@@ -1,7 +1,28 @@
 # Plan: Vibe Studio, a Rust NLE for vibe-editing
 
-> Branch `rust-editor` · 2026-11-04 · status: **proposal, awaiting approval**. Nothing below is built yet.
-> The evidence is in `RESEARCH.md`; the look is in `DESIGN.md`. "Vibe Studio" is a working name.
+> Branch `rust-editor` · 2026-11-04 · status: **approved; M0–M3 first cut built** (see Progress).
+> The evidence is in `RESEARCH.md`; the look is in `DESIGN.md`; the code is in `../../studio/`
+> (`studio/VIBE-STUDIO.md` lists every change from FilmCraft).
+
+## Decisions (2026-11-04, from the owner)
+
+- **Name:** Vibe Studio.
+- **Base:** FilmCraft. Because only the UI would be reshaped and upstream merges must stay easy, the whole repo
+  came in as a git subtree at `studio/` (an evolution of option D below): the engine is unmodified except for one
+  new module and its registration, and the UI and app crates carry the Vibe Studio changes.
+- **Accent:** the creator's brand colour (`brand/brand.json` `palette.accent`; default amber `#FFC531`).
+- **Role:** edit by hand, see what the AI and agents did, ask the AI, **and export**.
+
+## Progress
+
+| Milestone | State |
+|---|---|
+| M0 spike | ✓ builds on Linux in ~10 min cold (4 cores), ~2 min incremental; runs under Xvfb (software Vulkan); headless export of a 1080×1920 H.264 works |
+| M1 headless bridge | ✓ first cut: `vibe.importJob` (engine command): takes, camera, zoom punches, captions, graphics, SFX, voice gain, transcript. Tested on a synthetic job: 267 frames = the EDL, captions muted under the graphic, gains set. ✗ not yet: holds, per-word accent styling, b-roll, the PSNR gate against a real job's ffmpeg-lane final |
+| M2 desktop shell | ✓ first cut: renamed, own icon, brand accent, flat dark tokens, page tabs, `Vibe` workspace, Export button. ✗ not yet: the CapCut-style inspector tabs, overview strip, safe-zone overlay |
+| M3 agent lane | ✓ first cut: Assistant panel (Ask Claude with tool use over every command + frame look; Activity feed of Claude's and agents' commands); `lanes/vibe/{open,export}.sh`; `finalize.sh --lane vibe` with ffmpeg fallback. ✗ not yet: ig-* skill sections, LANES.md parity runs |
+| M4–M6 | not started |
+
 
 ## 1. Goal
 
