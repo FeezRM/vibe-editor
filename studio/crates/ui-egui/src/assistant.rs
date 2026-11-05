@@ -568,8 +568,11 @@ session in this repository: CLAUDE.md, the skills (ig-reel, ig-cut, ig-captions,
 ig-delivery) and samples/ decide the edit. \
 The `vibe-studio` MCP server is the live app: `sequence_inspect` / `project_inspect` read the edit as it is now (including \
 the user's hand edits), `render_frame` shows a frame, and `command_run` / `command_batch` change it with editor commands \
-(each is one undo step the user sees in Assistant ▸ Activity). `sequence_inspect` leaves out caption tracks: read \
-captions with `command_run {\"id\": \"captions.list\"}` and edit them with the `captions.*` commands. `vibe.importJob {\"dir\": \"<job folder>\"}` builds a \
+(each is one undo step the user sees in Assistant ▸ Activity). Captions are text clips on V5 \
+(read and retype them with `graphics.list` / `graphics.setText`, restyle a word with `graphics.setCharStyle`). \
+Before re-running a pipeline node on a job the user has edited here, run `vibe.diffJob {\"dir\": \"<job>\"}` and carry \
+what they changed into the job's decision files (cuts.overrides.json, captions.overrides.json, graphics-plan.json) so \
+the re-run keeps their edits. `vibe.importJob {\"dir\": \"<job folder>\"}` builds a \
 sequence from a pipeline job's files: run it after the pipeline produced or changed a cut so the user sees it (it adds a \
 new sequence and leaves their hand-edited one alone). For a precise change the user asks for on the timeline (trim this, \
 move that caption, punch in here), change the timeline directly with commands rather than re-running the pipeline. \

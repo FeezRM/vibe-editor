@@ -72,18 +72,28 @@ protocol for answering permission prompts from a host app.
 | `cuts.json` keeps | linked V1/A1 clips back to back, whole frames (no drift from the EDL) |
 | `preview/framing.json` | Motion Scale/Position on every V1 clip (the ffmpeg lane's fixed camera) |
 | `keep.zoom` | eased Scale/Position keyframes anchored on the face; `out` = the opening zoom-out |
-| `captions.json` | caption track `Captions` (C1), text and timing editable, styled from the look; groups under `mute_captions` graphics are left out |
+| `captions.json` | one text clip per caption on V5 in the look: caption face and size at its band, accent words and keyword groups in the accent face, scale and colour (per-character styles), retypable and restylable; groups under `mute_captions` graphics and hook titles are left out (`"captions": "track"` gives a plain caption track for SRT/VTT instead) |
+| `keep.hold` | a frame-hold clip of the keep's last frame, framed as the keep ended |
+| `broll-plan.json` | cutaways on V2 (filled, panned, sped), windowed clips on V2 with their sound on A2, hook titles on V4 |
 | `graphics-plan.json` + `renders/*.mov` | alpha clips on V3 (V4 when V3 is busy) at their cue |
-| `sfx-plan.json` | SFX on A3 at their dB, the music bed on A4 |
-| `audio/voice-gain.json` | clip gain on every A1 clip |
+| `sfx-plan.json` | SFX on A3 at their dB; the music bed on A4 from `onset_s`, at the hook level then the bed level (Volume keyframes) |
+| `audio/voice-gain.json` | clip gain on every A1 clip, and a Hard Limiter on A1 at `audio.peak_dbfs` (the ffmpeg lane's `alimiter`) |
 
 `vibe.importJob {"dir", "captions": "track"|"render"|"none"}` is an engine command like any other,
 so it also runs from the CLI (`filmcraft-cli exec vibe.importJob dir=projects/<job>`), the control
 channel, MCP and the Assistant. The whole import is one undo step.
 
-Not rebuilt yet: frozen holds (`keep.hold`), per-word caption accents (the look's second face and
-colour; the accent word is upper-cased when the look sets `accent_case: uppercase`), b-roll from
-`broll-plan.json`. See `../editor/docs/PLAN.md` M4.
+**Editing by hand.** Imported sequences are *magnetic* (Sequence ▸ Magnetic Timeline): trimming or
+deleting a take ripples the captions, graphics and SFX after it and trims whatever crosses the cut,
+as CapCut's main track does (FilmCraft, like Premiere, refuses such an edit). The music bed is not
+sync-locked, so it stays one piece. `vibe.diffJob {"dir"}` reports what you changed against the
+job's files (takes trimmed / removed / added / split, holds, captions retyped / retimed / removed /
+added, graphics moved / removed / added), so the agent can keep your edits when it re-runs the
+pipeline.
+
+Not rebuilt yet: crop_top on b-roll cutaways, the captions' text glow (a drop shadow stands in),
+the opening zoom's exact smoothstep (an ease stands in). Fonts come from the system: install the
+look's fonts (e.g. Europa Grotesk, Tactic Sans) on the Mac, as the samples look expects.
 
 ## Changes from FilmCraft
 

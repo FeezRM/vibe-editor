@@ -176,6 +176,27 @@ pub fn track_range_empty(track: &Track, range: TimeRange) -> bool {
     !track.items.iter().any(|i| i.range().overlaps(&range))
 }
 
+/// Magnetic timeline: take `range` out of a track's material instead of refusing a ripple edit
+/// (`Sequence::magnetic`). An item inside the range goes; one reaching into it from the left is
+/// cut back to the range start (a long one that crosses it loses the range's length from its
+/// tail); one reaching out of it to the right loses its head up to the range end, so the ripple's
+/// shift lands it where the range began. Items `keep` names are left alone.
+pub fn clear_range(track: &mut Track, range: TimeRange, keep: impl Fn(&TrackItem) -> bool) {
+    let (a, b) = (range.start, range.end());
+    track.items.retain(|i| keep(i) || !(i.start >= a && i.end() <= b));
+    for i in track.items.iter_mut().filter(|i| !keep(i) && i.range().overlaps(&range)) {
+        if i.start < a {
+            let cut = if i.end() <= b { i.end() - a } else { range.duration };
+            i.duration -= cut;
+        } else {
+            let head = b - i.start;
+            move_edge(i, Edge::In, head, true);
+        }
+    }
+    track.items.retain(|i| i.duration > Tick::ZERO);
+    remove_orphan_transitions(track);
+}
+
 /// Drop transitions whose clips no longer exist or are no longer adjacent to them (a transition
 /// between two clips must sit on their cut: the outgoing clip's end = the incoming clip's start).
 /// A one-sided fade needs only its clip. `Session::edit` runs this on every sequence an edit
@@ -515,7 +536,10 @@ pub fn ripple_delete_items(seq: &mut Sequence, items: &[ClipId]) -> Result<Vec<T
                 continue;
             }
             if !on_affected && !track_range_empty(tr, *span) {
-                return Err(EditError::SyncLockConflict(track_label(seq, tr.id)));
+                if !seq.magnetic {
+                    return Err(EditError::SyncLockConflict(track_label(seq, tr.id)));
+                }
+                clear_range(tr, *span, |_| false);
             }
             shift_track_from(tr, span.end(), -span.duration);
         }
@@ -550,7 +574,10 @@ pub fn close_gap(seq: &mut Sequence, track: TrackId, t: Tick) -> Result<()> {
                 continue;
             }
             if !track_range_empty(tr, gap) {
-                return Err(EditError::SyncLockConflict(track_label(seq, tr.id)));
+                if !seq.magnetic {
+                    return Err(EditError::SyncLockConflict(track_label(seq, tr.id)));
+                }
+                clear_range(tr, gap, |_| false);
             }
         }
         shift_track_from(tr, gap.end(), -gap.duration);
@@ -824,7 +851,10 @@ pub fn trim(seq: &mut Sequence, clip: ClipId, edge: Edge, mode: TrimMode, delta:
                 // (the clip's own linked partners are the caller's to trim or leave)
                 let in_the_way = tr.items.iter().any(|i| i.range().overlaps(&closing) && (own_link.is_none() || i.link != own_link));
                 if tr.id != tid && shift < Tick::ZERO && in_the_way {
-                    return Err(EditError::SyncLockConflict(track_label(seq, tr.id)));
+                    if !seq.magnetic {
+                        return Err(EditError::SyncLockConflict(track_label(seq, tr.id)));
+                    }
+                    clear_range(tr, closing, |i| own_link.is_some() && i.link == own_link);
                 }
                 let from = if edge == Edge::In { old_start + Tick(1) } else { old_end };
                 for i in &mut tr.items {
@@ -929,8 +959,12 @@ pub fn ripple_trim_group(seq: &mut Sequence, clips: &[ClipId], edge: Edge, delta
             // a shorter head closes the stretch just after the cut, a shorter tail the one before it
             let closing = if edge == Edge::In { TimeRange::new(from - Tick(1), -shift) } else { TimeRange::new(from + shift, -shift) };
             let own = |i: &TrackItem| i.link.is_some_and(|l| own_links.contains(&l));
-            if tr.items.iter().any(|i| i.range().overlaps(&closing) && !follows(i) && !own(i) && !stays(i)) {
-                return Err(EditError::SyncLockConflict(track_label(seq, tid)));
+            let blocking: Vec<ClipId> = tr.items.iter().filter(|i| i.range().overlaps(&closing) && !follows(i) && !own(i) && !stays(i)).map(|i| i.id).collect();
+            if !blocking.is_empty() {
+                if !seq.magnetic {
+                    return Err(EditError::SyncLockConflict(track_label(seq, tid)));
+                }
+                clear_range(tr, closing, |i| !blocking.contains(&i.id));
             }
         }
         let followers: Vec<ClipId> = tr.items.iter().filter(|i| !clips.contains(&i.id) && follows(i)).map(|i| i.id).collect();

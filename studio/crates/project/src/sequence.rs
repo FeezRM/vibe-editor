@@ -169,6 +169,11 @@ pub struct Sequence {
     /// Split In/Out points (Markers ▸ Mark Split): per-channel overrides of `mark_in`/`mark_out`.
     #[serde(default, skip_serializing_if = "SplitMarks::is_empty")]
     pub split: SplitMarks,
+    /// Magnetic timeline (Vibe Studio; CapCut's main-track magnet): a ripple edit that closes time
+    /// trims whatever crosses the closing stretch on a sync-locked track (a caption, a graphic, an
+    /// SFX) instead of refusing the edit. Off in FilmCraft's own sequences.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub magnetic: bool,
 }
 
 /// Split edit points: separate video and audio In/Out points (Markers ▸ Mark Split). `None` means

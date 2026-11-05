@@ -181,6 +181,32 @@ fn ripple_delete_and_conflict() {
     assert_eq!(fx.spans(v1), vec![(0, 10), (20, 10)], "unchanged on failure");
 }
 
+/// Vibe Studio's magnetic timeline: what crosses the closing stretch on a sync-locked track is
+/// trimmed out of it instead of blocking the edit (a caption over a take that is deleted or cut
+/// shorter); without the flag the edit is refused as before.
+#[test]
+fn magnetic_ripples_trim_what_is_in_the_way() {
+    let mut fx = Fx::new();
+    let (v1, v2) = (fx.v(0), fx.v(1));
+    let a = fx.put(v1, 0, 10, 0);
+    let b = fx.put(v1, 10, 10, 0);
+    fx.put(v1, 20, 10, 0);
+    // captions: one ends inside take b, one crosses into take c, one lies wholly inside b
+    fx.put(v2, 6, 7, 0);
+    fx.put(v2, 14, 2, 0);
+    fx.put(v2, 18, 6, 0);
+    assert_eq!(ripple_delete_items(&mut fx.seq, &[b]), Err(EditError::SyncLockConflict("V2".into())), "not magnetic: refused");
+    fx.seq.magnetic = true;
+    ripple_delete_items(&mut fx.seq, &[b]).unwrap();
+    assert_eq!(fx.spans(v1), vec![(0, 10), (10, 10)]);
+    assert_eq!(fx.spans(v2), vec![(6, 4), (10, 4)], "cut back to the gap, the inner one gone, the late one trimmed and shifted");
+    // a shorter tail on take a: the caption crossing its end loses the closed stretch
+    let mut n = fx.next;
+    ripple_trim_group(&mut fx.seq, &[a], Edge::Out, -f(2), &mut Fx::ctx(&mut n)).unwrap();
+    assert_eq!(fx.spans(v1), vec![(0, 8), (8, 10)]);
+    assert_eq!(fx.spans(v2), vec![(6, 2), (8, 4)]);
+}
+
 #[test]
 fn ripple_delete_closes_the_time_free_on_every_track() {
     // four clips on V1 with their sounds on A1; the second sound starts 2 early and ends 2 late

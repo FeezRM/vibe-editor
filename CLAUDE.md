@@ -62,11 +62,14 @@ compositions.
 
 `studio/` is the user's editor (FilmCraft-based; `studio/VIBE-STUDIO.md`). When an edit is ready, or the user wants to
 look or tweak by hand: `lanes/vibe/open.sh projects/<job>` (returns at once; their hand edits live in
-`<job>/vibe/<job>.fcproj`). While it is open, the `vibe-studio` MCP server is the live app: `sequence_inspect`
-(captions: `command_run captions.list`), `render_frame`, `command_run` / `command_batch` — each change is an undo step
-the user sees in Assistant ▸ Activity. A timeline tweak they ask for goes through those commands, not a pipeline re-run;
-after a pipeline re-run, `vibe.importJob {"dir": "<job>"}` shows the new cut as a new sequence (their hand-edited one
-stays). If they edited by hand, export with `./finalize.sh <job> --lane vibe` so their edits ship.
+`<job>/vibe/<job>.fcproj`). It shows the edit as the pipeline ships it (styled captions as text clips on V5, graphics,
+b-roll, holds, zooms as keyframes, SFX, music levels) and every piece stays editable. While it is open, the `vibe-studio`
+MCP server is the live app: `sequence_inspect`, `render_frame`, `command_run` / `command_batch` — each change is an undo
+step the user sees in Assistant ▸ Activity. A timeline tweak they ask for goes through those commands, not a pipeline
+re-run. **Before re-running any node on a job they edited by hand, run `vibe.diffJob {"dir": "<job>"}`** (what they
+trimmed, deleted, retyped, retimed or moved, in pipeline terms) and carry it into `cuts.overrides.json`,
+`captions.overrides.json` and `graphics-plan.json`, so the re-run keeps their edits; then `vibe.importJob` shows the new
+cut as a new sequence. If they edited by hand, export with `./finalize.sh <job> --lane vibe` so their edits ship.
 
 ## Technical locks — one line each; the story is in the archive
 

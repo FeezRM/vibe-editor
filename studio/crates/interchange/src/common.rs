@@ -601,6 +601,7 @@ pub(crate) fn empty_sequence(settings: SequenceSettings) -> Sequence {
         multicam: None,
         merged: None,
         split: Default::default(),
+        magnetic: false,
     }
 }
 
