@@ -3,7 +3,7 @@
 # Full interface coverage: every string of the reference catalog is translated into Russian with
 # ordinary video-editing vocabulary. Clean-room: written from the plain meaning of the English
 # text; no proprietary localization resource, string table or product interface was consulted.
-	About FilmCraft	О FilmCraft
+	About Vibe Studio	О Vibe Studio
 	Add Audio Submix Track	Добавить дорожку подмикширования аудио
 	Add Caption at Playhead	Добавить субтитр в позиции курсора
 	Add Chapter Marker…	Добавить маркер главы…
@@ -29,7 +29,6 @@
 	Apply Default Transitions to Selection	Применить переходы по умолчанию к выделению
 	Apply Video Transition	Применить видеопереход
 	Arrange	Упорядочить
-	ArtCraft Website	Веб-сайт ArtCraft
 	Assembly	Сборка
 	Attach Proxies…	Прикрепить прокси…
 	Audio Channels…	Аудиоканалы…
@@ -122,9 +121,8 @@
 	File	Файл
 	File…	Файл…
 	Fill frame	Заполнить кадр
-	FilmCraft Help…	Справка FilmCraft…
-	FilmCraft on GitHub	FilmCraft на GitHub
-	FilmCraft on getartcraft.com	FilmCraft на getartcraft.com
+	Vibe Studio Help…	Справка Vibe Studio…
+	Vibe Studio on GitHub	Vibe Studio на GitHub
 	Find Next	Найти далее
 	Find…	Найти…
 	Fit	Вписать
@@ -168,7 +166,6 @@
 	Insert Frame Hold Segment	Вставить сегмент стоп-кадра
 	Install Motion Graphics Template…	Установить шаблон анимированной графики…
 	Interpret Footage…	Интерпретировать материал…
-	Join the ArtCraft Discord…	Присоединиться к Discord ArtCraft…
 	Keyboard Shortcuts…	Сочетания клавиш…
 	Label	Метка
 	Labels…	Метки…
@@ -297,7 +294,7 @@
 	Select Previous Graphic	Выбрать предыдущий графический элемент
 	Select Previous Layer	Выбрать предыдущий слой
 	Selection Follows Playhead	Выделение следует за курсором воспроизведения
-	Selection as FilmCraft Project…	Выделение как проект FilmCraft…
+	Selection as Vibe Studio Project…	Выделение как проект Vibe Studio…
 	Selection…	Выделение…
 	Send Backward	Переместить назад
 	Send to Back	Переместить на задний план
@@ -364,7 +361,6 @@
 	Master volume: use the Audio Track Mixer	Громкость мастера задаётся в микшере аудиодорожек
 	Search	Поиск
 	Quick Export	Быстрый экспорт
-	Join the ArtCraft Discord (discord.gg/artcraft)	Присоединиться к Discord ArtCraft (discord.gg/artcraft)
 	Cancel	Отмена
 	OK	ОК
 	Interpret Footage	Интерпретировать материал
@@ -407,8 +403,6 @@
 	Delete Caption Track	Удалить дорожку субтитров
 	Delete Empty Caption Tracks	Удалить пустые дорожки субтитров
 	Version {version}	Версия {version}
-	A clean-room, pure-Rust non-linear video editor. Part of the ArtCraft family.	Нелинейный видеоредактор на чистом Rust, созданный по принципу чистой комнаты. Часть семейства ArtCraft.
-	Join the ArtCraft Discord	Присоединиться к Discord ArtCraft
 	Source code on GitHub	Исходный код на GitHub
 	Report an issue	Сообщить о проблеме
 	MIT OR Apache-2.0. Fonts: Inter, Noto Serif and JetBrains Mono (SIL OFL 1.1).	MIT OR Apache-2.0. Шрифты: Inter, Noto Serif и JetBrains Mono (SIL OFL 1.1).
@@ -428,7 +422,7 @@
 	No background jobs.	Фоновых заданий нет.
 	Recover Unsaved Changes	Восстановить несохранённые изменения
 	Untitled	Без названия
-	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft был закрыт, а в проекте «{name}» оставались несохранённые изменения.
+	Vibe Studio was closed while “{name}” had unsaved changes.	Vibe Studio был закрыт, а в проекте «{name}» оставались несохранённые изменения.
 	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio неожиданно завершился, а в проекте «{name}» оставались несохранённые изменения.
 	Recover unsaved changes from {when}?	Восстановить несохранённые изменения от {when}?
 	The project had not been saved yet.	Проект ещё не был сохранён.
@@ -956,7 +950,7 @@
 	Font family	Семейство шрифтов
 	Label Colors	Цвета меток
 	Decoded frames held for the monitors and thumbnails: {used} of {budget}.	Декодированных кадров в памяти для мониторов и миниатюр: {used} из {budget}.
-	FilmCraft keeps the rest of the RAM free for other applications.	FilmCraft оставляет остальную оперативную память свободной для других приложений.
+	Vibe Studio keeps the rest of the RAM free for other applications.	Vibe Studio оставляет остальную оперативную память свободной для других приложений.
 	not available in this session	недоступно в этом сеансе
 	Currently: {loc} — {files} file(s), {size}	Сейчас: {loc} — файлов: {files}, {size}
 	 ({ch} output channels)	 (каналов выхода: {ch})
@@ -1067,7 +1061,7 @@
 	Video Frame	Кадр видео
 	Pin To	Прикрепить к
 	Pinned Edges	Закреплённые края
-	FilmCraft Graphics Template	Шаблон графики FilmCraft
+	Vibe Studio Graphics Template	Шаблон графики Vibe Studio
 	{n} Font	Шрифт {n}
 	{n} Size	Размер {n}
 	{n} Color	Цвет {n}
@@ -1077,7 +1071,7 @@
 	Export As Motion Graphics Template	Экспортировать как шаблон анимированной графики
 	Category:	Категория:
 	Editable properties:	Редактируемые свойства:
-	Saved as a FilmCraft graphics template (.fcgt) in your templates folder.	Сохранено как шаблон графики FilmCraft (.fcgt) в папке шаблонов.
+	Saved as a Vibe Studio graphics template (.fcgt) in your templates folder.	Сохранено как шаблон графики Vibe Studio (.fcgt) в папке шаблонов.
 	Exported graphics template to {path}	Шаблон графики экспортирован в {path}
 	Replace Fonts in Projects	Заменить шрифты в проектах
 	Fonts used in the project:	Шрифты, используемые в проекте:
@@ -1448,7 +1442,7 @@
 	Center of Sphere	Центр сферы
 	Cents	Центы
 	Change to Color	Изменить на цвет
-	Changes are copied in the background a moment after each edit. If FilmCraft quits unexpectedly, they are offered the next time it starts.	Изменения копируются в фоне через мгновение после каждой правки. Если FilmCraft неожиданно закроется, их предложат при следующем запуске.
+	Changes are copied in the background a moment after each edit. If Vibe Studio quits unexpectedly, they are offered the next time it starts.	Изменения копируются в фоне через мгновение после каждой правки. Если Vibe Studio неожиданно закроется, их предложат при следующем запуске.
 	Channel	Канал
 	Channel Blur	Размытие канала
 	Channel Mix	Микширование каналов
@@ -1821,13 +1815,13 @@
 	Hard Limiter	Жёсткий ограничитель
 	Hard Mix	Жёсткое смешивание
 	Hardware decoding	Аппаратное декодирование
-	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and FilmCraft's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Аппаратное декодирование: в режиме «Авто» используется системный видеодекодер (VideoToolbox в macOS, Media Foundation в Windows, VA-API или NVDEC для H.264 и HEVC в Linux) для поддерживаемых им потоков, а для всего остального или при сбое оборудования — собственный декодер FilmCraft. Уже открытые медиа сохраняют свой декодер до повторного открытия.
+	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and Vibe Studio's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Аппаратное декодирование: в режиме «Авто» используется системный видеодекодер (VideoToolbox в macOS, Media Foundation в Windows, VA-API или NVDEC для H.264 и HEVC в Linux) для поддерживаемых им потоков, а для всего остального или при сбое оборудования — собственный декодер Vibe Studio. Уже открытые медиа сохраняют свой декодер до повторного открытия.
 	Head Size	Размер головы
 	Heart	Сердце
 	Height	Высота
 	Hexagon	Шестиугольник
 	Hide Back Face	Скрыть обратную сторону
-	Hide FilmCraft	Скрыть FilmCraft
+	Hide Vibe Studio	Скрыть Vibe Studio
 	Hide Others	Скрыть остальные
 	High	Высокий
 	High Cutoff	Срез ВЧ
@@ -2098,7 +2092,7 @@
 	Night	Ночь
 	No Motion	Без движения
 	No Scroll	Без прокрутки
-	No plugins are installed. Changes will take effect the next time you start FilmCraft.	Плагины не установлены. Изменения вступят в силу при следующем запуске FilmCraft.
+	No plugins are installed. Changes will take effect the next time you start Vibe Studio.	Плагины не установлены. Изменения вступят в силу при следующем запуске Vibe Studio.
 	Noise	Шум
 	Noise & Grain	Шум и зерно
 	Noise (Legacy)	Шум (устаревший)
@@ -2530,7 +2524,7 @@
 	Template Properties	Свойства шаблона
 	Text Animator	Аниматор текста
 	Text Color	Цвет текста
-	The media cache holds render previews of unsaved projects and other files FilmCraft can recreate. Deleting them is always safe; FilmCraft rebuilds them as needed.	Кэш медиа хранит превью визуализации несохранённых проектов и других файлов, которые FilmCraft может воссоздать. Удалять их всегда безопасно: FilmCraft пересоздаёт их по мере необходимости.
+	The media cache holds render previews of unsaved projects and other files Vibe Studio can recreate. Deleting them is always safe; Vibe Studio rebuilds them as needed.	Кэш медиа хранит превью визуализации несохранённых проектов и других файлов, которые Vibe Studio может воссоздать. Удалять их всегда безопасно: Vibe Studio пересоздаёт их по мере необходимости.
 	Thickness	Толщина
 	Tile Gradient	Плиточный градиент
 	Tilt	Наклон
@@ -2740,8 +2734,8 @@
 	System Compatibility Report	Отчёт о совместимости системы
 	no GPU adapter: the CPU compositor is used	Нет адаптера GPU: используется композитор на CPU
 	Avid Log Exchange	Avid Log Exchange (ALE)
-	FilmCraft Project	Проект FilmCraft
-	{name} Selection.fcproj	{name} Выделение.fcproj
+	Vibe Studio Project	Проект Vibe Studio
+	{name} Selection.vibeproj	{name} Выделение.vibeproj
 	{name} (Simplified)	{name} (упрощённая)
 	Find in:	Найти в:
 	Find:	Найти:
@@ -2880,7 +2874,7 @@
 	Start Queue	Запустить очередь
 	Stop	Остановить
 	Clear Finished	Очистить завершённые
-	Not supported by FilmCraft's encoders yet	Кодировщики FilmCraft пока это не поддерживают
+	Not supported by Vibe Studio's encoders yet	Кодировщики Vibe Studio пока это не поддерживают
 	Sequence name	Имя последовательности
 	Folder	Папка
 	Preset	Пресет
@@ -2970,7 +2964,7 @@
 	Drag a clip to slide it between its neighbours.	Перетащите клип для смещения между соседними клипами.
 	Drag to scroll the timeline.	Перетащите, чтобы прокрутить таймлайн.
 	Click to zoom in; Opt-click to zoom out.	Щёлкните для увеличения масштаба; Opt+щелчок — для уменьшения.
-	FilmCraft hit an error	В FilmCraft произошла ошибка
+	Vibe Studio hit an error	В Vibe Studio произошла ошибка
 	Details: {path}	Подробности: {path}
 	Opened {url}	Открыто {url}
 	(empty)	(пусто)
@@ -3230,7 +3224,7 @@
 	QuickTime, ProRes 4444 (4:4:4) with alpha channel, 24-bit 48 kHz PCM	QuickTime, ProRes 4444 (4:4:4) с альфа-каналом, PCM 24 бит, 48 кГц
 	QuickTime, ProRes 4444 XQ (4:4:4), 24-bit 48 kHz PCM	QuickTime, ProRes 4444 XQ (4:4:4), PCM 24 бит, 48 кГц
 	QuickTime, ProRes 422, 24-bit 48 kHz PCM	QuickTime, ProRes 422, PCM 24 бит, 48 кГц
-	Quit FilmCraft	Выйти из FilmCraft
+	Quit Vibe Studio	Выйти из Vibe Studio
 	Rate Stretch Tool	Растяжение скорости
 	Razor Tool	Лезвие
 	Rectangle Tool	Прямоугольник
@@ -3531,8 +3525,8 @@
 	Composite in Linear Color	Компоновка в линейном цвете
 	Auto Tone Map Media (HDR and log into SDR)	Автоматическое отображение тонов медиа (HDR и лог в SDR)
 	Configure…	Настроить…
-	Not supported in FilmCraft yet	Пока не поддерживается в FilmCraft
-	FilmCraft always composites in linear light	FilmCraft всегда компонует в линейном свете
+	Not supported in Vibe Studio yet	Пока не поддерживается в Vibe Studio
+	Vibe Studio always composites in linear light	Vibe Studio всегда компонует в линейном свете
 	Loop marked range	Цикл по помеченному диапазону
 	Play Source	Воспроизвести источник
 	Source Play/Stop	Воспроизвести/остановить источник
@@ -3592,7 +3586,7 @@
 	Opens in your web browser: {url}	Откроется в браузере: {url}
 	Saves this session's log and shows it in your file manager.	Сохраняет журнал этого сеанса и показывает его в файловом менеджере.
 	Shows a report on this computer.	Показывает отчёт о компьютере.
-	Shows the version, community links and credits in a FilmCraft window.	Показывает версию, ссылки сообщества и список участников в окне FilmCraft.
+	Shows the version, community links and credits in a Vibe Studio window.	Показывает версию, ссылки сообщества и список участников в окне Vibe Studio.
 	Couldn't open your web browser	Не удалось открыть браузер
 	Open this address in your browser yourself:	Этот адрес нужно открыть в браузере вручную:
 	Reset Interface Zoom	Сбросить масштаб интерфейса
@@ -3662,7 +3656,7 @@
 # The strings the missing-translations report listed for ru (#1674).
 	1 frame ({seconds} s)	1 кадр ({seconds} с)
 	1/2	1/2
-	AV1 needs a hardware encoder; none was found on this machine, and FilmCraft has no software AV1 encoder yet.	Для AV1 требуется аппаратный кодировщик; на этом компьютере он не найден, а программного кодировщика AV1 в FilmCraft пока нет.
+	AV1 needs a hardware encoder; none was found on this machine, and Vibe Studio has no software AV1 encoder yet.	Для AV1 требуется аппаратный кодировщик; на этом компьютере он не найден, а программного кодировщика AV1 в Vibe Studio пока нет.
 	Add Track	Добавить дорожку
 	Audio Names	Имена аудио
 	Audio output failed: playing without sound (check Settings > Audio Hardware)	Ошибка аудиовыхода: воспроизведение без звука (проверьте Настройки > Аудиооборудование)
@@ -3687,13 +3681,13 @@
 	End: {tc}	Конец: {tc}
 	Enter a positive duration within the supported speed range.	Введите положительную длительность в поддерживаемом диапазоне скоростей.
 	Exported {path} as {format}, from its file extension	Экспортировано {path} как {format}, по расширению файла
-	FilmCraft Updates	Обновления FilmCraft
-	FilmCraft {version} is currently the newest version available.	FilmCraft {version} — самая новая доступная версия.
-	H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and FilmCraft has no software H.265 encoder yet. Choose H.264 or ProRes instead.	Для H.265 (HEVC) требуется аппаратный кодировщик (NVENC на GPU NVIDIA, VideoToolbox на macOS); на этом компьютере он не найден, а программного кодировщика H.265 в FilmCraft пока нет. Вместо него выберите H.264 или ProRes.
+	Vibe Studio Updates	Обновления Vibe Studio
+	Vibe Studio {version} is currently the newest version available.	Vibe Studio {version} — самая новая доступная версия.
+	H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and Vibe Studio has no software H.265 encoder yet. Choose H.264 or ProRes instead.	Для H.265 (HEVC) требуется аппаратный кодировщик (NVENC на GPU NVIDIA, VideoToolbox на macOS); на этом компьютере он не найден, а программного кодировщика H.265 в Vibe Studio пока нет. Вместо него выберите H.264 или ProRes.
 	In:	Вход:
 	Invalid duration: {error}	Недопустимая длительность: {error}
 	Keep Existing Settings	Сохранить существующие параметры
-	Looks for a newer FilmCraft release and offers to update.	Ищет более новый выпуск FilmCraft и предлагает обновиться.
+	Looks for a newer Vibe Studio release and offers to update.	Ищет более новый выпуск Vibe Studio и предлагает обновиться.
 	Marker Color:	Цвет маркера:
 	No matching text.	Совпадений с текстом нет.
 	No text graphics in this sequence. Add text with the Type tool.	В этой последовательности нет текстовой графики. Добавьте текст инструментом «Текст».

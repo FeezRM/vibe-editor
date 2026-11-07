@@ -1,4 +1,4 @@
-//! Test-only helpers shared by every FilmCraft crate (used as a dev-dependency only).
+//! Test-only helpers shared by every Vibe Studio crate (used as a dev-dependency only).
 //!
 //! - [`oracle`]: find `ffmpeg` / `ffprobe` (env vars, `PATH`, well-known dirs) and skip — or, with
 //!   `FILMCRAFT_REQUIRE_ORACLES=1`, fail — when they are missing ([`require_ffmpeg!`] & co.).

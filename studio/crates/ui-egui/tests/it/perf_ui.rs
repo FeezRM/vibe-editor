@@ -170,7 +170,7 @@ fn opening_a_project_releases_the_previous_media_pool() {
     let dir = std::env::temp_dir().join(format!("filmcraft-perf-ui-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).unwrap();
-    let path = dir.join("reopen.fcproj").to_string_lossy().to_string();
+    let path = dir.join("reopen.vibeproj").to_string_lossy().to_string();
 
     let mut d = Driver::demo();
     d.settled();

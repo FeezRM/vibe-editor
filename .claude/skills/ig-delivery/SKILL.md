@@ -14,7 +14,7 @@ python workflows/verify-final.py projects/<job>          # gate + review/final-s
 the Premiere lane `lanes/premiere/export.mjs` proves the file itself and falls back to ffmpeg.
 
 **Vibe Studio** (`studio/`, the vibe lane) is the editor the user refines in: `lanes/vibe/open.sh projects/<job>`
-opens the job as an editable timeline (their hand edits live in `<job>/vibe/<job>.fcproj`), and `--lane vibe`
+opens the job as an editable timeline (their hand edits live in `<job>/vibe/<job>.vibeproj`), and `--lane vibe`
 exports that project with captions burned in, falling back to ffmpeg. When the user has edited by hand, export on
 the vibe lane so their edits ship; then run `verify-final.py` as usual.
 

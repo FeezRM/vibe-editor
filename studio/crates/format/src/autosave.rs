@@ -1,10 +1,10 @@
 //! Auto-save file naming and rotation (Premiere behaviour).
 //!
 //! Auto-saves go to an `Auto-Save` folder next to the project, named
-//! `<project name>-YYYY-MM-DD_HH-MM-SS-<unix seconds>.fcproj` (local wall-clock time, then the real
+//! `<project name>-YYYY-MM-DD_HH-MM-SS-<unix seconds>.vibeproj` (local wall-clock time, then the real
 //! time that orders the files). After each write the oldest files of that project beyond the "Maximum
-//! Project Versions" limit are deleted. Only files whose name is exactly `<name>-<timestamp>.fcproj`
-//! or `<name>-<timestamp>-<unix seconds>.fcproj` are ever touched.
+//! Project Versions" limit are deleted. Only files whose name is exactly `<name>-<timestamp>.vibeproj`
+//! or `<name>-<timestamp>-<unix seconds>.vibeproj` are ever touched.
 
 use std::fs;
 use std::io;
@@ -70,10 +70,10 @@ pub fn display_time(unix: i64, offset_secs: i32) -> String {
     format!("{y:04}-{mo:02}-{d:02} {h:02}:{mi:02}:{s:02}")
 }
 
-/// `<stem>-YYYY-MM-DD_HH-MM-SS-<unix seconds>.fcproj`. The local stamp is for people; the unix time
+/// `<stem>-YYYY-MM-DD_HH-MM-SS-<unix seconds>.vibeproj`. The local stamp is for people; the unix time
 /// orders the files (the local clock can go back, or repeat an hour, when daylight saving time ends).
 pub fn auto_save_name(name: &str, unix: i64, offset_secs: i32) -> String {
-    format!("{}-{}-{unix}.fcproj", file_stem(name), timestamp(unix, offset_secs))
+    format!("{}-{}-{unix}.vibeproj", file_stem(name), timestamp(unix, offset_secs))
 }
 
 fn is_stamp(s: &str) -> bool {
@@ -107,7 +107,7 @@ pub fn list_auto_saves(dir: &Path, name: &str) -> Vec<PathBuf> {
         .filter_map(|e| e.ok())
         .filter_map(|e| {
             let f = e.file_name().to_string_lossy().into_owned();
-            let (stamp, unix) = parse_stamp(f.strip_prefix(&prefix)?.strip_suffix(".fcproj")?)?;
+            let (stamp, unix) = parse_stamp(f.strip_prefix(&prefix)?.strip_suffix(".vibeproj")?)?;
             Some((unix, stamp.to_string(), e.path()))
         })
         .collect();
@@ -171,10 +171,10 @@ mod tests {
 
     #[test]
     fn names_and_stems() {
-        assert_eq!(auto_save_name("My Film", 0, 0), "My Film-1970-01-01_00-00-00-0.fcproj");
+        assert_eq!(auto_save_name("My Film", 0, 0), "My Film-1970-01-01_00-00-00-0.vibeproj");
         assert_eq!(file_stem("a/b:c"), "a_b_c");
         assert_eq!(file_stem("  "), "Untitled");
-        assert_eq!(auto_save_dir(Path::new("/x/y/p.fcproj")), Path::new("/x/y/Auto-Save"));
+        assert_eq!(auto_save_dir(Path::new("/x/y/p.vibeproj")), Path::new("/x/y/Auto-Save"));
     }
 
     #[test]
@@ -213,12 +213,12 @@ mod tests {
             write_auto_save(&d, "Cut", 1_790_000_000 + i * 60, 0, b"{}", 5).unwrap();
         }
         // Another project whose name starts with the same prefix, and an unrelated file.
-        fs::write(d.join("Cut-Two-2026-01-01_00-00-00.fcproj"), b"{}").unwrap();
+        fs::write(d.join("Cut-Two-2026-01-01_00-00-00.vibeproj"), b"{}").unwrap();
         fs::write(d.join("notes.txt"), b"keep").unwrap();
         let left = list_auto_saves(&d, "Cut");
         assert_eq!(left.len(), 5);
-        assert!(left[0].to_string_lossy().ends_with(&format!("Cut-{}-1790000120.fcproj", timestamp(1_790_000_120, 0))));
-        assert!(left[4].to_string_lossy().ends_with(&format!("Cut-{}-1790000360.fcproj", timestamp(1_790_000_360, 0))));
+        assert!(left[0].to_string_lossy().ends_with(&format!("Cut-{}-1790000120.vibeproj", timestamp(1_790_000_120, 0))));
+        assert!(left[4].to_string_lossy().ends_with(&format!("Cut-{}-1790000360.vibeproj", timestamp(1_790_000_360, 0))));
         assert_eq!(list_auto_saves(&d, "Cut-Two").len(), 1);
         assert!(d.join("notes.txt").exists());
         rotate(&d, "Cut", 2).unwrap();

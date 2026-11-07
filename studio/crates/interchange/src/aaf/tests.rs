@@ -145,7 +145,7 @@ fn the_top_level_composition_has_the_registered_usage_code() {
     assert_eq!(comp.data(pid::USAGE_CODE), Some(&usage[..]));
 }
 
-/// Files from FilmCraft 0.16 and earlier tag the top-level composition with the unregistered label
+/// Files from Vibe Studio 0.16 and earlier tag the top-level composition with the unregistered label
 /// 060e2b34.04010105.0d011201.02030000. They still import: the composition no other one uses is
 /// the edit.
 #[test]
@@ -169,7 +169,7 @@ fn files_with_the_old_usage_code_still_import() {
 }
 
 /// A file that holds one edit tagged with each label (a tool merged a composition from an older
-/// FilmCraft file into a newer one) imports both edits.
+/// Vibe Studio file into a newer one) imports both edits.
 #[test]
 fn edits_tagged_with_either_usage_code_both_import() {
     let (p, s) = project();

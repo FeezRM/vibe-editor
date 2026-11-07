@@ -737,7 +737,7 @@ pub fn show(app: &mut FilmcraftApp, ctx: &egui::Context) {
             let (prompt, ctx2) = (d.clone(), ctx.clone());
             // the project the dialog saves (not one opened, created or closed to meanwhile)
             let project = app.session.document_epoch;
-            let name = format!("{}.fcproj", app.session.project.name);
+            let name = format!("{}.vibeproj", app.session.project.name);
             let r = app.pick(crate::native_dialogs::FileDialog::SaveProject { name }, move |app, paths| {
                 if app.session.document_epoch != project {
                     return Ok(Value::Null);

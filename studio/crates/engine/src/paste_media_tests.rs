@@ -159,7 +159,7 @@ fn without_place_files_are_only_imported() {
 fn pasted_images_are_saved_next_to_the_project() {
     let dir = tmp_dir("paste-media-save");
     let mut s = demo();
-    s.path = Some(dir.join("film.fcproj").to_string_lossy().into_owned());
+    s.path = Some(dir.join("film.vibeproj").to_string_lossy().into_owned());
     let mut png = Vec::new();
     image::RgbaImage::from_pixel(8, 8, image::Rgba([0, 0, 0, 255])).write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
     let first = crate::paste_media::save_pasted_image(&mut s, &png).unwrap();

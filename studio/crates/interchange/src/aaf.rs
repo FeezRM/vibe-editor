@@ -11,7 +11,7 @@
 //! - one timeline slot per video track (picture) and per audio track (sound; one per channel when
 //!   broken out to mono), each a **Sequence** of **Filler**s, **SourceClip**s and **Transition**s
 //!   (Cross Dissolve → `VideoDissolve_2`, Dip to Black → `VideoFadeToBlack`, audio crossfades →
-//!   `MonoAudioDissolve`; the FilmCraft effect id is kept in a tagged value),
+//!   `MonoAudioDissolve`; the Vibe Studio effect id is kept in a tagged value),
 //! - clip volume as a `MonoAudioGain` **OperationGroup** around the source clip with an
 //!   `Amplitude` **ConstantValue** or **VaryingValue** (keyframes as control points),
 //! - sequence markers as **CommentMarker**s in an event slot;
@@ -28,7 +28,7 @@
 //!
 //! Import reads the same structures (and the common variations: sequences inside sequences,
 //! selectors, operation groups around clips, legacy data definitions, essence groups, and Premiere
-//! Pro's one video slot holding a nested scope with a segment per video track) into FilmCraft
+//! Pro's one video slot holding a nested scope with a segment per video track) into Vibe Studio
 //! sequences (a composition that others use becomes a nested sequence), media items (linked by path; embedded audio is returned as WAV files for the
 //! caller to write) and markers.
 

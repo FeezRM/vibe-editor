@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 /// `filmcraft --help`.
 pub const USAGE: &str = "\
-Usage: filmcraft [options] [project.fcproj | media files...]
+Usage: filmcraft [options] [project.vibeproj | media files...]
 
 Options:
   --control <port>   start the localhost JSON-lines control server
@@ -119,10 +119,10 @@ pub fn parse(env_control_port: Option<String>, args: impl IntoIterator<Item = Os
     Ok(Cli::Run(l))
 }
 
-/// Whether a launch file is a FilmCraft project. The extension's case does not matter: Windows file
-/// associations and the Linux MIME glob start the app for `CUT.FCPROJ` too (#850).
+/// Whether a launch file is a Vibe Studio project. The extension's case does not matter: Windows file
+/// associations and the Linux MIME glob start the app for `CUT.VIBEPROJ` too (#850).
 pub fn is_project(path: &str) -> bool {
-    Path::new(path).extension().is_some_and(|e| e.eq_ignore_ascii_case("fcproj"))
+    Path::new(path).extension().is_some_and(|e| e.eq_ignore_ascii_case("vibeproj"))
 }
 
 /// `path` made absolute against the working directory, so a project or media file named relative
@@ -238,11 +238,11 @@ mod tests {
                 graphics: None
             }
         );
-        let l = launch(&["--control", "9876", "--empty", "--no-recover", "--data-dir", "/tmp/fc", "cut.fcproj", "a.mp4"]);
+        let l = launch(&["--control", "9876", "--empty", "--no-recover", "--data-dir", "/tmp/fc", "cut.vibeproj", "a.mp4"]);
         assert_eq!(l.control_port, Some(9876));
         assert_eq!((l.demo, l.startup_flag, l.recover), (false, true, Some(false)));
         assert_eq!(l.data_dir, Some(std::path::PathBuf::from("/tmp/fc")));
-        assert_eq!(l.files, ["cut.fcproj", "a.mp4"]);
+        assert_eq!(l.files, ["cut.vibeproj", "a.mp4"]);
         assert_eq!((launch(&["--demo"]).demo, launch(&["--demo"]).startup_flag, launch(&["--recover"]).recover), (true, true, Some(true)));
         // `--` ends the options; a lone `-` and macOS' process serial number are not options
         assert_eq!(launch(&["--", "--odd name.mov", "-h"]).files, ["--odd name.mov", "-h"]);
@@ -264,14 +264,14 @@ mod tests {
         assert_eq!(l.files, ["caf\u{fffd}.mov", "caf\u{fffd}.mov"]);
     }
 
-    /// Windows file associations and the Linux MIME glob match `CUT.FCPROJ` too; it used to be
+    /// Windows file associations and the Linux MIME glob match `CUT.VIBEPROJ` too; it used to be
     /// imported as a media file instead of opened (#850).
     #[test]
     fn a_project_is_recognised_whatever_the_case_of_its_extension() {
-        for p in ["cut.fcproj", "CUT.FCPROJ", "Cut.FcProj", "/edits/a b.fcproj", r"C:\Edits\CUT.FCPROJ"] {
+        for p in ["cut.vibeproj", "CUT.VIBEPROJ", "Cut.VibeProj", "/edits/a b.vibeproj", r"C:\Edits\CUT.VIBEPROJ"] {
             assert!(is_project(p), "{p}");
         }
-        for p in ["cut.mp4", "fcproj", ".fcproj", "a.fcproj.mov", "a.fcprojx", ""] {
+        for p in ["cut.mp4", "vibeproj", ".vibeproj", "a.vibeproj.mov", "a.vibeprojx", ""] {
             assert!(!is_project(p), "{p}");
         }
     }
@@ -283,9 +283,9 @@ mod tests {
         let cwd = std::env::current_dir().unwrap();
         let nested = Path::new("clips").join("a.mp4");
         let already = cwd.join("b.wav").to_string_lossy().into_owned();
-        let files = ["Cut.FCPROJ".to_string(), nested.to_string_lossy().into_owned(), "other.fcproj".to_string(), already.clone()];
+        let files = ["Cut.VIBEPROJ".to_string(), nested.to_string_lossy().into_owned(), "other.vibeproj".to_string(), already.clone()];
         let (project, media) = project_and_media(&files);
-        assert_eq!(project, Some(cwd.join("Cut.FCPROJ").to_string_lossy().into_owned()));
+        assert_eq!(project, Some(cwd.join("Cut.VIBEPROJ").to_string_lossy().into_owned()));
         assert_eq!(media, [cwd.join(&nested).to_string_lossy().into_owned(), already]);
         for p in media.iter().chain(&project) {
             assert!(Path::new(p).is_absolute() && !p.starts_with(r"\\?\"), "{p}");

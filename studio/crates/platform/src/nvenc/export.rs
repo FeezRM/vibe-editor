@@ -261,7 +261,7 @@ fn factory_with(
     }
 }
 
-/// The H.265 side of [`factory`]: FilmCraft's only HEVC encoder on Windows, so the Hardware encoding toggle
+/// The H.265 side of [`factory`]: Vibe Studio's only HEVC encoder on Windows, so the Hardware encoding toggle
 /// does not apply and a request NVENC cannot take is an error, not a fall-through.
 fn hevc_factory(w: u32, h: u32, rate: FrameRate, s: &ExportSettings) -> Option<Result<Box<dyn VideoEncoder>>> {
     let declined = |why: &str| {

@@ -75,11 +75,11 @@ fn lock(project: &Path, waiting: impl FnOnce()) -> std::io::Result<File> {
 pub fn for_save(a: &Args) -> Option<File> {
     let project = saved_in_place(a).unwrap_or_else(|e| crate::fail(e))?;
     let shown = project.display();
-    let waiting = || crate::diag(format_args!("filmcraft-cli: waiting for another run saving {shown}"));
+    let waiting = || crate::diag(format_args!("vibe-studio-cli: waiting for another run saving {shown}"));
     match lock(project, waiting) {
         Ok(file) => Some(file),
         Err(e) => {
-            crate::diag(format_args!("filmcraft-cli: warning: can't lock {shown} ({e}); another run saving it now could overwrite these edits"));
+            crate::diag(format_args!("vibe-studio-cli: warning: can't lock {shown} ({e}); another run saving it now could overwrite these edits"));
             None
         }
     }
@@ -98,7 +98,7 @@ mod tests {
     /// its paths are spelt and whatever it saves.
     #[test]
     fn a_missing_project_stops_the_run_before_anything_opens_it() {
-        let name = format!("fc-cli-gone-{}.fcproj", std::process::id());
+        let name = format!("fc-cli-gone-{}.vibeproj", std::process::id());
         let gone = std::env::temp_dir().join(&name);
         let gone = gone.to_str().unwrap();
         let alias = std::env::temp_dir().join(".").join(&name);
@@ -106,9 +106,9 @@ mod tests {
         let dotted = format!("./{name}");
         // in a folder that doesn't exist either, so no part of either spelling can be resolved
         let new_dir = std::env::temp_dir().join(format!("fc-cli-new-dir-{}", std::process::id()));
-        let in_new_dir = new_dir.join("p.fcproj");
+        let in_new_dir = new_dir.join("p.vibeproj");
         let in_new_dir = in_new_dir.to_str().unwrap();
-        let in_new_dir_alias = new_dir.join(".").join("p.fcproj");
+        let in_new_dir_alias = new_dir.join(".").join("p.vibeproj");
         let in_new_dir_alias = in_new_dir_alias.to_str().unwrap();
         for list in [
             &["--project", gone, "--save", "exec"][..],
@@ -116,7 +116,7 @@ mod tests {
             &["--project", gone, "--save-as", alias, "exec"],
             &["--project", &name, "--save-as", &dotted, "exec"],
             &["--project", in_new_dir, "--save-as", in_new_dir_alias, "exec"],
-            &["--project", gone, "--save-as", "other.fcproj", "exec"],
+            &["--project", gone, "--save-as", "other.vibeproj", "exec"],
             &["--project", gone, "exec"],
         ] {
             let error = saved_in_place(&args(list)).unwrap_err();
@@ -128,8 +128,8 @@ mod tests {
 
     #[test]
     fn the_lock_sits_next_to_the_project() {
-        assert_eq!(lock_path(Path::new("/a/b/p.fcproj")), Path::new("/a/b/.p.fcproj.lock"));
-        assert_eq!(lock_path(Path::new("p.fcproj")), Path::new(".p.fcproj.lock"));
+        assert_eq!(lock_path(Path::new("/a/b/p.vibeproj")), Path::new("/a/b/.p.vibeproj.lock"));
+        assert_eq!(lock_path(Path::new("p.vibeproj")), Path::new(".p.vibeproj.lock"));
     }
 
     #[test]

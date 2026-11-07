@@ -398,7 +398,7 @@ pub fn write(doc: &Document, rate: Option<FrameRate>) -> Vec<u8> {
     put(&mut gsi, 11, 1, "0");
     put(&mut gsi, 12, 2, "00");
     put(&mut gsi, 14, 2, "09");
-    put(&mut gsi, 16, 32, "FilmCraft");
+    put(&mut gsi, 16, 32, "Vibe Studio");
     put(&mut gsi, 224, 6, "000101");
     put(&mut gsi, 230, 6, "000101");
     put(&mut gsi, 236, 2, "00");

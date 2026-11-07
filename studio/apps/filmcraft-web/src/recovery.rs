@@ -1,7 +1,7 @@
 //! Auto-save and crash recovery in OPFS (the desktop recovery journal, mapped to the browser).
 //!
 //! - While the project has unsaved changes, a snapshot is written every few seconds to
-//!   `recovery/snapshot.fcproj` with `recovery/meta.json` saying it is dirty; once the project is
+//!   `recovery/snapshot.vibeproj` with `recovery/meta.json` saying it is dirty; once the project is
 //!   saved (downloaded) the meta is marked clean.
 //! - Imported media are copied to `media/<name>` (the browser streams the copy; nothing goes
 //!   through wasm memory), so the snapshot's `/files/<name>` references resolve after a reload.
@@ -17,7 +17,7 @@ use serde_json::{Value, json};
 use crate::opfs;
 use crate::recovery_policy::{Action, Policy};
 
-const SNAPSHOT: &str = "recovery/snapshot.fcproj";
+const SNAPSHOT: &str = "recovery/snapshot.vibeproj";
 const META: &str = "recovery/meta.json";
 /// Media larger than this are not copied to OPFS.
 const KEEP_MAX: f64 = 4.0 * 1024.0 * 1024.0 * 1024.0;
@@ -103,7 +103,7 @@ pub async fn load_snapshot() -> Option<(String, Vec<u8>)> {
     }
     let bytes = opfs::read(SNAPSHOT).await?;
     let name = meta.get("name").and_then(Value::as_str).unwrap_or("Recovered").to_string();
-    Some((format!("{name}.fcproj"), bytes))
+    Some((format!("{name}.vibeproj"), bytes))
 }
 
 /// Keep a copy of an imported file in OPFS (background).

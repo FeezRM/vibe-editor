@@ -192,7 +192,7 @@ impl BridgeClient {
             .await
             .map_err(|_| AutomationError::Bridge(format!("timed out connecting to {}", self.addr)))?
             .map_err(|e| AutomationError::Bridge(format!(
-                "cannot connect to {} ({e}); start the app with `filmcraft --control <port>` and set FILMCRAFT_CONTROL_TOKEN to the same 64-hex-character value on both sides (see docs/control-protocol.md)",
+                "cannot connect to {} ({e}); start the app with `vibe-studio --control <port>` and set FILMCRAFT_CONTROL_TOKEN to the same 64-hex-character value on both sides (see docs/control-protocol.md)",
                 self.addr
             )))?;
         let (r, w) = s.into_split();
@@ -410,10 +410,10 @@ mod tests {
         let token = "0123456789abcdef".repeat(4);
         b.token = Some(token.clone());
         b.call("ui.inspect", json!({})).await.unwrap();
-        b.execute("file.saveAs", json!({"path": "/owner/project.fcproj"})).await.unwrap();
+        b.execute("file.saveAs", json!({"path": "/owner/project.vibeproj"})).await.unwrap();
         let seen = seen.lock().await;
         assert_eq!(seen.len(), 2);
         assert!(seen.iter().all(|request| request["token"] == token));
-        assert_eq!(seen[1]["params"]["params"]["path"], "/owner/project.fcproj");
+        assert_eq!(seen[1]["params"]["params"]["path"], "/owner/project.vibeproj");
     }
 }

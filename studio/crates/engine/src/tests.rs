@@ -895,7 +895,7 @@ fn commands_are_unique_and_described() {
 fn save_and_open_roundtrip() {
     let dir = std::env::temp_dir().join(format!("fc-test-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
-    let path = dir.join("demo.fcproj").to_string_lossy().to_string();
+    let path = dir.join("demo.vibeproj").to_string_lossy().to_string();
     let mut s = demo();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     assert!(!s.is_dirty());

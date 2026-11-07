@@ -594,7 +594,7 @@ fn aaf_nested_sequence_of_another_rate_and_broken_out_to_mono() {
     }
 }
 
-/// A project that claims a sequence is inside itself (FilmCraft refuses to make one, a damaged
+/// A project that claims a sequence is inside itself (Vibe Studio refuses to make one, a damaged
 /// file may hold one) exports without looping: the clip is left as a gap and named in the report.
 #[test]
 fn a_sequence_inside_itself_exports_as_a_gap() {

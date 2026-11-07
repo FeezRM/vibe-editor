@@ -109,7 +109,7 @@ pub struct TrackItem {
     /// of animating through the hold.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub hold_filters: bool,
-    /// Video Options ▸ Field Options… (stored; FilmCraft renders progressive frames).
+    /// Video Options ▸ Field Options… (stored; Vibe Studio renders progressive frames).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub field_options: Option<FieldOptions>,
     /// Audio clips: the source channels this clip plays (0-based; one = mono on both sides, two =

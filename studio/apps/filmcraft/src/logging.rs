@@ -8,7 +8,7 @@
 //! start moves the previous log to `filmcraft.1.log` (and that one to `.2`), so the log of a run
 //! that crashed survives the next launch.
 //!
-//! Levels: `info` for FilmCraft's own crates, `warn` for everything else (wgpu and naga are
+//! Levels: `info` for Vibe Studio's own crates, `warn` for everything else (wgpu and naga are
 //! chatty). `RUST_LOG` replaces that with env_logger-style directives: `debug`,
 //! `warn,filmcraft_codecs=trace`, `wgpu_core=info`. A directive ending in `*` matches every target
 //! that starts with it (`filmcraft*=debug`).
@@ -31,7 +31,7 @@ use std::time::SystemTime;
 use log::LevelFilter;
 
 /// The current log file's name inside the log directory.
-pub const LOG_FILE: &str = "filmcraft.log";
+pub const LOG_FILE: &str = "vibe-studio.log";
 /// The log directory inside the data directory (shared with the crash logs and Reveal Log Files).
 pub const LOG_DIR: &str = "Logs";
 /// How many previous logs are kept (`filmcraft.1.log` … `filmcraft.<KEEP>.log`).
@@ -129,7 +129,7 @@ fn utc_parts(secs: u64, nanos: u32) -> (i64, chrono::NaiveDateTime) {
 }
 
 fn numbered(dir: &Path, n: usize) -> PathBuf {
-    if n == 0 { dir.join(LOG_FILE) } else { dir.join(format!("filmcraft.{n}.log")) }
+    if n == 0 { dir.join(LOG_FILE) } else { dir.join(format!("vibe-studio.{n}.log")) }
 }
 
 /// Shift the previous logs up one (`.log` → `.1.log` → … → `.<KEEP>.log`, the oldest dropped)
@@ -421,9 +421,9 @@ mod tests {
             std::fs::write(&path, format!("run {run}")).expect("write");
         }
         assert_eq!(read(&dir.join(LOG_FILE)), "run 4");
-        assert_eq!(read(&dir.join("filmcraft.1.log")), "run 3");
-        assert_eq!(read(&dir.join("filmcraft.2.log")), "run 2");
-        assert!(!dir.join("filmcraft.3.log").exists(), "only {KEEP} old logs are kept");
+        assert_eq!(read(&dir.join("vibe-studio.1.log")), "run 3");
+        assert_eq!(read(&dir.join("vibe-studio.2.log")), "run 2");
+        assert!(!dir.join("vibe-studio.3.log").exists(), "only {KEEP} old logs are kept");
         let _ = std::fs::remove_dir_all(&dir);
     }
 
@@ -511,7 +511,7 @@ mod tests {
     fn the_logger_filters_records_and_writes_them_to_the_attached_file() {
         let dir = temp_dir("logger");
         let logger = AppLogger::new(Filter::parse(DEFAULT_FILTER), false);
-        record(&logger, log::Level::Info, "filmcraft", "FilmCraft starting");
+        record(&logger, log::Level::Info, "filmcraft", "Vibe Studio starting");
         record(&logger, log::Level::Info, "wgpu_core::device", "too chatty");
         let path = logger.attach_dir(&dir).expect("attach");
         assert_eq!(path, dir.join(LOG_FILE));
@@ -520,14 +520,14 @@ mod tests {
         let text = read(&path);
         let lines: Vec<&str> = text.lines().collect();
         assert_eq!(lines.len(), 2, "{text}");
-        assert!(lines.first().is_some_and(|l| l.contains(" INFO  [") && l.ends_with("filmcraft: FilmCraft starting")), "{text}");
+        assert!(lines.first().is_some_and(|l| l.contains(" INFO  [") && l.ends_with("filmcraft: Vibe Studio starting")), "{text}");
         assert!(lines.get(1).is_some_and(|l| l.ends_with("wgpu_hal::vulkan: a real warning")), "{text}");
         assert!(logger.enabled(&log::Metadata::builder().level(log::Level::Info).target("filmcraft_engine::autosave").build()));
         assert!(!logger.enabled(&log::Metadata::builder().level(log::Level::Info).target("naga").build()));
         // A second launch rotates: the first log becomes `.1`.
         let second = AppLogger::new(Filter::parse(DEFAULT_FILTER), false);
         assert_eq!(second.attach_dir(&dir).expect("attach again"), dir.join(LOG_FILE));
-        assert_eq!(read(&dir.join("filmcraft.1.log")), text);
+        assert_eq!(read(&dir.join("vibe-studio.1.log")), text);
         let _ = std::fs::remove_dir_all(&dir);
     }
 

@@ -113,7 +113,7 @@ pub(crate) fn show(app: &mut FilmcraftApp, ctx: &egui::Context) {
     #[cfg(target_arch = "wasm32")]
     if app.updates_rt.manual_window_open {
         let mut open = true;
-        egui::Window::new(crate::i18n::t("FilmCraft Updates"))
+        egui::Window::new(crate::i18n::t("Vibe Studio Updates"))
             .open(&mut open)
             .collapsible(false)
             .resizable(false)
@@ -156,7 +156,7 @@ mod tests {
         let release = craft_update::Release {
             tag: "v99.0.0".into(),
             version: craft_update::parse_version("99.0.0"),
-            name: "FilmCraft 99.0.0".into(),
+            name: "Vibe Studio 99.0.0".into(),
             html_url: "https://github.com/storytold/filmcraft/releases/tag/v99.0.0".into(),
             ..Default::default()
         };

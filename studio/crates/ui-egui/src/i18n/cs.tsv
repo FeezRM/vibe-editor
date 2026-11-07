@@ -14,7 +14,7 @@
 #   escapes  \n  \t  \\ inside a column. Keep {name} placeholders in both columns.
 #   lines starting with # and blank lines are ignored.
 
-	About FilmCraft	O aplikaci FilmCraft
+	About Vibe Studio	O aplikaci Vibe Studio
 	Add Audio Submix Track	Přidat stopu zvukové podskupiny
 	Add Caption at Playhead	Přidat titulek na pozici přehrávací hlavy
 	Add Chapter Marker…	Přidat značku kapitoly…
@@ -40,7 +40,6 @@
 	Apply Default Transitions to Selection	Použít výchozí přechody na výběr
 	Apply Video Transition	Použít videopřechod
 	Arrange	Uspořádat
-	ArtCraft Website	Web ArtCraft
 	Assembly	Sestavení
 	Attach Proxies…	Připojit proxy soubory…
 	Audio Channels…	Zvukové kanály…
@@ -133,9 +132,8 @@
 	File	Soubor
 	File…	Soubor…
 	Fill frame	Vyplnit snímek
-	FilmCraft Help…	Nápověda k FilmCraft…
-	FilmCraft on GitHub	FilmCraft na GitHubu
-	FilmCraft on getartcraft.com	FilmCraft na getartcraft.com
+	Vibe Studio Help…	Nápověda k Vibe Studio…
+	Vibe Studio on GitHub	Vibe Studio na GitHubu
 	Find Next	Najít další
 	Find…	Najít…
 	Fit	Přizpůsobit
@@ -167,7 +165,7 @@
 	Guide Templates	Šablony vodítek
 	Help	Nápověda
 	Hide All Caption Tracks	Skrýt všechny stopy titulků
-	Hide FilmCraft	Skrýt FilmCraft
+	Hide Vibe Studio	Skrýt Vibe Studio
 	Hide Others	Skrýt ostatní
 	High Quality Playback	Přehrávání ve vysoké kvalitě
 	History	Historie
@@ -181,7 +179,6 @@
 	Insert Frame Hold Segment	Vložit segment se zmrazeným snímkem
 	Install Motion Graphics Template…	Nainstalovat šablonu pohyblivé grafiky…
 	Interpret Footage…	Interpretovat záběry…
-	Join the ArtCraft Discord…	Připojit se k Discordu ArtCraft…
 	Keyboard Shortcuts…	Klávesové zkratky…
 	Label	Štítek
 	Labels…	Štítky…
@@ -308,7 +305,7 @@
 	Select Previous Graphic	Vybrat předchozí grafiku
 	Select Previous Layer	Vybrat předchozí vrstvu
 	Selection Follows Playhead	Výběr sleduje přehrávací hlavu
-	Selection as FilmCraft Project…	Výběr jako projekt FilmCraft…
+	Selection as Vibe Studio Project…	Výběr jako projekt Vibe Studio…
 	Selection…	Výběr…
 	Send Backward	Přenést dál
 	Send to Back	Přenést do pozadí
@@ -374,7 +371,6 @@
 	Master volume: use the Audio Track Mixer	Celkovou hlasitost nastavte v mixážním pultu zvukových stop.
 	Search	Hledat
 	Quick Export	Rychlý export
-	Join the ArtCraft Discord (discord.gg/artcraft)	Připojit se k Discordu ArtCraft (discord.gg/artcraft)
 	Cancel	Zrušit
 	OK	Potvrdit
 	Interpret Footage	Interpretovat záběry
@@ -417,8 +413,6 @@
 	Delete Caption Track	Odstranit stopu titulků
 	Delete Empty Caption Tracks	Odstranit prázdné stopy titulků
 	Version {version}	Verze {version}
-	A clean-room, pure-Rust non-linear video editor. Part of the ArtCraft family.	Nelineární videoeditor napsaný čistě v Rustu, vytvořený nezávislou implementací. Součást rodiny ArtCraft.
-	Join the ArtCraft Discord	Připojit se k Discordu ArtCraft
 	Source code on GitHub	Zdrojový kód na GitHubu
 	Report an issue	Nahlásit problém
 	MIT OR Apache-2.0. Fonts: Inter, Noto Serif and JetBrains Mono (SIL OFL 1.1).	MIT OR Apache-2.0. Písma: Inter, Noto Serif a JetBrains Mono (SIL OFL 1.1).
@@ -438,7 +432,7 @@
 	No background jobs.	Žádné úlohy na pozadí.
 	Recover Unsaved Changes	Obnovit neuložené změny
 	Untitled	Bez názvu
-	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft byl zavřen, když projekt „{name}“ obsahoval neuložené změny.
+	Vibe Studio was closed while “{name}” had unsaved changes.	Vibe Studio byl zavřen, když projekt „{name}“ obsahoval neuložené změny.
 	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio se neočekávaně ukončil, když projekt „{name}“ obsahoval neuložené změny.
 	Recover unsaved changes from {when}?	Obnovit neuložené změny z {when}?
 	The project had not been saved yet.	Projekt ještě nebyl uložen.
@@ -965,7 +959,7 @@
 	Font family	Rodina písma
 	Label Colors	Barvy štítků
 	Decoded frames held for the monitors and thumbnails: {used} of {budget}.	Dekódované snímky uložené pro monitory a miniatury: {used} z {budget}.
-	FilmCraft keeps the rest of the RAM free for other applications.	FilmCraft ponechává zbytek paměti RAM volný pro ostatní aplikace.
+	Vibe Studio keeps the rest of the RAM free for other applications.	Vibe Studio ponechává zbytek paměti RAM volný pro ostatní aplikace.
 	not available in this session	v této relaci není dostupné
 	Currently: {loc} — {files} file(s), {size}	Aktuálně: {loc} — počet souborů: {files}, {size}
 	 ({ch} output channels)	 (počet výstupních kanálů: {ch})
@@ -1076,7 +1070,7 @@
 	Video Frame	Videosnímek
 	Pin To	Připnout k
 	Pinned Edges	Připnuté okraje
-	FilmCraft Graphics Template	Grafická šablona FilmCraft
+	Vibe Studio Graphics Template	Grafická šablona Vibe Studio
 	{n} Font	{n} – písmo
 	{n} Size	{n} – velikost
 	{n} Color	{n} – barva
@@ -1086,7 +1080,7 @@
 	Export As Motion Graphics Template	Exportovat jako šablonu pohyblivé grafiky
 	Category:	Kategorie:
 	Editable properties:	Upravitelné vlastnosti:
-	Saved as a FilmCraft graphics template (.fcgt) in your templates folder.	Uloženo jako grafická šablona FilmCraft (.fcgt) ve složce šablon.
+	Saved as a Vibe Studio graphics template (.fcgt) in your templates folder.	Uloženo jako grafická šablona Vibe Studio (.fcgt) ve složce šablon.
 	Exported graphics template to {path}	Grafická šablona byla exportována do {path}
 	Replace Fonts in Projects	Nahradit písma v projektech
 	Fonts used in the project:	Písma použitá v projektu:
@@ -1456,7 +1450,7 @@
 	Center of Sphere	Střed koule
 	Cents	Centy
 	Change to Color	Změna na barvu
-	Changes are copied in the background a moment after each edit. If FilmCraft quits unexpectedly, they are offered the next time it starts.	Změny se krátce po každé úpravě kopírují na pozadí. Pokud se FilmCraft neočekávaně ukončí, nabídne je při příštím spuštění k obnovení.
+	Changes are copied in the background a moment after each edit. If Vibe Studio quits unexpectedly, they are offered the next time it starts.	Změny se krátce po každé úpravě kopírují na pozadí. Pokud se Vibe Studio neočekávaně ukončí, nabídne je při příštím spuštění k obnovení.
 	Channel	Kanál
 	Channel Blur	Rozostření kanálů
 	Channel Mix	Mix kanálů
@@ -1829,7 +1823,7 @@
 	Hard Limiter	Tvrdý limitér
 	Hard Mix	Tvrdé míchání
 	Hardware decoding	Hardwarové dekódování
-	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and FilmCraft's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Hardwarové dekódování: režim Auto používá systémový dekodér videa (VideoToolbox na macOS, Media Foundation ve Windows, VA-API nebo NVDEC pro H.264 a HEVC na Linuxu) pro podporované datové proudy. Pro ostatní proudy nebo při selhání hardwaru použije vlastní dekodér FilmCraft. Již otevřená média si ponechají svůj dekodér až do opětovného otevření.
+	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and Vibe Studio's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Hardwarové dekódování: režim Auto používá systémový dekodér videa (VideoToolbox na macOS, Media Foundation ve Windows, VA-API nebo NVDEC pro H.264 a HEVC na Linuxu) pro podporované datové proudy. Pro ostatní proudy nebo při selhání hardwaru použije vlastní dekodér Vibe Studio. Již otevřená média si ponechají svůj dekodér až do opětovného otevření.
 	Head Size	Velikost hlavy
 	Heart	Srdce
 	Height	Výška
@@ -2104,7 +2098,7 @@
 	Night	Noc
 	No Motion	Bez pohybu
 	No Scroll	Bez posouvání
-	No plugins are installed. Changes will take effect the next time you start FilmCraft.	Nejsou nainstalovány žádné zásuvné moduly. Změny se projeví při příštím spuštění FilmCraft.
+	No plugins are installed. Changes will take effect the next time you start Vibe Studio.	Nejsou nainstalovány žádné zásuvné moduly. Změny se projeví při příštím spuštění Vibe Studio.
 	Noise	Šum
 	Noise & Grain	Šum a zrno
 	Noise (Legacy)	Šum (starší)
@@ -2535,7 +2529,7 @@
 	Template Properties	Vlastnosti šablony
 	Text Animator	Animátor textu
 	Text Color	Barva textu
-	The media cache holds render previews of unsaved projects and other files FilmCraft can recreate. Deleting them is always safe; FilmCraft rebuilds them as needed.	Mezipaměť médií obsahuje vykreslené náhledy neuložených projektů a další soubory, které FilmCraft dokáže znovu vytvořit. Jejich odstranění je vždy bezpečné; FilmCraft je podle potřeby obnoví.
+	The media cache holds render previews of unsaved projects and other files Vibe Studio can recreate. Deleting them is always safe; Vibe Studio rebuilds them as needed.	Mezipaměť médií obsahuje vykreslené náhledy neuložených projektů a další soubory, které Vibe Studio dokáže znovu vytvořit. Jejich odstranění je vždy bezpečné; Vibe Studio je podle potřeby obnoví.
 	Thickness	Tloušťka
 	Tile Gradient	Dlaždicový přechod barev
 	Tilt	Náklon
@@ -2745,8 +2739,8 @@
 	System Compatibility Report	Zpráva o kompatibilitě systému
 	no GPU adapter: the CPU compositor is used	není k dispozici adaptér GPU: používá se kompozice na CPU
 	Avid Log Exchange	Avid Log Exchange
-	FilmCraft Project	Projekt FilmCraft
-	{name} Selection.fcproj	{name} Výběr.fcproj
+	Vibe Studio Project	Projekt Vibe Studio
+	{name} Selection.vibeproj	{name} Výběr.vibeproj
 	{name} (Simplified)	{name} (zjednodušeno)
 	Find in:	Hledat v:
 	Find:	Najít:
@@ -2883,7 +2877,7 @@
 	Start Queue	Spustit frontu
 	Stop	Zastavit
 	Clear Finished	Vymazat dokončené
-	Not supported by FilmCraft's encoders yet	Kodéry FilmCraft to zatím nepodporují
+	Not supported by Vibe Studio's encoders yet	Kodéry Vibe Studio to zatím nepodporují
 	Sequence name	Název sekvence
 	Folder	Složka
 	Preset	Přednastavení
@@ -2969,7 +2963,7 @@
 	Drag a clip to slide it between its neighbours.	Tažením klipu jej posuňte mezi sousedními klipy.
 	Drag to scroll the timeline.	Tažením posouvejte časovou osu.
 	Click to zoom in; Opt-click to zoom out.	Kliknutím přiblížíte; Opt+kliknutím oddálíte.
-	FilmCraft hit an error	Ve FilmCraft došlo k chybě
+	Vibe Studio hit an error	Ve Vibe Studio došlo k chybě
 	Details: {path}	Podrobnosti: {path}
 	Opened {url}	Otevřeno {url}
 	(empty)	(prázdné)
@@ -3224,7 +3218,7 @@
 	QuickTime, ProRes 4444 (4:4:4) with alpha channel, 24-bit 48 kHz PCM	QuickTime, ProRes 4444 (4:4:4) s alfa kanálem, 24bitové PCM 48 kHz
 	QuickTime, ProRes 4444 XQ (4:4:4), 24-bit 48 kHz PCM	QuickTime, ProRes 4444 XQ (4:4:4), 24bitové PCM 48 kHz
 	QuickTime, ProRes 422, 24-bit 48 kHz PCM	QuickTime, ProRes 422, 24bitové PCM 48 kHz
-	Quit FilmCraft	Ukončit FilmCraft
+	Quit Vibe Studio	Ukončit Vibe Studio
 	Rate Stretch Tool	Nástroj Změna rychlosti
 	Razor Tool	Nástroj Žiletka
 	Rectangle Tool	Nástroj Obdélník
@@ -3523,8 +3517,8 @@
 	Composite in Linear Color	Kompozice v lineárních barvách
 	Auto Tone Map Media (HDR and log into SDR)	Automatické mapování tónů médií (HDR a log do SDR)
 	Configure…	Nastavit…
-	Not supported in FilmCraft yet	FilmCraft to zatím nepodporuje
-	FilmCraft always composites in linear light	FilmCraft vždy provádí kompozici v lineárním světle
+	Not supported in Vibe Studio yet	Vibe Studio to zatím nepodporuje
+	Vibe Studio always composites in linear light	Vibe Studio vždy provádí kompozici v lineárním světle
 	Loop marked range	Opakovat označený rozsah
 	Play Source	Přehrát zdroj
 	Source Play/Stop	Přehrát / zastavit zdroj
@@ -3605,7 +3599,7 @@
 	Recent	Nedávné
 	Saves this session's log and shows it in your file manager.	Uloží protokol této relace a zobrazí jej ve správci souborů.
 	Shows a report on this computer.	Zobrazí zprávu o tomto počítači.
-	Shows the version, community links and credits in a FilmCraft window.	Zobrazí verzi, odkazy na komunitu a poděkování v okně FilmCraft.
+	Shows the version, community links and credits in a Vibe Studio window.	Zobrazí verzi, odkazy na komunitu a poděkování v okně Vibe Studio.
 	no Korean font is installed on this system; the interface stays in English	v systému není nainstalováno korejské písmo; rozhraní zůstává v angličtině
 	Animate zoom, scrolling and menus	Animovat přibližování, posouvání a nabídky
 	No matching text.	Žádný odpovídající text.
@@ -3613,13 +3607,13 @@
 	Open a sequence to search its graphics	Pro hledání v grafikách otevřete sekvenci
 	Reset Interface Zoom	Obnovit měřítko rozhraní
 	Track Color	Barva stopy
-	AV1 needs a hardware encoder; none was found on this machine, and FilmCraft has no software AV1 encoder yet.	AV1 vyžaduje hardwarový kodér; v tomto počítači žádný nebyl nalezen a FilmCraft zatím nemá softwarový kodér AV1.
+	AV1 needs a hardware encoder; none was found on this machine, and Vibe Studio has no software AV1 encoder yet.	AV1 vyžaduje hardwarový kodér; v tomto počítači žádný nebyl nalezen a Vibe Studio zatím nemá softwarový kodér AV1.
 	Clear History	Vymazat historii
 	Delete Redoable Actions	Odstranit akce, které lze provést znovu
 	Delete the dimmed actions after the current state? They cannot be redone.	Odstranit zašedlé akce za aktuálním stavem? Nepůjde je provést znovu.
 	Duration: {tc}	Doba trvání: {tc}
 	End: {tc}	Konec: {tc}
-	H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and FilmCraft has no software H.265 encoder yet. Choose H.264 or ProRes instead.	H.265 (HEVC) vyžaduje hardwarový kodér (NVENC na grafických kartách NVIDIA, VideoToolbox na macOS); v tomto počítači žádný nebyl nalezen a FilmCraft zatím nemá softwarový kodér H.265. Zvolte místo toho H.264 nebo ProRes.
+	H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and Vibe Studio has no software H.265 encoder yet. Choose H.264 or ProRes instead.	H.265 (HEVC) vyžaduje hardwarový kodér (NVENC na grafických kartách NVIDIA, VideoToolbox na macOS); v tomto počítači žádný nebyl nalezen a Vibe Studio zatím nemá softwarový kodér H.265. Zvolte místo toho H.264 nebo ProRes.
 	Show Duplicate Frame Markers	Zobrazit značky duplicitních snímků
 	Start: {tc}	Začátek: {tc}
 	Transparency Grid	Mřížka průhlednosti
@@ -3631,5 +3625,5 @@
 	Check for Updates…	Zkontrolovat aktualizace…
 	Checking for updates…	Kontroluje se aktualizace…
 	Could not check for updates:\n{error}	Aktualizace se nepodařilo zkontrolovat:\n{error}
-	FilmCraft {version} is currently the newest version available.	FilmCraft {version} je nejnovější dostupná verze.
-	Looks for a newer FilmCraft release and offers to update.	Vyhledá novější vydání FilmCraftu a nabídne aktualizaci.
+	Vibe Studio {version} is currently the newest version available.	Vibe Studio {version} je nejnovější dostupná verze.
+	Looks for a newer Vibe Studio release and offers to update.	Vyhledá novější vydání Vibe Studiou a nabídne aktualizaci.

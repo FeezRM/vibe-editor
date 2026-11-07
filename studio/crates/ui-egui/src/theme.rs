@@ -155,7 +155,7 @@ impl Tokens {
     pub fn for_kind(kind: ThemeKind) -> Self {
         // Vibe Studio's dark palette (editor/docs/DESIGN.md §2): neutral near-black greys, one
         // accent (the creator's brand colour, [`brand_accent`]), no tints. Structure follows
-        // FilmCraft's Premiere-measured "Darkest" theme.
+        // the Premiere-measured "Darkest" theme it replaced.
         let accent = brand_accent();
         let dark = Tokens {
             kind,
@@ -343,7 +343,7 @@ impl Tokens {
     /// the focus outline, the playhead, timecodes, drag values and track targeting) and accessible
     /// colour contrast (brighter secondary text and borders).
     pub fn with_appearance(mut self, highlight: Option<[u8; 3]>, accessible_contrast: bool) -> Self {
-        // Vibe Studio: FilmCraft's stock highlight (Premiere blue) means "not chosen": keep the brand accent
+        // Vibe Studio: the stock highlight inherited from FilmCraft (Premiere blue) means "not chosen": keep the brand accent
         let stock = filmcraft_engine::settings::parse_hex(filmcraft_engine::settings::DEFAULT_HIGHLIGHT);
         let highlight = highlight.filter(|h| Some(*h) != stock);
         if let Some([r, g, b]) = highlight {
@@ -511,7 +511,7 @@ fn add_craft_fonts(fonts: &mut FontDefinitions) {
 
 pub fn apply_visuals(ctx: &egui::Context, t: &Tokens) {
     let light = t.kind == ThemeKind::Light;
-    // FilmCraft decides between light and dark itself (Settings ▸ Appearance ▸ Appearance Mode), so
+    // Vibe Studio decides between light and dark itself (Settings ▸ Appearance ▸ Appearance Mode), so
     // egui must not switch to its other built-in style when the system appearance changes.
     ctx.set_theme(if light { egui::Theme::Light } else { egui::Theme::Dark });
     let mut v = if light { Visuals::light() } else { Visuals::dark() };
@@ -519,7 +519,9 @@ pub fn apply_visuals(ctx: &egui::Context, t: &Tokens) {
     v.window_fill = t.panel_bg;
     v.extreme_bg_color = t.field_bg;
     v.faint_bg_color = t.row_alt;
-    v.override_text_color = Some(t.text);
+    // Vibe Studio: no global text override, so selected tabs and toggles (egui's selection style) draw
+    // `on_accent` on the accent fill; every other state below uses the theme's text colour as before.
+    v.override_text_color = None;
     v.selection.bg_fill = t.accent;
     v.selection.stroke = Stroke::new(1.0, t.on_accent);
     v.hyperlink_color = t.accent;
@@ -542,12 +544,13 @@ pub fn apply_visuals(ctx: &egui::Context, t: &Tokens) {
     v.widgets.hovered.bg_fill = t.hover;
     v.widgets.hovered.weak_bg_fill = t.hover;
     v.widgets.hovered.bg_stroke = Stroke::new(1.0, t.field_border);
-    v.widgets.hovered.fg_stroke = Stroke::new(1.0, t.tab_text_active);
+    v.widgets.hovered.fg_stroke = Stroke::new(1.0, t.text);
     v.widgets.active.bg_fill = t.pressed;
     v.widgets.active.weak_bg_fill = t.pressed;
-    v.widgets.active.fg_stroke = Stroke::new(1.0, t.tab_text_active);
+    v.widgets.active.fg_stroke = Stroke::new(1.0, t.text);
     v.widgets.open.bg_fill = t.hover;
     v.widgets.open.weak_bg_fill = t.hover;
+    v.widgets.open.fg_stroke = Stroke::new(1.0, t.text);
     ctx.set_visuals(v);
     ctx.global_style_mut(|s| {
         s.spacing.item_spacing = egui::vec2(6.0, 4.0);

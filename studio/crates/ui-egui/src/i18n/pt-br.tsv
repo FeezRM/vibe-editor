@@ -4,7 +4,7 @@
 # Brazilian Portuguese video-editing vocabulary. No proprietary localisation resource, string table
 # or product UI was consulted or copied; add entries the same way. Commands use the infinitive
 # ("Salvar como…"), instructions use the polite imperative ("Selecione um clipe…"), and labels use
-# sentence case. Product, format and technology names (FilmCraft, ArtCraft, Lumetri, ProRes, LUFS,
+# sentence case. Product, format and technology names (Vibe Studio, ArtCraft, Lumetri, ProRes, LUFS,
 # EDL, AAF…) keep their spelling; decimals in prose use a comma ("29,97 fps"). This catalog has the
 # same entries as `es.tsv` plus the native macOS Settings menu; strings added later show in English
 # until they are translated. A native-speaker review is welcome.
@@ -18,7 +18,7 @@
 # dissolve = dissolução, scopes = escopos, highlights = realces, offline = offline, legacy = legado,
 # preferences (also the native macOS Settings menu) = Preferências, settings = configurações.
 
-	About FilmCraft	Sobre o FilmCraft
+	About Vibe Studio	Sobre o Vibe Studio
 	Add Audio Submix Track	Adicionar faixa de submixagem de áudio
 	Add Caption at Playhead	Adicionar legenda no cursor de reprodução
 	Add Chapter Marker…	Adicionar marcador de capítulo…
@@ -44,7 +44,6 @@
 	Apply Default Transitions to Selection	Aplicar transições padrão à seleção
 	Apply Video Transition	Aplicar transição de vídeo
 	Arrange	Organizar
-	ArtCraft Website	Site do ArtCraft
 	Assembly	Montagem
 	Attach Proxies…	Anexar proxies…
 	Audio Channels…	Canais de áudio…
@@ -141,9 +140,8 @@
 	File	Arquivo
 	File…	Arquivo…
 	Fill frame	Preencher quadro
-	FilmCraft Help…	Ajuda do FilmCraft…
-	FilmCraft on GitHub	FilmCraft no GitHub
-	FilmCraft on getartcraft.com	FilmCraft no getartcraft.com
+	Vibe Studio Help…	Ajuda do Vibe Studio…
+	Vibe Studio on GitHub	Vibe Studio no GitHub
 	Find Next	Localizar próximo
 	Find…	Localizar…
 	Fit	Ajustar
@@ -187,7 +185,6 @@
 	Insert Frame Hold Segment	Inserir segmento de quadro congelado
 	Install Motion Graphics Template…	Instalar modelo de gráficos de movimento…
 	Interpret Footage…	Interpretar clipes…
-	Join the ArtCraft Discord…	Entre no Discord do ArtCraft…
 	Keyboard Shortcuts…	Atalhos de teclado…
 	Label	Rótulo
 	Labels…	Rótulos…
@@ -316,7 +313,7 @@
 	Select Previous Graphic	Selecionar gráfico anterior
 	Select Previous Layer	Selecionar camada anterior
 	Selection Follows Playhead	A seleção segue o cursor de reprodução
-	Selection as FilmCraft Project…	Seleção como projeto do FilmCraft…
+	Selection as Vibe Studio Project…	Seleção como projeto do Vibe Studio…
 	Selection…	Seleção…
 	Send Backward	Enviar para trás
 	Send to Back	Enviar para o fundo
@@ -383,7 +380,6 @@
 	Master volume: use the Audio Track Mixer	Volume principal: use o misturador de faixas de áudio
 	Search	Pesquisar
 	Quick Export	Exportação rápida
-	Join the ArtCraft Discord (discord.gg/artcraft)	Entre no Discord do ArtCraft (discord.gg/artcraft)
 	Cancel	Cancelar
 	OK	OK
 	Interpret Footage	Interpretar clipes
@@ -426,8 +422,6 @@
 	Delete Caption Track	Excluir faixa de legendas
 	Delete Empty Caption Tracks	Excluir faixas de legendas vazias
 	Version {version}	Versão {version}
-	A clean-room, pure-Rust non-linear video editor. Part of the ArtCraft family.	Um editor de vídeo não linear em Rust puro, desenvolvido em sala limpa. Parte da família ArtCraft.
-	Join the ArtCraft Discord	Entre no Discord do ArtCraft
 	Source code on GitHub	Código-fonte no GitHub
 	Report an issue	Relatar um problema
 	MIT OR Apache-2.0. Fonts: Inter, Noto Serif and JetBrains Mono (SIL OFL 1.1).	MIT OR Apache-2.0. Fontes: Inter, Noto Serif e JetBrains Mono (SIL OFL 1.1).
@@ -447,7 +441,7 @@
 	No background jobs.	Nenhuma tarefa em segundo plano.
 	Recover Unsaved Changes	Recuperar alterações não salvas
 	Untitled	Sem título
-	FilmCraft was closed while “{name}” had unsaved changes.	O FilmCraft foi fechado enquanto “{name}” tinha alterações não salvas.
+	Vibe Studio was closed while “{name}” had unsaved changes.	O Vibe Studio foi fechado enquanto “{name}” tinha alterações não salvas.
 	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	O Vibe Studio fechou inesperadamente enquanto “{name}” tinha alterações não salvas.
 	Recover unsaved changes from {when}?	Recuperar as alterações não salvas de {when}?
 	The project had not been saved yet.	O projeto ainda não tinha sido salvo.
@@ -976,7 +970,7 @@
 	Font family	Família de fontes
 	Label Colors	Cores dos rótulos
 	Decoded frames held for the monitors and thumbnails: {used} of {budget}.	Quadros decodificados mantidos para os monitores e miniaturas: {used} de {budget}.
-	FilmCraft keeps the rest of the RAM free for other applications.	O FilmCraft deixa o restante da RAM livre para outros aplicativos.
+	Vibe Studio keeps the rest of the RAM free for other applications.	O Vibe Studio deixa o restante da RAM livre para outros aplicativos.
 	not available in this session	indisponível nesta sessão
 	Currently: {loc} — {files} file(s), {size}	Atualmente: {loc} — {files} arquivo(s), {size}
 	 ({ch} output channels)	 ({ch} canais de saída)
@@ -1087,7 +1081,7 @@
 	Video Frame	Quadro de vídeo
 	Pin To	Fixar em
 	Pinned Edges	Bordas fixadas
-	FilmCraft Graphics Template	Modelo de gráficos do FilmCraft
+	Vibe Studio Graphics Template	Modelo de gráficos do Vibe Studio
 	{n} Font	{n} Fonte
 	{n} Size	{n} Tamanho
 	{n} Color	{n} Cor
@@ -1097,7 +1091,7 @@
 	Export As Motion Graphics Template	Exportar como modelo de gráficos de movimento
 	Category:	Categoria:
 	Editable properties:	Propriedades editáveis:
-	Saved as a FilmCraft graphics template (.fcgt) in your templates folder.	Salvo como modelo de gráficos do FilmCraft (.fcgt) na sua pasta de modelos.
+	Saved as a Vibe Studio graphics template (.fcgt) in your templates folder.	Salvo como modelo de gráficos do Vibe Studio (.fcgt) na sua pasta de modelos.
 	Exported graphics template to {path}	Modelo de gráficos exportado para {path}
 	Replace Fonts in Projects	Substituir fontes em projetos
 	Fonts used in the project:	Fontes usadas no projeto:
@@ -1468,7 +1462,7 @@
 	Center of Sphere	Centro da esfera
 	Cents	Cents
 	Change to Color	Alterar para cor
-	Changes are copied in the background a moment after each edit. If FilmCraft quits unexpectedly, they are offered the next time it starts.	As alterações são copiadas em segundo plano logo após cada edição. Se o FilmCraft fechar inesperadamente, elas serão oferecidas na próxima vez que ele for iniciado.
+	Changes are copied in the background a moment after each edit. If Vibe Studio quits unexpectedly, they are offered the next time it starts.	As alterações são copiadas em segundo plano logo após cada edição. Se o Vibe Studio fechar inesperadamente, elas serão oferecidas na próxima vez que ele for iniciado.
 	Channel	Canal
 	Channel Blur	Desfoque de canal
 	Channel Mix	Mixagem de canais
@@ -1841,7 +1835,7 @@
 	Hard Limiter	Limitador rígido
 	Hard Mix	Mistura sólida
 	Hardware decoding	Decodificação por hardware
-	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and FilmCraft's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Decodificação por hardware: Automático usa o decodificador de vídeo do sistema (VideoToolbox no macOS, Media Foundation no Windows, VA-API ou NVDEC para H.264 e HEVC no Linux) para os fluxos que ele suporta, e o decodificador próprio do FilmCraft para todo o resto ou se o hardware falhar. A mídia que já está aberta mantém seu decodificador até ser reaberta.
+	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and Vibe Studio's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Decodificação por hardware: Automático usa o decodificador de vídeo do sistema (VideoToolbox no macOS, Media Foundation no Windows, VA-API ou NVDEC para H.264 e HEVC no Linux) para os fluxos que ele suporta, e o decodificador próprio do Vibe Studio para todo o resto ou se o hardware falhar. A mídia que já está aberta mantém seu decodificador até ser reaberta.
 	Head Size	Tamanho da cabeça
 	Heart	Coração
 	Height	Altura
@@ -2116,7 +2110,7 @@
 	Night	Noite
 	No Motion	Sem movimento
 	No Scroll	Sem rolagem
-	No plugins are installed. Changes will take effect the next time you start FilmCraft.	Nenhum plug-in instalado. As alterações terão efeito na próxima vez que o FilmCraft for iniciado.
+	No plugins are installed. Changes will take effect the next time you start Vibe Studio.	Nenhum plug-in instalado. As alterações terão efeito na próxima vez que o Vibe Studio for iniciado.
 	Noise	Ruído
 	Noise & Grain	Ruído e granulação
 	Noise (Legacy)	Ruído (legado)
@@ -2547,7 +2541,7 @@
 	Template Properties	Propriedades do modelo
 	Text Animator	Animador de texto
 	Text Color	Cor do texto
-	The media cache holds render previews of unsaved projects and other files FilmCraft can recreate. Deleting them is always safe; FilmCraft rebuilds them as needed.	O cache de mídia guarda pré-visualizações renderizadas de projetos não salvos e outros arquivos que o FilmCraft pode recriar. Excluí-los é sempre seguro; o FilmCraft os recria quando necessário.
+	The media cache holds render previews of unsaved projects and other files Vibe Studio can recreate. Deleting them is always safe; Vibe Studio rebuilds them as needed.	O cache de mídia guarda pré-visualizações renderizadas de projetos não salvos e outros arquivos que o Vibe Studio pode recriar. Excluí-los é sempre seguro; o Vibe Studio os recria quando necessário.
 	Thickness	Espessura
 	Tile Gradient	Gradiente em mosaico
 	Tilt	Inclinação
@@ -2757,8 +2751,8 @@
 	System Compatibility Report	Relatório de compatibilidade do sistema
 	no GPU adapter: the CPU compositor is used	nenhum adaptador de GPU: o compositor da CPU é usado
 	Avid Log Exchange	Avid Log Exchange
-	FilmCraft Project	Projeto do FilmCraft
-	{name} Selection.fcproj	{name} Seleção.fcproj
+	Vibe Studio Project	Projeto do Vibe Studio
+	{name} Selection.vibeproj	{name} Seleção.vibeproj
 	{name} (Simplified)	{name} (simplificada)
 	Find in:	Localizar em:
 	Find:	Localizar:
@@ -2897,7 +2891,7 @@
 	Start Queue	Iniciar fila
 	Stop	Parar
 	Clear Finished	Limpar concluídas
-	Not supported by FilmCraft's encoders yet	Ainda não suportado pelos codificadores do FilmCraft
+	Not supported by Vibe Studio's encoders yet	Ainda não suportado pelos codificadores do Vibe Studio
 	Sequence name	Nome da sequência
 	Folder	Pasta
 	Preset	Predefinição
@@ -2987,7 +2981,7 @@
 	Drag a clip to slide it between its neighbours.	Arraste um clipe para deslizá-lo entre seus vizinhos.
 	Drag to scroll the timeline.	Arraste para rolar a linha do tempo.
 	Click to zoom in; Opt-click to zoom out.	Clique para ampliar; Opt+clique para reduzir.
-	FilmCraft hit an error	O FilmCraft encontrou um erro
+	Vibe Studio hit an error	O Vibe Studio encontrou um erro
 	Details: {path}	Detalhes: {path}
 	Opened {url}	{url} aberto
 	(empty)	(vazio)
@@ -3241,7 +3235,7 @@
 	QuickTime, ProRes 4444 (4:4:4) with alpha channel, 24-bit 48 kHz PCM	QuickTime, ProRes 4444 (4:4:4) com canal alfa, PCM de 24 bits e 48 kHz
 	QuickTime, ProRes 4444 XQ (4:4:4), 24-bit 48 kHz PCM	QuickTime, ProRes 4444 XQ (4:4:4), PCM de 24 bits e 48 kHz
 	QuickTime, ProRes 422, 24-bit 48 kHz PCM	QuickTime, ProRes 422, PCM de 24 bits e 48 kHz
-	Quit FilmCraft	Sair do FilmCraft
+	Quit Vibe Studio	Sair do Vibe Studio
 	Rate Stretch Tool	Ferramenta Alongamento de taxa
 	Razor Tool	Ferramenta Lâmina
 	Rectangle Tool	Ferramenta Retângulo
@@ -3541,8 +3535,8 @@
 	Composite in Linear Color	Compor em cor linear
 	Auto Tone Map Media (HDR and log into SDR)	Mapeamento de tons automático da mídia (HDR e log para SDR)
 	Configure…	Configurar…
-	Not supported in FilmCraft yet	Ainda não suportado no FilmCraft
-	FilmCraft always composites in linear light	O FilmCraft sempre compõe em luz linear
+	Not supported in Vibe Studio yet	Ainda não suportado no Vibe Studio
+	Vibe Studio always composites in linear light	O Vibe Studio sempre compõe em luz linear
 	Loop marked range	Loop do intervalo marcado
 	Play Source	Reproduzir origem
 	Source Play/Stop	Reproduzir/parar origem

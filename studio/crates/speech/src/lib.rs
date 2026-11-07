@@ -1,4 +1,4 @@
-//! Speech-to-text for FilmCraft's Text panel ▸ Transcript.
+//! Speech-to-text for Vibe Studio's Text panel ▸ Transcript.
 //!
 //! - [`Transcriber`]: the trait every speech recogniser implements. It takes mono 16 kHz samples
 //!   and returns a [`Transcript`] whose words carry media-time bounds (`Tick`s; one 16 kHz sample

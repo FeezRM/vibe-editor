@@ -30,7 +30,7 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
         ui.ctx().send_viewport_cmd(egui::ViewportCommand::Maximized(!max));
     }
     let mut x = rect.min.x + if app.integrated_titlebar { 104.0 } else { 14.0 };
-    // The app's name where FilmCraft has Home (Import is the first page)
+    // The app's name where Vibe Studio has Home (Import is the first page)
     let name = p.layout_no_wrap("Vibe Studio".to_string(), Tokens::semibold(13.0), t.text);
     let home = Rect::from_min_size(pos2(x, rect.center().y - name.size().y / 2.0), name.size());
     app.auto.add("header.appName", home, "Vibe Studio");
@@ -58,7 +58,7 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
         let resp = ui.interact(r, egui::Id::unique(("page", id)), Sense::click());
         app.auto.add(&format!("header.page.{id}"), r, label);
         if id == "edit" || id == "import" || id == "export" {
-            // the mode ids FilmCraft agents already use
+            // the mode ids Vibe Studio agents already use
             let mode_id = if id == "edit" { "edit" } else { id };
             app.auto.add(&format!("header.mode.{mode_id}"), r, label);
         }

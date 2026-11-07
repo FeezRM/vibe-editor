@@ -54,7 +54,7 @@ pub fn show_recovery(app: &mut FilmcraftApp, ctx: &egui::Context) -> bool {
             let name = c["projectName"].as_str().unwrap_or(tl!("Untitled"));
             let when = c["savedAt"].as_str().unwrap_or("");
             let why = if c["cleanExit"].as_bool() == Some(true) {
-                tlf!("FilmCraft was closed while “{name}” had unsaved changes.", name)
+                tlf!("Vibe Studio was closed while “{name}” had unsaved changes.", name)
             } else {
                 tlf!("Vibe Studio quit unexpectedly while “{name}” had unsaved changes.", name)
             };
@@ -135,7 +135,7 @@ pub fn show_revert(app: &mut FilmcraftApp, ctx: &egui::Context) -> bool {
     open && (!r.should_close() || ctx.input(|i| i.pointer.any_down()))
 }
 
-/// "“cut.fcproj” already exists in “edits”. Do you want to replace it?" for a save dialog's answer
+/// "“cut.vibeproj” already exists in “edits”. Do you want to replace it?" for a save dialog's answer
 /// that names an existing file once its extension was added (drawn after every other dialog, so
 /// it stays on top). Escape cancels.
 pub fn show_overwrite(app: &mut FilmcraftApp, ctx: &egui::Context) {

@@ -21,7 +21,7 @@ pub enum Scaling {
     StretchToFill,
 }
 
-/// Field order of the encoded video. FilmCraft's encoders write progressive frames.
+/// Field order of the encoded video. Vibe Studio's encoders write progressive frames.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum FieldOrder {
@@ -62,7 +62,7 @@ impl H264Profile {
 }
 
 /// Export ▸ Hardware encoding: whether H.264 may be encoded by the system's hardware video encoder
-/// (VideoToolbox on macOS, NVENC on NVIDIA GPUs on Windows) instead of FilmCraft's own encoder. Off
+/// (VideoToolbox on macOS, NVENC on NVIDIA GPUs on Windows) instead of Vibe Studio's own encoder. Off
 /// by default: hardware encoders make different streams, and exports are otherwise byte-identical
 /// from run to run and machine to machine.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -477,7 +477,7 @@ impl ExportMetadata {
                 .filter(|(_, s)| !s.trim().is_empty())
                 .map(|(k, s)| (k.to_string(), s.trim().to_string()))
                 .collect();
-        v.push(("©too".into(), format!("FilmCraft {}", env!("CARGO_PKG_VERSION"))));
+        v.push(("©too".into(), format!("Vibe Studio {}", env!("CARGO_PKG_VERSION"))));
         v
     }
 }

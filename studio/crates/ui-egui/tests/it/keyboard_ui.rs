@@ -235,6 +235,8 @@ fn maximize_under_cursor_ignores_native_window_rects() {
     // otherwise takes the session for Wayland and keeps floating windows in-window.
     d.harness.input_mut().viewports.entry(egui::ViewportId::ROOT).or_default().outer_rect =
         Some(egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(1600.0, 1000.0)));
+    // Info is docked in Premiere's Editing workspace (not in Vibe Studio's default)
+    d.ok("ui.set", json!({"workspace": "Editing"}));
     d.ok("ui.menu.invoke", json!({"id": "window.floatPanel", "params": {"panel": "Info", "rect": [0, 0, 700, 500]}}));
     d.frames(4);
     let elements = d.ok("ui.elements", json!({"prefix": "panel."}));

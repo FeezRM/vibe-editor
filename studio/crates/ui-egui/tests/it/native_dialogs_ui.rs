@@ -232,7 +232,7 @@ fn s(p: &std::path::Path) -> String {
     p.to_string_lossy().into_owned()
 }
 
-/// #1644: GTK's file chooser saves the name as typed. Save As adds `.fcproj` when the name has no
+/// #1644: GTK's file chooser saves the name as typed. Save As adds `.vibeproj` when the name has no
 /// such extension, and asks before replacing a file that only the added extension names (the
 /// dialog's own prompt was about the name as typed).
 #[test]
@@ -246,20 +246,20 @@ fn save_as_adds_the_project_extension_and_asks_before_replacing_what_that_names(
         tx.send(vec![answer]).unwrap();
         d.frames(3);
     };
-    // no extension: `cut` is saved as `cut.fcproj`
+    // no extension: `cut` is saved as `cut.vibeproj`
     save_as(&mut d, s(&dir.join("cut")));
-    assert!(dir.join("cut.fcproj").is_file());
+    assert!(dir.join("cut.vibeproj").is_file());
     assert!(!dir.join("cut").exists());
-    assert_eq!(d.app().session.path.as_deref(), Some(s(&dir.join("cut.fcproj")).as_str()));
-    // another extension keeps it and adds ours; an upper-case `.FCPROJ` is kept as typed
+    assert_eq!(d.app().session.path.as_deref(), Some(s(&dir.join("cut.vibeproj")).as_str()));
+    // another extension keeps it and adds ours; an upper-case `.VIBEPROJ` is kept as typed
     save_as(&mut d, s(&dir.join("a.filmcraft")));
-    assert!(dir.join("a.filmcraft.fcproj").is_file());
-    save_as(&mut d, s(&dir.join("UPPER.FCPROJ")));
-    assert!(dir.join("UPPER.FCPROJ").is_file());
+    assert!(dir.join("a.filmcraft.vibeproj").is_file());
+    save_as(&mut d, s(&dir.join("UPPER.VIBEPROJ")));
+    assert!(dir.join("UPPER.VIBEPROJ").is_file());
     assert!(d.app().overwrite_prompt_path().is_none());
 
-    // `keep` + `.fcproj` is an existing file: nothing is written until the user answers
-    let keep = dir.join("keep.fcproj");
+    // `keep` + `.vibeproj` is an existing file: nothing is written until the user answers
+    let keep = dir.join("keep.vibeproj");
     std::fs::write(&keep, "not a project").unwrap();
     save_as(&mut d, s(&dir.join("keep")));
     assert_eq!(d.app().overwrite_prompt_path(), Some(s(&keep).as_str()));
@@ -277,7 +277,7 @@ fn save_as_adds_the_project_extension_and_asks_before_replacing_what_that_names(
     assert!(d.app().overwrite_prompt_path().is_none());
     assert!(std::fs::read_to_string(&keep).unwrap().starts_with('{'));
     assert_eq!(d.app().session.path.as_deref(), Some(s(&keep).as_str()));
-    // the chosen name already ends in `.fcproj`: the dialog asked, the app doesn't ask again
+    // the chosen name already ends in `.vibeproj`: the dialog asked, the app doesn't ask again
     save_as(&mut d, s(&keep));
     assert!(d.app().overwrite_prompt_path().is_none());
     // cancelled: nothing saved, no prompt
@@ -310,7 +310,7 @@ fn export_save_dialogs_add_their_extension_with_synchronous_pickers_too() {
 fn quit_save_waits_for_a_save_dialog_answered_later() {
     let dir = PathBuf::from(env!("CARGO_TARGET_TMPDIR")).join("native-dialogs-quit");
     std::fs::create_dir_all(&dir).unwrap();
-    let path = dir.join("quit.fcproj");
+    let path = dir.join("quit.vibeproj");
     let _ = std::fs::remove_file(&path);
     let mut d = Driver::new(true);
     d.app().session.path = None;
@@ -354,7 +354,7 @@ fn quit_save_waits_for_a_save_dialog_answered_later() {
 fn a_late_save_answer_finishes_the_newest_prompt_and_only_for_its_project() {
     let dir = PathBuf::from(env!("CARGO_TARGET_TMPDIR")).join("native-dialogs-late");
     std::fs::create_dir_all(&dir).unwrap();
-    let path = dir.join("late.fcproj");
+    let path = dir.join("late.vibeproj");
     let _ = std::fs::remove_file(&path);
     let mut d = Driver::new(true);
     d.app().session.path = None;
@@ -384,7 +384,7 @@ fn a_late_save_answer_finishes_the_newest_prompt_and_only_for_its_project() {
     let (_, answer) = d.asked();
     d.harness.input_mut().viewports.entry(egui::ViewportId::ROOT).or_default().events.push(egui::ViewportEvent::Close);
     d.frames(3);
-    answer.send(vec![blocker.join("late.fcproj").to_string_lossy().into_owned()]).unwrap();
+    answer.send(vec![blocker.join("late.vibeproj").to_string_lossy().into_owned()]).unwrap();
     d.frames(5);
     assert_eq!(d.app().ui.clip_dialog.as_ref().map(|c| c.command.clone()).as_deref(), Some("app.quit"), "the Quit prompt stays");
     assert!(!d.app().quit_confirmed && !d.app().ui.status.is_empty(), "not quitting, with the reason");

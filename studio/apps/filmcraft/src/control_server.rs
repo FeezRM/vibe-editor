@@ -171,7 +171,7 @@ fn serve_with_timeout(
         // Until the app can drain the queue, a request would outlive its 60 s reply wait and
         // still run after startup: reject it instead, so a client retry is the only copy (#3436).
         if !ready.load(Ordering::Relaxed) {
-            return Some(json!({"ok": false, "error": "FilmCraft is still starting; send the request again"}));
+            return Some(json!({"ok": false, "error": "Vibe Studio is still starting; send the request again"}));
         }
         let (req, rrx) = ControlRequest::new(method, params);
         tx.send(req).ok()?;

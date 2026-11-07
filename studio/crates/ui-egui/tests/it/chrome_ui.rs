@@ -1,5 +1,5 @@
 //! Headless UI tests of the window chrome flags: `UiState::show_header` and
-//! `UiState::show_status_bar` default to on, and an app that embeds FilmCraft can turn them off
+//! `UiState::show_status_bar` default to on, and an app that embeds Vibe Studio can turn them off
 //! to give the panels the whole window.
 
 use egui_kittest::Harness;

@@ -16,7 +16,7 @@ no Adobe assets.
 ```sh
 cd studio
 cargo build -p filmcraft -p filmcraft-cli          # ~10 min the first time; binaries in target/debug/
-../lanes/vibe/open.sh ../projects/<job>             # the job as a sequence, hand edits kept in <job>/vibe/<job>.fcproj
+../lanes/vibe/open.sh ../projects/<job>             # the job as a sequence, hand edits kept in <job>/vibe/<job>.vibeproj
 ../lanes/vibe/export.sh ../projects/<job> out.mp4   # headless export, captions burned in
 target/debug/vibe-studio projects/<job>             # or open a job folder directly (it has a RUN.md)
 ```
@@ -55,7 +55,7 @@ app on your Mac or a terminal) and tell it what to make. The pipeline, skills an
 before, and nothing needs Vibe Studio. With Vibe Studio set up (`lanes/vibe/setup.sh` builds it
 and registers `vibe-studio` in `.mcp.json`), that session can also open the edit in the editor
 (`lanes/vibe/open.sh projects/<job>`) and see and change what is open there. The `vibe-studio` MCP
-server (`lanes/vibe/mcp.sh` → `filmcraft-cli mcp --bridge vibe-studio`) finds the running app
+server (`lanes/vibe/mcp.sh` → `vibe-studio-cli mcp --bridge vibe-studio`) finds the running app
 through `~/.vibe-studio/live.json` (port and token, readable by you only, written while the app is
 open and removed when it quits) each time a tool runs, so it doesn't matter which starts first.
 When the app isn't open, its tools say so and how to open it. Approve the server once when Claude
@@ -80,7 +80,7 @@ protocol for answering permission prompts from a host app.
 | `audio/voice-gain.json` | clip gain on every A1 clip, and a Hard Limiter on A1 at `audio.peak_dbfs` (the ffmpeg lane's `alimiter`) |
 
 `vibe.importJob {"dir", "captions": "track"|"render"|"none"}` is an engine command like any other,
-so it also runs from the CLI (`filmcraft-cli exec vibe.importJob dir=projects/<job>`), the control
+so it also runs from the CLI (`vibe-studio-cli exec vibe.importJob dir=projects/<job>`), the control
 channel, MCP and the Assistant. The whole import is one undo step.
 
 **Editing by hand.** Imported sequences are *magnetic* (Sequence ▸ Magnetic Timeline): trimming or
@@ -101,6 +101,7 @@ look's fonts (e.g. Europa Grotesk, Tactic Sans) on the Mac, as the samples look 
 |---|---|---|
 | Name and icon | "Vibe Studio" in the header, window, About, dialogs; binary `vibe-studio`; own icon (an amber V); data in its own folder (`…/Vibe Studio`, `VIBE_STUDIO_DATA_DIR`) | `apps/filmcraft/src/{main,vibe}.rs`, `apps/filmcraft/Cargo.toml`, `crates/ui-egui/src/brand.rs`, `assets/app-icon/vibe-studio-*` |
 | Trademarks | the ArtCraft wordmark and Discord button are gone (ArtCraft's marks, not code-licensed); the updater is off (it would install FilmCraft over Vibe Studio) | `brand.rs`, `header.rs`, `main.rs` |
+| Rebrand | every user-facing string says Vibe Studio (all 17 languages); projects are `.vibeproj` (same format as `.fcproj`: rename a FilmCraft project to open it); the CLI is `vibe-studio-cli`, the MCP server `vibe-studio` with `vibe-studio://` resources; Help and About link to vibe-editor on GitHub, and About credits FilmCraft; logs are `vibe-studio.log` | `links.rs`, `menus.rs`, `panels/dialogs.rs`, `i18n/*.tsv`, `automation/src/server.rs`, `apps/filmcraft-cli/Cargo.toml` |
 | Look | the design in `../editor/docs/DESIGN.md`: neutral near-black greys, one accent, the creator's brand colour from `brand/brand.json` (`VIBE_BRAND` overrides; default amber `#FFC531`), dark text on accent fills, 4 px radii | `crates/ui-egui/src/theme.rs`, accent buttons in `panels/export_mode/*`, `panels/text.rs`, `panels/timeline.rs` |
 | Header | page tabs Import · Edit · Captions · Color · Audio · Export (Edit = the `Vibe` workspace); Assistant and Export buttons | `crates/ui-egui/src/header.rs` |
 | Workspace | `Vibe` (the default): assets │ Program │ Properties over the Assistant, with the timeline under the first two | `crates/ui-egui/src/dock.rs`, `state.rs`, `menus.rs` |

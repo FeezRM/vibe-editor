@@ -88,7 +88,7 @@ fn captions_import_edit_export_and_burn_in() {
     assert!(pd < cpu.px.len() / 200, "the GPU plan matches the CPU render ({pd})");
 
     // save/open keeps caption tracks
-    let proj = dir.join("cap.fcproj").to_string_lossy().to_string();
+    let proj = dir.join("cap.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveAs", json!({"path": proj})).unwrap();
     let before = s.active_sequence().unwrap().caption_tracks.clone();
     s.execute("file.open", json!({"path": proj})).unwrap();

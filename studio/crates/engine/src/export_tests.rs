@@ -965,7 +965,7 @@ fn default_export_dir_never_needs_a_real_filesystem() {
     // the shared temp-dir helper is what every former `std::env::temp_dir()` call goes through
     assert!(!crate::temp_dir().as_os_str().is_empty());
     // a saved project exports next to itself
-    let s = Session { path: Some("/projects/show/edit.fcproj".into()), ..Default::default() };
+    let s = Session { path: Some("/projects/show/edit.vibeproj".into()), ..Default::default() };
     assert_eq!(crate::export_tools::default_export_dir(&s), std::path::PathBuf::from("/projects/show"));
 }
 

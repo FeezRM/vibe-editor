@@ -9,13 +9,13 @@
 # Clean-room: every entry was written from the plain meaning of the English text using ordinary
 # Swedish video-editing vocabulary (spår, spelmarkör, sekvens, bin, snitt, nyckelbildruta,
 # undertext, rendera…). No proprietary localisation resource, string table or product UI was
-# consulted or copied, and no other FilmCraft catalog was translated from; add entries the same
-# way. Product, technology and format names (FilmCraft, ArtCraft, Lumetri, ProRes, LUFS, H.264…)
+# consulted or copied, and no other Vibe Studio catalog was translated from; add entries the same
+# way. Product, technology and format names (Vibe Studio, ArtCraft, Lumetri, ProRes, LUFS, H.264…)
 # keep their spelling, as do key-cap names (Shift, Alt, Ctrl, Cmd, Opt, Esc).
 # Labels use sentence case; commands are imperatives; Delete = Radera, Remove = Ta bort,
 # Clear = Rensa; decimals use a comma and frame rates are written bild/s (29,97 bild/s).
 
-	About FilmCraft	Om FilmCraft
+	About Vibe Studio	Om Vibe Studio
 	Add Audio Submix Track	Lägg till ljudsubmixspår
 	Add Caption at Playhead	Lägg till undertext vid spelmarkören
 	Add Chapter Marker…	Lägg till kapitelmarkör…
@@ -41,7 +41,6 @@
 	Apply Default Transitions to Selection	Använd standardövergångar på markering
 	Apply Video Transition	Använd videoövergång
 	Arrange	Ordna
-	ArtCraft Website	ArtCrafts webbplats
 	Assembly	Sammanställning
 	Attach Proxies…	Koppla proxyer…
 	Audio Channels…	Ljudkanaler…
@@ -134,9 +133,8 @@
 	File	Arkiv
 	File…	Fil…
 	Fill frame	Fyll bildrutan
-	FilmCraft Help…	FilmCraft-hjälp…
-	FilmCraft on GitHub	FilmCraft på GitHub
-	FilmCraft on getartcraft.com	FilmCraft på getartcraft.com
+	Vibe Studio Help…	Vibe Studio-hjälp…
+	Vibe Studio on GitHub	Vibe Studio på GitHub
 	Find Next	Sök nästa
 	Find…	Sök…
 	Fit	Anpassa
@@ -180,7 +178,6 @@
 	Insert Frame Hold Segment	Infoga frysbildssegment
 	Install Motion Graphics Template…	Installera rörlig grafik-mall…
 	Interpret Footage…	Tolka material…
-	Join the ArtCraft Discord…	Gå med i ArtCraft på Discord…
 	Keyboard Shortcuts…	Kortkommandon…
 	Label	Etikett
 	Labels…	Etiketter…
@@ -309,7 +306,7 @@
 	Select Previous Graphic	Markera föregående grafik
 	Select Previous Layer	Markera föregående lager
 	Selection Follows Playhead	Markeringen följer spelmarkören
-	Selection as FilmCraft Project…	Markering som FilmCraft-projekt…
+	Selection as Vibe Studio Project…	Markering som Vibe Studio-projekt…
 	Selection…	Markering…
 	Send Backward	Flytta bakåt
 	Send to Back	Flytta längst bak
@@ -375,7 +372,6 @@
 	Master volume: use the Audio Track Mixer	Huvudvolym: använd ljudspårsmixern
 	Search	Sök
 	Quick Export	Snabbexport
-	Join the ArtCraft Discord (discord.gg/artcraft)	Gå med i ArtCraft på Discord (discord.gg/artcraft)
 	Cancel	Avbryt
 	OK	OK
 	Interpret Footage	Tolka material
@@ -418,8 +414,6 @@
 	Delete Caption Track	Radera undertextspåret
 	Delete Empty Caption Tracks	Radera tomma undertextspår
 	Version {version}	Version {version}
-	A clean-room, pure-Rust non-linear video editor. Part of the ArtCraft family.	En icke-linjär videoredigerare i ren Rust, utvecklad enligt clean room-metoden. En del av ArtCraft-familjen.
-	Join the ArtCraft Discord	Gå med i ArtCraft på Discord
 	Source code on GitHub	Källkod på GitHub
 	Report an issue	Rapportera ett problem
 	MIT OR Apache-2.0. Fonts: Inter, Noto Serif and JetBrains Mono (SIL OFL 1.1).	MIT OR Apache-2.0. Typsnitt: Inter, Noto Serif och JetBrains Mono (SIL OFL 1.1).
@@ -439,7 +433,7 @@
 	No background jobs.	Inga bakgrundsjobb.
 	Recover Unsaved Changes	Återställ osparade ändringar
 	Untitled	Namnlös
-	FilmCraft was closed while “{name}” had unsaved changes.	FilmCraft stängdes medan “{name}” hade osparade ändringar.
+	Vibe Studio was closed while “{name}” had unsaved changes.	Vibe Studio stängdes medan “{name}” hade osparade ändringar.
 	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	Vibe Studio avslutades oväntat medan “{name}” hade osparade ändringar.
 	Recover unsaved changes from {when}?	Vill du återställa osparade ändringar från {when}?
 	The project had not been saved yet.	Projektet hade inte sparats ännu.
@@ -967,7 +961,7 @@
 	Font family	Typsnittsfamilj
 	Label Colors	Etikettfärger
 	Decoded frames held for the monitors and thumbnails: {used} of {budget}.	Avkodade bildrutor som hålls för monitorer och miniatyrer: {used} av {budget}.
-	FilmCraft keeps the rest of the RAM free for other applications.	FilmCraft lämnar resten av RAM-minnet fritt för andra program.
+	Vibe Studio keeps the rest of the RAM free for other applications.	Vibe Studio lämnar resten av RAM-minnet fritt för andra program.
 	not available in this session	inte tillgängligt i den här sessionen
 	Currently: {loc} — {files} file(s), {size}	För närvarande: {loc} — {files} fil(er), {size}
 	 ({ch} output channels)	 ({ch} utgångskanaler)
@@ -1078,7 +1072,7 @@
 	Video Frame	Videobildruta
 	Pin To	Fäst vid
 	Pinned Edges	Fästa kanter
-	FilmCraft Graphics Template	FilmCraft-grafikmall
+	Vibe Studio Graphics Template	Vibe Studio-grafikmall
 	{n} Font	{n} typsnitt
 	{n} Size	{n} storlek
 	{n} Color	{n} färg
@@ -1088,7 +1082,7 @@
 	Export As Motion Graphics Template	Exportera som rörlig grafik-mall
 	Category:	Kategori:
 	Editable properties:	Redigerbara egenskaper:
-	Saved as a FilmCraft graphics template (.fcgt) in your templates folder.	Sparad som FilmCraft-grafikmall (.fcgt) i din mallmapp.
+	Saved as a Vibe Studio graphics template (.fcgt) in your templates folder.	Sparad som Vibe Studio-grafikmall (.fcgt) i din mallmapp.
 	Exported graphics template to {path}	Exporterade grafikmall till {path}
 	Replace Fonts in Projects	Ersätt typsnitt i projekt
 	Fonts used in the project:	Typsnitt som används i projektet:
@@ -1458,7 +1452,7 @@
 	Center of Sphere	Sfärens mittpunkt
 	Cents	Cent
 	Change to Color	Ändra till färg
-	Changes are copied in the background a moment after each edit. If FilmCraft quits unexpectedly, they are offered the next time it starts.	Ändringar kopieras i bakgrunden en kort stund efter varje redigering. Om FilmCraft avslutas oväntat erbjuds de nästa gång programmet startar.
+	Changes are copied in the background a moment after each edit. If Vibe Studio quits unexpectedly, they are offered the next time it starts.	Ändringar kopieras i bakgrunden en kort stund efter varje redigering. Om Vibe Studio avslutas oväntat erbjuds de nästa gång programmet startar.
 	Channel	Kanal
 	Channel Blur	Kanaloskärpa
 	Channel Mix	Kanalmix
@@ -1831,13 +1825,13 @@
 	Hard Limiter	Hård limiter
 	Hard Mix	Hård blandning
 	Hardware decoding	Hårdvaruavkodning
-	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and FilmCraft's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Hårdvaruavkodning: Auto använder systemets videoavkodare (VideoToolbox på macOS, Media Foundation på Windows, VA-API eller NVDEC för H.264 och HEVC på Linux) för de strömmar den stöder, och FilmCrafts egen avkodare för allt annat eller om hårdvaran inte fungerar. Media som redan är öppna behåller sin avkodare tills de öppnas igen.
+	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and Vibe Studio's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Hårdvaruavkodning: Auto använder systemets videoavkodare (VideoToolbox på macOS, Media Foundation på Windows, VA-API eller NVDEC för H.264 och HEVC på Linux) för de strömmar den stöder, och Vibe Studios egen avkodare för allt annat eller om hårdvaran inte fungerar. Media som redan är öppna behåller sin avkodare tills de öppnas igen.
 	Head Size	Huvudstorlek
 	Heart	Hjärta
 	Height	Höjd
 	Hexagon	Hexagon
 	Hide Back Face	Dölj baksida
-	Hide FilmCraft	Göm FilmCraft
+	Hide Vibe Studio	Göm Vibe Studio
 	Hide Others	Göm övriga
 	High	Hög
 	High Cutoff	Övre brytfrekvens
@@ -2108,7 +2102,7 @@
 	Night	Natt
 	No Motion	Ingen rörelse
 	No Scroll	Ingen rullning
-	No plugins are installed. Changes will take effect the next time you start FilmCraft.	Inga plugins är installerade. Ändringarna börjar gälla nästa gång du startar FilmCraft.
+	No plugins are installed. Changes will take effect the next time you start Vibe Studio.	Inga plugins är installerade. Ändringarna börjar gälla nästa gång du startar Vibe Studio.
 	Noise	Brus
 	Noise & Grain	Brus och korn
 	Noise (Legacy)	Brus (äldre)
@@ -2540,7 +2534,7 @@
 	Template Properties	Mallegenskaper
 	Text Animator	Textanimering
 	Text Color	Textfärg
-	The media cache holds render previews of unsaved projects and other files FilmCraft can recreate. Deleting them is always safe; FilmCraft rebuilds them as needed.	Mediecachen innehåller renderade förhandsgranskningar av osparade projekt och andra filer som FilmCraft kan återskapa. Det är alltid säkert att radera dem; FilmCraft bygger upp dem igen vid behov.
+	The media cache holds render previews of unsaved projects and other files Vibe Studio can recreate. Deleting them is always safe; Vibe Studio rebuilds them as needed.	Mediecachen innehåller renderade förhandsgranskningar av osparade projekt och andra filer som Vibe Studio kan återskapa. Det är alltid säkert att radera dem; Vibe Studio bygger upp dem igen vid behov.
 	Thickness	Tjocklek
 	Tile Gradient	Upprepa gradienten
 	Tilt	Lutning
@@ -2750,8 +2744,8 @@
 	System Compatibility Report	Systemkompatibilitetsrapport
 	no GPU adapter: the CPU compositor is used	ingen GPU-adapter: CPU-kompositorn används
 	Avid Log Exchange	Avid Log Exchange
-	FilmCraft Project	FilmCraft-projekt
-	{name} Selection.fcproj	{name} Markering.fcproj
+	Vibe Studio Project	Vibe Studio-projekt
+	{name} Selection.vibeproj	{name} Markering.vibeproj
 	{name} (Simplified)	{name} (förenklad)
 	Find in:	Sök i:
 	Find:	Sök:
@@ -2890,7 +2884,7 @@
 	Start Queue	Starta kö
 	Stop	Stoppa
 	Clear Finished	Rensa slutförda
-	Not supported by FilmCraft's encoders yet	Stöds inte av FilmCrafts kodare än
+	Not supported by Vibe Studio's encoders yet	Stöds inte av Vibe Studios kodare än
 	Sequence name	Sekvensnamn
 	Folder	Mapp
 	Preset	Förinställning
@@ -2980,7 +2974,7 @@
 	Drag a clip to slide it between its neighbours.	Dra ett klipp för att slide-flytta det mellan grannklippen.
 	Drag to scroll the timeline.	Dra för att rulla tidslinjen.
 	Click to zoom in; Opt-click to zoom out.	Klicka för att zooma in; Opt-klicka för att zooma ut.
-	FilmCraft hit an error	FilmCraft stötte på ett fel
+	Vibe Studio hit an error	Vibe Studio stötte på ett fel
 	Details: {path}	Detaljer: {path}
 	Opened {url}	Öppnade {url}
 	(empty)	(tom)
@@ -3240,7 +3234,7 @@
 	QuickTime, ProRes 4444 (4:4:4) with alpha channel, 24-bit 48 kHz PCM	QuickTime, ProRes 4444 (4:4:4) med alfakanal, PCM 24 bitar 48 kHz
 	QuickTime, ProRes 4444 XQ (4:4:4), 24-bit 48 kHz PCM	QuickTime, ProRes 4444 XQ (4:4:4), PCM 24 bitar 48 kHz
 	QuickTime, ProRes 422, 24-bit 48 kHz PCM	QuickTime, ProRes 422, PCM 24 bitar 48 kHz
-	Quit FilmCraft	Avsluta FilmCraft
+	Quit Vibe Studio	Avsluta Vibe Studio
 	Rate Stretch Tool	Hastighetssträckningsverktyg
 	Razor Tool	Rakbladsverktyg
 	Rectangle Tool	Rektangelverktyg
@@ -3539,8 +3533,8 @@
 	Composite in Linear Color	Komponera i linjär färg
 	Auto Tone Map Media (HDR and log into SDR)	Tonmappa media automatiskt (HDR och log till SDR)
 	Configure…	Konfigurera…
-	Not supported in FilmCraft yet	Stöds inte i FilmCraft ännu
-	FilmCraft always composites in linear light	FilmCraft komponerar alltid i linjärt ljus
+	Not supported in Vibe Studio yet	Stöds inte i Vibe Studio ännu
+	Vibe Studio always composites in linear light	Vibe Studio komponerar alltid i linjärt ljus
 	Loop marked range	Loopa markerat intervall
 	Play Source	Spela upp källa
 	Source Play/Stop	Spela/stoppa källa
@@ -3600,7 +3594,7 @@
 	Opens in your web browser: {url}	Öppnas i din webbläsare: {url}
 	Saves this session's log and shows it in your file manager.	Sparar loggen för den här sessionen och visar den i filhanteraren.
 	Shows a report on this computer.	Visar en rapport om den här datorn.
-	Shows the version, community links and credits in a FilmCraft window.	Visar version, communitylänkar och medverkande i ett FilmCraft-fönster.
+	Shows the version, community links and credits in a Vibe Studio window.	Visar version, communitylänkar och medverkande i ett Vibe Studio-fönster.
 	Couldn't open your web browser	Det gick inte att öppna webbläsaren
 	Open this address in your browser yourself:	Öppna den här adressen i webbläsaren själv:
 	Delete Redoable Actions	Radera åtgärder som kan göras om
@@ -3620,17 +3614,17 @@
 	Open a sequence to search its graphics	Öppna en sekvens för att söka i dess grafik
 	No text graphics in this sequence. Add text with the Type tool.	Det finns ingen textgrafik i den här sekvensen. Lägg till text med textverktyget.
 	No matching text.	Ingen text matchar.
-	H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and FilmCraft has no software H.265 encoder yet. Choose H.264 or ProRes instead.	H.265 (HEVC) kräver en hårdvarukodare (NVENC på NVIDIA-grafikkort, VideoToolbox på macOS). Ingen hittades på den här datorn, och FilmCraft har ännu ingen programvarukodare för H.265. Välj H.264 eller ProRes i stället.
-	AV1 needs a hardware encoder; none was found on this machine, and FilmCraft has no software AV1 encoder yet.	AV1 kräver en hårdvarukodare. Ingen hittades på den här datorn, och FilmCraft har ännu ingen programvarukodare för AV1.
+	H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and Vibe Studio has no software H.265 encoder yet. Choose H.264 or ProRes instead.	H.265 (HEVC) kräver en hårdvarukodare (NVENC på NVIDIA-grafikkort, VideoToolbox på macOS). Ingen hittades på den här datorn, och Vibe Studio har ännu ingen programvarukodare för H.265. Välj H.264 eller ProRes i stället.
+	AV1 needs a hardware encoder; none was found on this machine, and Vibe Studio has no software AV1 encoder yet.	AV1 kräver en hårdvarukodare. Ingen hittades på den här datorn, och Vibe Studio har ännu ingen programvarukodare för AV1.
 	Checking for updates…	Söker efter uppdateringar…
 	Could not check for updates:\n{error}	Det gick inte att söka efter uppdateringar:\n{error}
-	FilmCraft {version} is currently the newest version available.	FilmCraft {version} är den senaste tillgängliga versionen.
-	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API for H.264 and HEVC on Linux) for the streams it supports, and FilmCraft's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Hårdvaruavkodning: Auto använder systemets videoavkodare (VideoToolbox på macOS, Media Foundation på Windows, VA-API för H.264 och HEVC på Linux) för de strömmar den stöder, och FilmCrafts egen avkodare för allt annat eller om hårdvaruavkodningen misslyckas. Media som redan är öppna behåller sin avkodare tills de öppnas igen.
-	Looks for a newer FilmCraft release and offers to update.	Söker efter en nyare version av FilmCraft och erbjuder uppdatering.
+	Vibe Studio {version} is currently the newest version available.	Vibe Studio {version} är den senaste tillgängliga versionen.
+	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API for H.264 and HEVC on Linux) for the streams it supports, and Vibe Studio's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Hårdvaruavkodning: Auto använder systemets videoavkodare (VideoToolbox på macOS, Media Foundation på Windows, VA-API för H.264 och HEVC på Linux) för de strömmar den stöder, och Vibe Studios egen avkodare för allt annat eller om hårdvaruavkodningen misslyckas. Media som redan är öppna behåller sin avkodare tills de öppnas igen.
+	Looks for a newer Vibe Studio release and offers to update.	Söker efter en nyare version av Vibe Studio och erbjuder uppdatering.
 	Check for Updates…	Sök efter uppdateringar…
 	Set Work Area Bar In Point	Ange arbetsområdesfältets in-punkt
 	Set Work Area Bar Out Point	Ange arbetsområdesfältets ut-punkt
-	FilmCraft Updates	FilmCraft-uppdateringar
+	Vibe Studio Updates	Vibe Studio-uppdateringar
 	Center at Cut	Centrera vid snitt
 	Start at Cut	Börja vid snitt
 	End at Cut	Sluta vid snitt

@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft-format"
-description = "FilmCraft .fcproj files: schema versions + migrations, atomic saves, auto-save naming and rotation"
+description = "Vibe Studio .vibeproj files: schema versions + migrations, atomic saves, auto-save naming and rotation"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

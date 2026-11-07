@@ -65,7 +65,7 @@ const HISTORY_COMMAND_PREFIXES: &[(&str, Icon)] = &[
 ];
 
 /// The icon a History step shows for the command that made it: the tool's icon for a command a
-/// timeline tool runs, the command's own icon where FilmCraft has one, and a plain square for
+/// timeline tool runs, the command's own icon where Vibe Studio has one, and a plain square for
 /// every other command and for a step made outside a command.
 pub(crate) fn history_icon(command: Option<&str>) -> Icon {
     let Some(id) = command else { return Icon::Square };

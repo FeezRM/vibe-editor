@@ -1,7 +1,7 @@
 //! OS media integration (layer L5): hardware video decoding and encoding through the operating
 //! system's codecs.
 //!
-//! [`register`] puts the platform's hardware decoder factory in front of FilmCraft's own decoders
+//! [`register`] puts the platform's hardware decoder factory in front of Vibe Studio's own decoders
 //! (`filmcraft_codecs::register_video_decoder`). Today that is VideoToolbox on macOS for H.264
 //! (`avcC`) and HEVC (`hvcC`) streams, 8- and 10-bit, 4:2:0 and 4:2:2; Media Foundation / DXVA on
 //! Windows; NVDEC ([`nvdec`], NVIDIA's driver) and VA-API ([`vaapi`]) on Linux for H.264 and HEVC; on other systems (and on
@@ -66,7 +66,7 @@ pub enum Availability {
 
 /// Register the platform's hardware video decoders (call once at startup; repeated calls are
 /// harmless). Streams they do not take, and every stream while hardware decoding is Off, keep
-/// using FilmCraft's own decoders.
+/// using Vibe Studio's own decoders.
 pub fn register() -> Availability {
     #[cfg(all(target_os = "linux", target_pointer_width = "64"))]
     filmcraft_export::register_encoder(nvenc::export::factory);
@@ -81,7 +81,7 @@ pub fn register() -> Availability {
         filmcraft_codecs::hw::set_hw_backend("VideoToolbox");
         Availability::Available("VideoToolbox")
     }
-    // Export ▸ H.265: NVENC is FilmCraft's only HEVC encoder on Windows, so the format is available
+    // Export ▸ H.265: NVENC is Vibe Studio's only HEVC encoder on Windows, so the format is available
     // when a small HEVC session opens. That takes about half a second, so it is asked on a thread of
     // its own now rather than by the first draw of the format list.
     #[cfg(target_os = "windows")]

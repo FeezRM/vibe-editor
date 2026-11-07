@@ -1,5 +1,5 @@
 //! Structural checks of written OMF files: the Bento label and TOC, and the required properties of
-//! the OMF Interchange 2.0 classes FilmCraft writes.
+//! the OMF Interchange 2.0 classes Vibe Studio writes.
 
 use std::collections::HashMap;
 

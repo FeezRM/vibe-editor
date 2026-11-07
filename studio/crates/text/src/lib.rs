@@ -1,4 +1,4 @@
-//! FilmCraft text engine (layer L1).
+//! Vibe Studio text engine (layer L1).
 //!
 //! - [`fonts`]: font database — bundled OFL fonts (Inter, JetBrains Mono, Noto Serif), the optional
 //!   craft-fonts ([`fonts::CRAFT_FONTS`], Japanese; empty unless built with `CRAFT_FONTS_DIR`) plus faces

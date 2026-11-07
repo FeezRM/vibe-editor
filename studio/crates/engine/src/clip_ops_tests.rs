@@ -331,7 +331,7 @@ fn close_project_and_save_all() {
     let mut s = demo();
     assert!(s.execute("file.saveAll", json!({})).is_err(), "never saved: use Save As");
     let dir = tmp_dir("close-project");
-    let path = dir.join("p.fcproj").to_string_lossy().into_owned();
+    let path = dir.join("p.vibeproj").to_string_lossy().into_owned();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     s.execute("project.select", json!({"items": [item_named(&s, "Ocean_Sunset.mp4").0]})).unwrap();
     s.execute("edit.label.rose", json!({})).unwrap();
@@ -662,7 +662,7 @@ fn extract_audio_writes_a_wav_and_imports_it() {
     s.execute("project.select", json!({"items": [forest.0]})).unwrap();
     // unsaved project, generator media: there is nowhere to put the file
     assert!(s.execute("clip.extractAudio", json!({})).is_err());
-    s.execute("file.saveAs", json!({"path": dir.join("x.fcproj").to_string_lossy()})).unwrap();
+    s.execute("file.saveAs", json!({"path": dir.join("x.vibeproj").to_string_lossy()})).unwrap();
     let n0 = s.history.undo.len();
     let r = s.execute("clip.extractAudio", json!({})).unwrap();
     let e = &r["extracted"][0];

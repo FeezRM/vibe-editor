@@ -62,7 +62,7 @@ compositions.
 
 `studio/` is the user's editor (FilmCraft-based; `studio/VIBE-STUDIO.md`). When an edit is ready, or the user wants to
 look or tweak by hand: `lanes/vibe/open.sh projects/<job>` (returns at once; their hand edits live in
-`<job>/vibe/<job>.fcproj`). It shows the edit as the pipeline ships it (styled captions as text clips on V5, graphics,
+`<job>/vibe/<job>.vibeproj`). It shows the edit as the pipeline ships it (styled captions as text clips on V5, graphics,
 b-roll, holds, zooms as keyframes, SFX, music levels) and every piece stays editable. While it is open, the `vibe-studio`
 MCP server is the live app: `sequence_inspect`, `render_frame`, `command_run` / `command_batch` — each change is an undo
 step the user sees in Assistant ▸ Activity. A timeline tweak they ask for goes through those commands, not a pipeline

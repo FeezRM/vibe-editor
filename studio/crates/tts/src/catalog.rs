@@ -1,7 +1,7 @@
 //! The downloadable neural voices: Kokoro-82M, its voice packs and the CMUdict pronunciation
 //! dictionary. Every file is pinned to a revision and checked against its SHA-256 when downloaded
 //! (the downloader is `filmcraft_speech::models::download_files`, run by the engine after the
-//! user confirms). Nothing here is bundled with FilmCraft or committed to the repository.
+//! user confirms). Nothing here is bundled with Vibe Studio or committed to the repository.
 //!
 //! Licences: Kokoro-82M weights and voices by hexgrad, Apache-2.0 (declared on the model card; the
 //! repository has no separate LICENSE file). CMUdict, Carnegie Mellon University, BSD-style.

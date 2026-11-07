@@ -34,7 +34,7 @@ fn reference_audio(path: &Path) -> Vec<f32> {
     out.stdout.as_chunks::<4>().0.iter().map(|b| f32::from_le_bytes(*b)).collect()
 }
 
-/// The first `n` mono samples of stream 0 as FilmCraft decodes them.
+/// The first `n` mono samples of stream 0 as Vibe Studio decodes them.
 fn ours(src: &filmcraft_media::SharedSource, n: usize) -> Vec<f32> {
     src.audio(0, n, 48_000).unwrap().channels[0].clone()
 }

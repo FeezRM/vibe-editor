@@ -1,4 +1,4 @@
-//! Media sources for FilmCraft.
+//! Media sources for Vibe Studio.
 //!
 //! A [`MediaSource`] is anything that yields video frames and/or audio for a media time: decoded
 //! files (containers + codecs), stills, image sequences and synthetic generators (bars & tone,
@@ -131,7 +131,7 @@ pub struct VideoStreamInfo {
     /// HDR static metadata (mastering display, content light level) when the file carries it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hdr: Option<filmcraft_color::HdrMetadata>,
-    /// Which values of `color` are FilmCraft's defaults rather than read from the file. `None`
+    /// Which values of `color` are Vibe Studio's defaults rather than read from the file. `None`
     /// where the source doesn't say: stills, generated media, MPEG program and transport streams,
     /// and media info saved before this was recorded.
     #[serde(default, skip_serializing_if = "Option::is_none")]

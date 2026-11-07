@@ -45,7 +45,7 @@ fn starts() -> Vec<PathBuf> {
     [std::env::current_dir().ok(), std::env::current_exe().ok().and_then(|e| e.parent().map(Path::to_path_buf))].into_iter().flatten().collect()
 }
 
-/// The per-user data folder: `VIBE_STUDIO_DATA_DIR`, else FilmCraft's location under Vibe
+/// The per-user data folder: `VIBE_STUDIO_DATA_DIR`, else the platform's data folder under Vibe
 /// Studio's own name. An explicit `FILMCRAFT_DATA_DIR` or a portable install's folder is used as is.
 pub fn data_dir() -> Option<PathBuf> {
     if let Some(d) = std::env::var_os("VIBE_STUDIO_DATA_DIR").filter(|v| !v.is_empty()) {
@@ -56,7 +56,7 @@ pub fn data_dir() -> Option<PathBuf> {
         return Some(base);
     }
     Some(match base.file_name().and_then(|n| n.to_str()) {
-        Some("FilmCraft") => base.with_file_name("Vibe Studio"),
+        Some("Vibe Studio") => base.with_file_name("Vibe Studio"),
         Some("filmcraft") => base.with_file_name("vibe-studio"),
         _ => base,
     })
@@ -73,7 +73,7 @@ pub struct ControlLink {
     pub token: String,
 }
 
-/// Where this app tells other Claude Code sessions how to reach it (`filmcraft-cli mcp --bridge
+/// Where this app tells other Claude Code sessions how to reach it (`vibe-studio-cli mcp --bridge
 /// vibe-studio`, the repository's `.mcp.json`): `VIBE_STUDIO_LIVE`, else `~/.vibe-studio/live.json`.
 fn live_file() -> Option<PathBuf> {
     if let Some(p) = std::env::var_os("VIBE_STUDIO_LIVE").filter(|v| !v.is_empty()) {
@@ -191,10 +191,10 @@ fn find_claude(path: &std::ffi::OsString) -> Option<PathBuf> {
     std::env::var_os("VIBE_AGENT_CLAUDE").map(PathBuf::from).filter(|p| p.is_file()).or_else(|| find_in(path, "claude"))
 }
 
-/// The MCP server that is this app: `filmcraft-cli mcp --bridge`, beside this executable.
+/// The MCP server that is this app: `vibe-studio-cli mcp --bridge`, beside this executable.
 fn bridge_cli() -> Option<PathBuf> {
     let dir = std::env::current_exe().ok()?.parent()?.to_path_buf();
-    let name = if cfg!(windows) { "filmcraft-cli.exe" } else { "filmcraft-cli" };
+    let name = if cfg!(windows) { "vibe-studio-cli.exe" } else { "vibe-studio-cli" };
     Some(dir.join(name)).filter(|p| p.is_file())
 }
 
@@ -282,7 +282,7 @@ pub fn agent_launcher(link: Option<ControlLink>) -> AgentLauncher {
         let mcp = match (&link, bridge_cli()) {
             (Some(l), Some(cli)) => Some(write_mcp_config(l, &cli)?),
             _ => {
-                log::warn!("agent: no control channel or filmcraft-cli beside the app; the agent can run the pipeline but not see the timeline");
+                log::warn!("agent: no control channel or vibe-studio-cli beside the app; the agent can run the pipeline but not see the timeline");
                 None
             }
         };
@@ -378,7 +378,7 @@ mod tests {
             && let Some(d) = data_dir()
         {
             let name = d.file_name().and_then(|n| n.to_str()).unwrap_or_default().to_string();
-            assert!(name != "FilmCraft" && name != "filmcraft", "{}", d.display());
+            assert!(name != "Vibe Studio" && name != "filmcraft", "{}", d.display());
         }
     }
 
@@ -408,7 +408,7 @@ mod tests {
         std::fs::create_dir_all(root.join("workflows")).unwrap();
         std::fs::write(root.join("CLAUDE.md"), "x").unwrap();
         std::fs::write(root.join("run.sh"), "x").unwrap();
-        let found = repo_root(Some(job.join("demo.fcproj").to_str().unwrap()));
+        let found = repo_root(Some(job.join("demo.vibeproj").to_str().unwrap()));
         assert_eq!(found.as_deref(), Some(root.as_path()));
         let _ = std::fs::remove_dir_all(&root);
     }

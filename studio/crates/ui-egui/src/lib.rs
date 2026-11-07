@@ -1,4 +1,4 @@
-//! The FilmCraft egui frontend.
+//! The Vibe Studio egui frontend.
 //!
 //! Thin by design: all project changes go through `filmcraft_engine::Session::execute`; this crate
 //! owns only presentation state ([`state::UiState`]), GPU textures, the playback clock and the
@@ -6,12 +6,12 @@
 
 #![cfg_attr(not(test), deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable))]
 
-/// FilmCraft as craft-update knows it, with its 128 px icon and accent colour: the update
+/// Vibe Studio as craft-update knows it, with its 128 px icon and accent colour: the update
 /// prompt shows both, and an AppImage's menu entry gets the icon.
 #[cfg(not(target_arch = "wasm32"))]
 pub const UPDATE_APP: craft_update::app::App = craft_update::app::App {
-    icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/ai.storyteller.filmcraft.png")),
-    accent: Some([0x8b, 0x5c, 0xf6]),
+    icon_png: Some(include_bytes!("../../../assets/app-icon/vibe-studio-256.png")),
+    accent: Some(crate::theme::DEFAULT_BRAND_ACCENT),
     ..craft_update::suite::FILMCRAFT
 };
 

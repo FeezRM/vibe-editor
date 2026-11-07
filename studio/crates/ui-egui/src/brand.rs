@@ -1,6 +1,5 @@
-//! The app's wordmark. Vibe Studio draws its name as text in the UI font. FilmCraft drew the
-//! ArtCraft wordmark here: that mark is ArtCraft's trademark (used by FilmCraft with permission,
-//! see `docs/brand/`), not something the code licence lets a fork use, so it is not shown.
+//! The app's wordmark: Vibe Studio draws its name as text in the UI font. (The editor this is built
+//! on drew a third-party wordmark here; trademarks are not covered by the code licence.)
 
 /// The name drawn as the wordmark.
 pub const WORDMARK: &str = "Vibe Studio";

@@ -1,4 +1,4 @@
-//! `.fcproj` save/open through the command interface: schema envelope, legacy upgrade, Save a Copy,
+//! `.vibeproj` save/open through the command interface: schema envelope, legacy upgrade, Save a Copy,
 //! Revert.
 
 use super::*;
@@ -20,7 +20,7 @@ fn temp_dir(tag: &str) -> std::path::PathBuf {
 #[test]
 fn saved_file_is_versioned_and_save_copy_keeps_state() {
     let d = temp_dir("schema");
-    let path = d.join("p.fcproj").to_string_lossy().to_string();
+    let path = d.join("p.vibeproj").to_string_lossy().to_string();
     let mut s = demo();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     let v: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
@@ -28,7 +28,7 @@ fn saved_file_is_versioned_and_save_copy_keeps_state() {
     assert_eq!(v["format"], "filmcraft.project");
     s.execute("sequence.addEdit", json!({"seconds": 1.0})).unwrap();
     assert!(s.is_dirty());
-    let copy = d.join("copy.fcproj").to_string_lossy().to_string();
+    let copy = d.join("copy.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveCopy", json!({"path": copy})).unwrap();
     assert!(s.is_dirty(), "Save a Copy leaves the project unsaved");
     assert_eq!(s.path.as_deref(), Some(path.as_str()));
@@ -49,8 +49,8 @@ fn saved_file_is_versioned_and_save_copy_keeps_state() {
 #[test]
 fn legacy_project_opens_and_first_save_keeps_a_backup() {
     let d = temp_dir("legacy");
-    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../format/tests/fixtures/v1-edit.fcproj");
-    let path = d.join("old.fcproj");
+    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../format/tests/fixtures/v1-edit.vibeproj");
+    let path = d.join("old.vibeproj");
     std::fs::copy(&fixture, &path).unwrap();
     let p = path.to_string_lossy().to_string();
     let mut s = Session::default();
@@ -61,7 +61,7 @@ fn legacy_project_opens_and_first_save_keeps_a_backup() {
     assert!(s.drain_events().iter().any(|e| matches!(e, Event::Toast { message, .. } if message.contains("Upgraded"))));
     let r = s.execute("file.save", json!({})).unwrap();
     let backup = r["backup"].as_str().unwrap().to_string();
-    assert!(backup.ends_with("old (schema v1 backup).fcproj"), "{backup}");
+    assert!(backup.ends_with("old (schema v1 backup).vibeproj"), "{backup}");
     assert_eq!(std::fs::read(&backup).unwrap(), std::fs::read(&fixture).unwrap());
     let v: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
     assert_eq!(v["schema_version"], filmcraft_format::SCHEMA_VERSION);
@@ -72,7 +72,7 @@ fn legacy_project_opens_and_first_save_keeps_a_backup() {
     v["schema_version"] = json!(filmcraft_format::SCHEMA_VERSION + 1);
     std::fs::write(&path, serde_json::to_vec(&v).unwrap()).unwrap();
     let e = Session::default().execute("file.open", json!({"path": p})).unwrap_err().to_string();
-    assert!(e.contains("newer version of FilmCraft"), "{e}");
+    assert!(e.contains("newer version of Vibe Studio"), "{e}");
     let _ = std::fs::remove_dir_all(&d);
 }
 
@@ -80,13 +80,13 @@ fn legacy_project_opens_and_first_save_keeps_a_backup() {
 fn project_is_named_after_its_file() {
     let d = temp_dir("name");
     let mut s = demo();
-    let a = d.join("Apollo 11 - Tranquility.fcproj").to_string_lossy().to_string();
+    let a = d.join("Apollo 11 - Tranquility.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveAs", json!({"path": a})).unwrap();
     assert_eq!(s.project.name, "Apollo 11 - Tranquility");
     assert_eq!(s.project.root.name, "Apollo 11 - Tranquility");
     assert!(!s.is_dirty(), "renaming on Save As is not an edit");
     // Save a Copy keeps the current name.
-    let c = d.join("Backup copy.fcproj").to_string_lossy().to_string();
+    let c = d.join("Backup copy.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveCopy", json!({"path": c})).unwrap();
     assert_eq!(s.project.name, "Apollo 11 - Tranquility");
     s.execute("file.open", json!({"path": c})).unwrap();
@@ -111,7 +111,7 @@ fn new_project_answers_with_its_name_and_revision() {
 #[test]
 fn open_demo_project_clears_saved_path_so_save_does_not_overwrite() {
     let d = temp_dir("demo-path");
-    let original = d.join("original.fcproj").to_string_lossy().to_string();
+    let original = d.join("original.vibeproj").to_string_lossy().to_string();
     let mut s = Session::default();
     s.execute("file.newProject", json!({"name": "Original"})).unwrap();
     s.execute("file.newBin", json!({"name": "ORIGINAL"})).unwrap();
@@ -124,7 +124,7 @@ fn open_demo_project_clears_saved_path_so_save_does_not_overwrite() {
     reopen.execute("file.open", json!({"path": original})).unwrap();
     assert!(
         reopen.project.root.children.iter().any(|e| matches!(e, filmcraft_project::BinEntry::Bin(b) if b.name == "ORIGINAL")),
-        "original.fcproj still has the ORIGINAL bin"
+        "original.vibeproj still has the ORIGINAL bin"
     );
     let _ = std::fs::remove_dir_all(&d);
 }

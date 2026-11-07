@@ -549,7 +549,7 @@ fn waveform_peaks_do_not_survive_opening_another_project() {
     });
     let (item, old) = first.expect("the demo timeline computes waveform peaks");
     // Reopen the same project from disk: same item ids, new media pool.
-    let path = std::env::temp_dir().join(format!("fc-peaks-{}.fcproj", std::process::id()));
+    let path = std::env::temp_dir().join(format!("fc-peaks-{}.vibeproj", std::process::id()));
     let path = path.to_string_lossy().to_string();
     d.exec("file.saveAs", json!({"path": path}));
     d.exec("file.open", json!({"path": path}));

@@ -1,5 +1,5 @@
-//! FilmCraft's panels in craft-ui's shared docking. craft-ui draws the frames, tab strips,
-//! floating windows and drag previews and owns the gestures; FilmCraft draws the panel
+//! Vibe Studio's panels in craft-ui's shared docking. craft-ui draws the frames, tab strips,
+//! floating windows and drag previews and owns the gestures; Vibe Studio draws the panel
 //! bodies, the ≡ panel menu, the panel items of each tab's context menu and the Timeline's
 //! sequence tabs, and maps its control commands onto
 //! craft-ui's `DockCommand`.
@@ -54,7 +54,7 @@ pub(crate) fn route(app: &mut FilmcraftApp, ctx: &egui::Context, id: &str, param
     None
 }
 
-/// FilmCraft's own docking commands, as craft-ui `window.panel.*` commands. `panel` defaults to
+/// Vibe Studio's own docking commands, as craft-ui `window.panel.*` commands. `panel` defaults to
 /// the focused panel.
 fn alias(app: &mut FilmcraftApp, ctx: &egui::Context, id: &str, params: &Value) -> Result<Value, String> {
     let panel = match params.get("panel") {
@@ -117,12 +117,12 @@ impl FilmcraftApp {
     }
 
     /// Run a craft-ui docking command on the current layout, all or nothing. Workspaces are
-    /// FilmCraft's own (Window ▸ Workspaces).
+    /// Vibe Studio's own (Window ▸ Workspaces).
     pub(crate) fn run_dock_command(&mut self, ctx: &egui::Context, command: DockCommand<PanelKind>) -> Result<(), String> {
         if command.is_app_owned() {
             return Err("use the window.workspace.* commands for workspaces".into());
         }
-        // A closed panel reopens through FilmCraft's own path: where it was, floating again if it
+        // A closed panel reopens through Vibe Studio's own path: where it was, floating again if it
         // was closed floating (#1985).
         if let DockCommand::Activate { panel } = &command
             && !self.ui.dock.contains(panel)
@@ -441,7 +441,7 @@ fn path_id(path: &[bool]) -> String {
     path.iter().map(|second| if *second { 'b' } else { 'a' }).collect()
 }
 
-/// FilmCraft's window is all groups: drops on all four window edges, Ctrl/Cmd-drag undocks, a
+/// Vibe Studio's window is all groups: drops on all four window edges, Ctrl/Cmd-drag undocks, a
 /// release over no target cancels, and a floating window's title bar only moves it.
 fn dock_style(ui: &egui::Ui, t: &Tokens) -> DockStyle {
     let mut style = DockStyle::from_ui(ui);
@@ -471,7 +471,7 @@ fn dock_style(ui: &egui::Ui, t: &Tokens) -> DockStyle {
     style
 }
 
-/// FilmCraft's side of the dock area for one frame.
+/// Vibe Studio's side of the dock area for one frame.
 struct FilmContent<'a> {
     app: &'a mut FilmcraftApp,
     seqs: SeqTabs,
@@ -502,7 +502,7 @@ impl DockContent<PanelKind> for FilmContent<'_> {
         let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect).id_salt(("panel", panel.id())));
         child.set_clip_rect(rect.intersect(ui.clip_rect()));
         panels::show(self.app, &mut child, *panel, rect);
-        // FilmCraft's drag payload lives in context data, not egui's drag-and-drop, so craft-ui
+        // Vibe Studio's drag payload lives in context data, not egui's drag-and-drop, so craft-ui
         // routes it to the native window under the pointer only when asked, each frame.
         if panels::dragging(ui.ctx()) {
             craft_ui::docking::route_app_drag(ui.ctx(), area_id());
@@ -546,7 +546,7 @@ impl DockContent<PanelKind> for FilmContent<'_> {
         if *panel == PanelKind::Timeline && self.seqs.open.is_empty() { self.seqs.label().into() } else { logical.into() }
     }
 
-    /// FilmCraft's own panel items head a tab's context menu, as in its ≡ menu; craft-ui adds
+    /// Vibe Studio's own panel items head a tab's context menu, as in its ≡ menu; craft-ui adds
     /// Undock, Move, Close and the group items after them.
     fn panel_menu(&mut self, ui: &mut egui::Ui, panel: &PanelKind) {
         let app = &mut *self.app;

@@ -74,11 +74,11 @@ pub const ALL_COLUMNS: [&str; 10] =
     ["Name", "Media Type", "Size", "Date Modified", "Frame Rate", "Media Duration", "Video Info", "Audio Info", "Video Codec", "Audio Codec"];
 pub const DEFAULT_COLUMNS: [&str; 5] = ["Name", "Frame Rate", "Media Duration", "Video Info", "Size"];
 
-/// Project and interchange files the browser can import: FilmCraft projects and every
+/// Project and interchange files the browser can import: Vibe Studio projects and every
 /// interchange document `file.import` reads ([`crate::interchange::EXTENSIONS`], AAF and OMF
-/// included). Avid Log Exchange (`.ale`) is left out: FilmCraft writes it (File ▸ Export) but,
+/// included). Avid Log Exchange (`.ale`) is left out: Vibe Studio writes it (File ▸ Export) but,
 /// like Premiere, does not read it (#1292).
-const PROJECT_EXTENSIONS: [&str; 8] = ["fcproj", "edl", "xml", "fcpxml", "otio", "aaf", "omf", "omfi"];
+const PROJECT_EXTENSIONS: [&str; 8] = ["vibeproj", "edl", "xml", "fcpxml", "otio", "aaf", "omf", "omfi"];
 const CAPTION_EXTENSIONS: [&str; 3] = ["srt", "vtt", "scc"];
 const RECENT_MAX: usize = 10;
 

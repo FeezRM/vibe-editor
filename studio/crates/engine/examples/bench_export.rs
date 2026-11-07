@@ -7,7 +7,7 @@
 //!
 //! The source is made once in `target/fixtures/export-bench/` unless `--source` names a file:
 //! with ffmpeg when it is installed (the clip the documented numbers use), otherwise a procedural
-//! demo scene with audio written by FilmCraft's own H.264 and AAC encoders. Prints each run, the median and minimum, and the stage times of the
+//! demo scene with audio written by Vibe Studio's own H.264 and AAC encoders. Prints each run, the median and minimum, and the stage times of the
 //! last run.
 
 use std::path::{Path, PathBuf};
@@ -28,7 +28,7 @@ fn arg(args: &[String], name: &str) -> Option<String> {
 }
 
 /// The source clip: `secs` seconds of a procedural demo scene with its audio at 1080p23.976,
-/// written once as H.264 + AAC by FilmCraft's own encoders (no ffmpeg needed).
+/// written once as H.264 + AAC by Vibe Studio's own encoders (no ffmpeg needed).
 fn generated_fixture(secs: u32) -> Option<PathBuf> {
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/fixtures/export-bench");
     let path = dir.join(format!("citynight1080_{secs}s.mp4"));

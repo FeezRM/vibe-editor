@@ -276,7 +276,7 @@ impl MxfSource {
                 c @ Codec::Avc { .. } => c.name().into(),
                 Codec::Mpeg2 if mpeg.is_some() => mpeg.as_ref().map(|m| m.0.codec_name()).unwrap_or_default(),
                 other => {
-                    let why = format!("{} video in MXF (FilmCraft has no {} decoder)", other.name(), other.name());
+                    let why = format!("{} video in MXF (Vibe Studio has no {} decoder)", other.name(), other.name());
                     unsupported = Some(why);
                     format!("{} (unsupported)", other.name())
                 }

@@ -1630,7 +1630,7 @@ fn ctrl_x_cuts_clips() {
 }
 
 /// Sequence ▸ Sequence Settings… opens Premiere Pro's dialog (it used to do nothing, #172): the
-/// General tab shows the sequence's settings, the ones FilmCraft can't change yet are shown (greyed
+/// General tab shows the sequence's settings, the ones Vibe Studio can't change yet are shown (greyed
 /// out), and the Color Management and VR Properties tabs are there. Opening and cancelling change
 /// nothing.
 #[test]

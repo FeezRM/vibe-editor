@@ -52,7 +52,7 @@ fn animated_gif_imports_as_a_clip_and_reopens() {
     assert_eq!(pixel_at(&s, id, 250, 12), [80, 0, 0, 255], "the third frame plays");
     assert_eq!(pixel_at(&s, id, 250, 2)[3], 0, "transparent pixels stay transparent, not black");
 
-    let proj = dir.join("anim.fcproj");
+    let proj = dir.join("anim.vibeproj");
     s.execute("file.saveAs", json!({"path": proj.to_string_lossy()})).unwrap();
     let mut t = Session::default();
     t.execute("file.open", json!({"path": proj.to_string_lossy()})).unwrap();

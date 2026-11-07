@@ -303,7 +303,7 @@ fn character_stroke_sizes_and_switches_do_not_change_the_layer() {
     assert_eq!(item(&s, c), before);
     s.execute("edit.redo", json!({})).unwrap();
     assert_eq!(item(&s, c), after);
-    let path = tmp_dir("gt-char-stroke-size-save").join("stroke-sizes.fcproj");
+    let path = tmp_dir("gt-char-stroke-size-save").join("stroke-sizes.vibeproj");
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     let mut reopened = Session::default();
     reopened.execute("file.open", json!({"path": path})).unwrap();
@@ -361,7 +361,7 @@ fn character_stroke_colours_are_local_undoable_and_persistent() {
     assert_eq!(item(&s, c), before);
     s.execute("edit.redo", json!({})).unwrap();
     assert_eq!(item(&s, c), after);
-    let path = tmp_dir("gt-char-strokes-save").join("strokes.fcproj");
+    let path = tmp_dir("gt-char-strokes-save").join("strokes.vibeproj");
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     let mut reopened = Session::default();
     reopened.execute("file.open", json!({"path": path})).unwrap();

@@ -44,8 +44,11 @@ impl FilmcraftApp {
                 r
             }),
             "file.saveAs" | "file.save" | "file.saveCopy" => {
-                let suggested =
-                    if id == "file.saveCopy" { format!("{} copy.fcproj", self.session.project.name) } else { format!("{}.fcproj", self.session.project.name) };
+                let suggested = if id == "file.saveCopy" {
+                    format!("{} copy.vibeproj", self.session.project.name)
+                } else {
+                    format!("{}.vibeproj", self.session.project.name)
+                };
                 let cmd = if id == "file.saveCopy" { "file.saveCopy" } else { "file.saveAs" };
                 self.pick(FileDialog::SaveProject { name: suggested }, move |app, paths| {
                     let Some(path) = paths.into_iter().next() else { return Ok(Value::Null) };

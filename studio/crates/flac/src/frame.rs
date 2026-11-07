@@ -53,7 +53,7 @@ fn sample_size_code(bps: u8) -> u8 {
         16 => 4,
         20 => 5,
         24 => 6,
-        // 32 bits has code 7 since RFC 9639, which earlier decoders (symphonia 0.5, FilmCraft's own
+        // 32 bits has code 7 since RFC 9639, which earlier decoders (symphonia 0.5, Vibe Studio's own
         // FLAC import) reject as reserved; 0 ("as STREAMINFO says") decodes everywhere
         _ => 0,
     }

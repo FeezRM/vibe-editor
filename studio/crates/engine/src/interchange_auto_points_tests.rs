@@ -102,7 +102,7 @@ fn a_project_saved_after_an_interchange_import_opens_again() {
     assert!(motion_point(&clip, "anchor").x.is_nan(), "the anchor waits for the media's real size");
     assert_eq!(auto_points(&s.project), ["motion.anchor"]);
     // the saved file opens again and holds the same project (NaN != NaN, so compare what is written)
-    let path = d.join("p.fcproj").to_string_lossy().to_string();
+    let path = d.join("p.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     let mut t = Session::default();
     t.execute("file.open", json!({"path": path})).unwrap();
@@ -135,7 +135,7 @@ fn a_linked_clip_gets_its_anchor_from_the_real_size_of_the_media() {
     assert_eq!((motion_point(&clip, "position"), motion_point(&clip, "anchor")), (Vec2::new(960.0, 540.0), Vec2::new(160.0, 90.0)));
     assert_eq!(auto_points(&s.project), Vec::<String>::new());
     // nothing is NaN, so the reopened project is equal
-    let path = d.join("p.fcproj").to_string_lossy().to_string();
+    let path = d.join("p.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     let mut t = Session::default();
     t.execute("file.open", json!({"path": path})).unwrap();
@@ -184,7 +184,7 @@ fn relinking_later_resolves_the_anchor_that_waited_for_the_real_size() {
     std::fs::write(&doc, xml_with_a_scale_only_motion_filter()).unwrap();
     let mut s = Session::default();
     let (_, seq) = import(&mut s, &doc);
-    let path = d.join("p.fcproj").to_string_lossy().to_string();
+    let path = d.join("p.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     let mut t = Session::default();
     t.execute("file.open", json!({"path": path})).unwrap();
@@ -288,7 +288,7 @@ fn fcpxml_video_still_can_be_relinked_after_save_and_reopen() {
     s.execute("edit.redo", json!({})).unwrap();
     assert_eq!(filmcraft_format::encode(&s.project, false), imported);
 
-    let saved = d.join("slides.fcproj");
+    let saved = d.join("slides.vibeproj");
     s.execute("file.saveAs", json!({"path": saved.to_string_lossy()})).unwrap();
     let mut reopened = Session::default();
     reopened.execute("file.open", json!({"path": saved.to_string_lossy()})).unwrap();

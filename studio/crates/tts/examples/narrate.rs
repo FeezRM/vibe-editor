@@ -1,6 +1,6 @@
 //! `cargo run -p filmcraft-tts --release --features kokoro --example narrate -- <models dir> <voice id> <script.txt> <out.wav>`
 //!
-//! Speaks a script file with any FilmCraft voice (built in or natural) through the full pipeline
+//! Speaks a script file with any Vibe Studio voice (built in or natural) through the full pipeline
 //! (normalizer, pronunciation, Kokoro) and writes a mono 32-bit float WAV.
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

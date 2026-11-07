@@ -1,4 +1,4 @@
-//! Timeline interchange for FilmCraft: import and export of
+//! Timeline interchange for Vibe Studio: import and export of
 //!
 //! - **CMX 3600 EDL** (`.edl`) with the common comment extensions (`* FROM CLIP NAME:`,
 //!   `* SOURCE FILE:`, `* LOC:`), `M2` speed lines, dissolves, wipes, key events, audio channels and
@@ -51,7 +51,8 @@ pub use comp::ExtractedMedia;
 /// Warn once when an export cannot carry exact marker metadata, including nested/source markers.
 fn warn_marker_metadata_loss(project: &Project, sequence: ItemId, report: &mut Report) {
     if !project.custom_colors.is_empty() {
-        report.warn("This format does not preserve the saved custom-color palette or its swatch names. Use a FilmCraft project or OTIO to retain the palette.");
+        report
+            .warn("This format does not preserve the saved custom-color palette or its swatch names. Use a Vibe Studio project or OTIO to retain the palette.");
     }
     let mut pending = std::collections::BTreeSet::from([sequence]);
     let mut seen = std::collections::BTreeSet::new();
@@ -83,7 +84,7 @@ fn warn_marker_metadata_loss(project: &Project, sequence: ItemId, report: &mut R
                 _ => false,
             };
         if has_extra {
-            report.warn("This format does not preserve marker authors or exact custom colors (including clip labels), or marker URLs. Use a FilmCraft project or OTIO for those properties.");
+            report.warn("This format does not preserve marker authors or exact custom colors (including clip labels), or marker URLs. Use a Vibe Studio project or OTIO for those properties.");
             return;
         }
     }

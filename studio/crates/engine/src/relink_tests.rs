@@ -15,7 +15,7 @@ use crate::relink::{apply_remap, derive_remap};
 const W: u32 = 160;
 const H: u32 = 90;
 
-/// A saved project at `<root>/Project/p.fcproj` using `<root>/Media/{a,b}.mov`.
+/// A saved project at `<root>/Project/p.vibeproj` using `<root>/Media/{a,b}.mov`.
 fn saved_project(root: &std::path::Path) -> (String, Vec<ItemId>) {
     let media = root.join("Media");
     std::fs::create_dir_all(&media).unwrap();
@@ -25,7 +25,7 @@ fn saved_project(root: &std::path::Path) -> (String, Vec<ItemId>) {
     let (mut s, items, _) = session_with(&[&a, &b]);
     let proj = root.join("Project");
     std::fs::create_dir_all(&proj).unwrap();
-    let path = proj.join("p.fcproj").to_string_lossy().into_owned();
+    let path = proj.join("p.vibeproj").to_string_lossy().into_owned();
     s.execute("file.save", json!({"path": path})).unwrap();
     (path, items)
 }
@@ -130,7 +130,7 @@ fn edl_clips_named_only_by_clip_name_are_missing_not_made_offline() {
     let m = s.execute("media.findMissing", json!({})).unwrap();
     let statuses: Vec<&str> = m["missing"].as_array().unwrap().iter().map(|r| r["status"].as_str().unwrap()).collect();
     assert_eq!(statuses, ["missing", "missing"], "{m}");
-    let path = root.join("p.fcproj").to_string_lossy().into_owned();
+    let path = root.join("p.vibeproj").to_string_lossy().into_owned();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     assert!(open(&path).offline.prompt, "opening the project asks for the missing files");
 

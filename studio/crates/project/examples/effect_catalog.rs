@@ -1,4 +1,4 @@
-//! Print FilmCraft's effect and transition catalog as the Effects panel lists it, as JSON: one
+//! Print Vibe Studio's effect and transition catalog as the Effects panel lists it, as JSON: one
 //! object per item with its `id`, display `name`, `kind` (`Video`, `Audio`, `VideoTransition`,
 //! `AudioTransition`) and Effects-panel folder `path` (e.g. `["Video Effects", "Blur & Sharpen"]`).
 //! Items with no Effects-panel folder (intrinsic Motion / Opacity / Volume…, graphic layers) and

@@ -601,7 +601,7 @@ fn edit_cameras_and_save_load() {
     assert_eq!(v1(&s), [(0, 2)]);
     assert!(s.execute("multicam.switchAngle", json!({"camera": 3})).is_err());
     let dir = tmp_dir("mc-save");
-    let path = dir.join("mc.fcproj").to_string_lossy().into_owned();
+    let path = dir.join("mc.vibeproj").to_string_lossy().into_owned();
     s.execute("file.save", json!({"path": path})).unwrap();
     let bytes = std::fs::read(&path).unwrap();
     let doc: Value = serde_json::from_slice(&bytes).unwrap();

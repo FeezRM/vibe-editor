@@ -4,7 +4,7 @@
 //!
 //! ```sh
 //! FILMCRAFT_DATA_DIR=/tmp/fc-bench cargo run --release -p filmcraft-ui-egui --example bench_audio -- \
-//!     "Project.fcproj" --seconds 20 [--sequence "One hero" …] [--mode direct|ahead|both] [--json out.json] [--wav dir]
+//!     "Project.vibeproj" --seconds 20 [--sequence "One hero" …] [--mode direct|ahead|both] [--json out.json] [--wav dir]
 //! ```
 //!
 //! `direct` mixes inside the device callback (how playback worked before sound was mixed ahead);
@@ -155,7 +155,7 @@ fn main() {
         }
     }
     let Some(project) = project else {
-        eprintln!("usage: bench_audio <project.fcproj> [--seconds N] [--sequence NAME] [--mode direct|ahead|both] [--json PATH] [--wav DIR]");
+        eprintln!("usage: bench_audio <project.vibeproj> [--seconds N] [--sequence NAME] [--mode direct|ahead|both] [--json PATH] [--wav DIR]");
         std::process::exit(2);
     };
     let mut s = Session::default();

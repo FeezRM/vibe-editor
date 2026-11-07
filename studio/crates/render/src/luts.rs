@@ -3,7 +3,7 @@
 //! Lumetri stores a LUT reference as text:
 //! * `""` — none;
 //! * `lib:<id>` — a LUT in the project's LUT library (`Project::luts`, imported `.cube`/`.3dl`);
-//! * `builtin:<id>` — a LUT FilmCraft generates from code: camera log → Rec. 709 conversions
+//! * `builtin:<id>` — a LUT Vibe Studio generates from code: camera log → Rec. 709 conversions
 //!   (from the published curves in `filmcraft-color`; input is video-range normalised, as camera
 //!   LUTs expect) and the procedural Creative looks.
 //!
@@ -76,7 +76,7 @@ impl Builtin {
             }
             BuiltinKind::Look(n) => Lut3d::from_fn(33, |c| crate::effects::apply_look(n, c).map(|v| v.clamp(0.0, 1.0))),
         };
-        cube.title = format!("FilmCraft {}", self.label);
+        cube.title = format!("Vibe Studio {}", self.label);
         Lut::from_cube(cube)
     }
 }

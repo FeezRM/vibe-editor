@@ -16,7 +16,7 @@
 //! are converted on import: their `Ctrl` is the primary modifier (`Cmd`) and `Win`/`Meta` maps to
 //! the macOS Control key.
 //!
-//! Built-in presets: **FilmCraft Default** (each command's default plus the Premiere-default audit,
+//! Built-in presets: **Vibe Studio Default** (each command's default plus the Premiere-default audit,
 //! see [`Shortcuts::audit`]), **Premiere Pro Compatible**, **Final Cut Pro Compatible** and
 //! **Avid Media Composer Compatible** ([`crate::shortcut_presets`]). Custom presets are JSON files in
 //! `<data dir>/Keyboard Shortcuts/`; the active set persists in `active.json` there.
@@ -56,7 +56,7 @@ pub const PANELS: &[&str] = &[
     "Lumetri Color",
 ];
 
-pub const DEFAULT_PRESET: &str = "FilmCraft Default";
+pub const DEFAULT_PRESET: &str = "Vibe Studio Default";
 pub const PREMIERE_PRESET: &str = "Premiere Pro Compatible";
 pub const FCP_PRESET: &str = "Final Cut Pro Compatible";
 pub const AVID_PRESET: &str = "Avid Media Composer Compatible";
@@ -471,7 +471,7 @@ pub struct PresetFile {
     pub format: String,
     pub version: u32,
     pub name: String,
-    /// The OS the key names were written for; None = canonical (FilmCraft) notation.
+    /// The OS the key names were written for; None = canonical (Vibe Studio) notation.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub platform: Option<Platform>,
     /// `active.json` only: the active set differs from the preset it started from.
@@ -564,7 +564,7 @@ impl Shortcuts {
 
     // ---------------------------------------------------------------- presets
 
-    /// Default bindings of every known command, plus FilmCraft's panel shortcuts.
+    /// Default bindings of every known command, plus Vibe Studio's panel shortcuts.
     fn base_defaults(&self) -> Vec<Binding> {
         let mut out = Vec::new();
         for c in self.commands() {
@@ -580,7 +580,7 @@ impl Shortcuts {
         out
     }
 
-    /// Premiere-default entries FilmCraft Default adopts: commands with no shortcut of their own
+    /// Premiere-default entries Vibe Studio Default adopts: commands with no shortcut of their own
     /// whose Premiere key is free in that context on this platform.
     pub fn audit(&self) -> Vec<Binding> {
         self.audit_for(Platform::current())
@@ -1092,10 +1092,10 @@ fn read_file(path: &Path) -> std::result::Result<PresetFile, String> {
     if bytes.len() as u64 > MAX_FILE {
         return Err(format!("{}: too large for a keyboard shortcuts file", path.display()));
     }
-    // FilmCraft's own format, whatever the file is called (an export may be named anything)
+    // Vibe Studio's own format, whatever the file is called (an export may be named anything)
     let parsed = serde_json::from_slice::<PresetFile>(&bytes)
         .map_err(|e| e.to_string())
-        .and_then(|f| if f.format == FILE_FORMAT { Ok(f) } else { Err("not a FilmCraft keyboard shortcuts file".into()) });
+        .and_then(|f| if f.format == FILE_FORMAT { Ok(f) } else { Err("not a Vibe Studio keyboard shortcuts file".into()) });
     parsed.map_err(|why| {
         // Premiere Pro's own shortcut files (#2489): say so, instead of a JSON parse error
         if path.extension().is_some_and(|e| e.eq_ignore_ascii_case("kys")) {
@@ -1110,7 +1110,7 @@ fn read_file(path: &Path) -> std::result::Result<PresetFile, String> {
 }
 
 /// The custom preset an imported file becomes: the set's own name, else the file's; never a
-/// built-in preset's, which would hide it from the preset list (an exported "FilmCraft Default"
+/// built-in preset's, which would hide it from the preset list (an exported "Vibe Studio Default"
 /// imported again, #2489): that one gets " (Imported)".
 fn import_name(name: &str, path: &Path) -> String {
     let stem = path.file_stem().map(|s| s.to_string_lossy().trim().to_string()).filter(|s| !s.is_empty());

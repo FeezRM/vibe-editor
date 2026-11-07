@@ -118,11 +118,11 @@ mod tests {
     #[test]
     fn long_file_name_still_saves() {
         let d = tmpdir("longname");
-        let p = d.join(format!("{}.fcproj", "a".repeat(245)));
+        let p = d.join(format!("{}.vibeproj", "a".repeat(245)));
         fs::write(&p, b"old").unwrap();
         atomic_write(&p, b"new").unwrap();
         assert_eq!(fs::read(&p).unwrap(), b"new");
-        let multi = d.join(format!("{}.fcproj", "é".repeat(120)));
+        let multi = d.join(format!("{}.vibeproj", "é".repeat(120)));
         assert!(temp_path(&multi).file_name().unwrap().len() <= 255);
         fs::remove_dir_all(&d).unwrap();
     }
@@ -130,7 +130,7 @@ mod tests {
     #[test]
     fn replaces_and_leaves_no_temp_files() {
         let d = tmpdir("replace");
-        let p = d.join("a.fcproj");
+        let p = d.join("a.vibeproj");
         atomic_write(&p, b"one").unwrap();
         atomic_write(&p, b"two").unwrap();
         assert_eq!(fs::read(&p).unwrap(), b"two");
@@ -142,7 +142,7 @@ mod tests {
     #[test]
     fn failed_write_keeps_old_file() {
         let d = tmpdir("fail");
-        let p = d.join("a.fcproj");
+        let p = d.join("a.vibeproj");
         atomic_write(&p, b"good").unwrap();
         // Renaming a file over a non-empty directory fails: the original target must survive.
         let dir_target = d.join("sub");
@@ -160,7 +160,7 @@ mod tests {
         use std::os::unix::fs::PermissionsExt;
 
         let d = tmpdir("permissions");
-        let p = d.join("private.fcproj");
+        let p = d.join("private.vibeproj");
         fs::write(&p, b"before").unwrap();
         fs::set_permissions(&p, fs::Permissions::from_mode(0o600)).unwrap();
         atomic_write(&p, b"after").unwrap();
@@ -232,7 +232,7 @@ mod tests {
     #[test]
     fn missing_directory_is_an_error() {
         let d = tmpdir("missing");
-        assert!(atomic_write(&d.join("nope/a.fcproj"), b"x").is_err());
+        assert!(atomic_write(&d.join("nope/a.vibeproj"), b"x").is_err());
         fs::remove_dir_all(&d).unwrap();
     }
 }

@@ -563,7 +563,7 @@ pub(super) fn clamp_edit_offsets(text: &str, ed: &mut GfxEdit) {
 
 /// The two ranges `DeleteSurroundingBytes` deletes: whole characters fully contained in the
 /// bytes before and after the sorted selection. The selection itself and any pre-edit (absent
-/// from FilmCraft's committed model) are excluded. A byte count that ends inside a character
+/// from Vibe Studio's committed model) are excluded. A byte count that ends inside a character
 /// leaves that character whole.
 pub(super) fn surrounding_byte_deletion_ranges(
     text: &str,

@@ -14,7 +14,7 @@ done
 [[ -n "$JOB" && -n "$OUT" && -f "$JOB/RUN.md" ]] || { echo "usage: lanes/vibe/export.sh <job-dir> <out.mp4> [--fresh] [--preset name]" >&2; exit 64; }
 JOB="$(cd "$JOB" && pwd)"
 PROJ="$(ensure_project "$JOB" "$FRESH")"
-CLI="$(pick_bin filmcraft-cli)"
+CLI="$(pick_bin vibe-studio-cli)"
 mkdir -p "$(dirname "$OUT")"
 script="$(mktemp)"
 python3 - "$OUT" "$PRESET" > "$script" <<'PY'

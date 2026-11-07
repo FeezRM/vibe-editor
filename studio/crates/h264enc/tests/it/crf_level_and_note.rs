@@ -37,9 +37,9 @@ fn first_access_unit_carries_the_settings() {
     packets.extend(enc.flush());
     let text = |p: &Packet| String::from_utf8_lossy(&p.data).into_owned();
     let first = text(&packets[0]);
-    for want in ["filmcraft-h264enc", "rc=crf crf=18.0", "profile=high", "level=", "bframes=2", "cabac=1"] {
+    for want in ["vibe-studio-h264enc", "rc=crf crf=18.0", "profile=high", "level=", "bframes=2", "cabac=1"] {
         assert!(first.contains(want), "{want} missing from {first:?}");
     }
     // once per stream
-    assert!(packets.iter().skip(1).all(|p| !text(p).contains("filmcraft-h264enc")));
+    assert!(packets.iter().skip(1).all(|p| !text(p).contains("vibe-studio-h264enc")));
 }

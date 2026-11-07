@@ -23,12 +23,12 @@ struct Driver {
 impl Driver {
     /// The demo project saved (in name) in a fresh folder, so pasted images are written there.
     fn demo(name: &str) -> Self {
-        let dir = std::env::temp_dir().join(format!("filmcraft-clipboard-{name}-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("vibe-studio-clipboard-{name}-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).unwrap();
         let mut session = Session::default();
         session.execute("file.openDemoProject", json!({})).expect("demo project");
-        session.path = Some(dir.join("film.fcproj").to_string_lossy().into_owned());
+        session.path = Some(dir.join("film.vibeproj").to_string_lossy().into_owned());
         let (tx, rx) = channel();
         let app = FilmcraftApp::new(session).with_control(rx);
         let harness = Harness::builder().with_size(egui::vec2(1600.0, 980.0)).with_max_steps(10_000).build_eframe(move |_cc| app);
@@ -218,7 +218,7 @@ fn ctrl_v_in_the_project_panel_imports() {
     assert!(d.app().session.project.items.values().any(|i| i.name == "Pasted Image 1.png"));
 }
 
-/// With nothing but clips copied in FilmCraft, Ctrl+V pastes the clips as before, also when the
+/// With nothing but clips copied in Vibe Studio, Ctrl+V pastes the clips as before, also when the
 /// system clipboard holds no text at all. A plain V press and release (the Selection tool) pastes
 /// nothing and doesn't read the clipboard.
 #[test]

@@ -259,7 +259,7 @@ fn a_reopened_project_shows_its_tabs_as_they_were_left() {
     let dir = std::env::temp_dir().join(format!("filmcraft-tabs-ui-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).unwrap();
-    let path = dir.join("tabs.fcproj").to_string_lossy().to_string();
+    let path = dir.join("tabs.vibeproj").to_string_lossy().to_string();
 
     let mut d = Driver::new();
     let main = d.active();

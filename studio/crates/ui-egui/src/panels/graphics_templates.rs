@@ -2,7 +2,7 @@
 //! sections of the Edit tab, and the Export As Motion Graphics Template, Install Motion Graphics
 //! Template and Replace Fonts in Projects dialogs (M10.7).
 //!
-//! The library lists the built-in templates (original FilmCraft designs) and the user's
+//! The library lists the built-in templates (original Vibe Studio designs) and the user's
 //! `.fcgt` templates with thumbnails rendered by the engine, a search field and a category
 //! filter. Click selects, double-click (or Apply) places the template at the playhead, dragging a
 //! card onto the timeline places it there. Everything runs engine commands
@@ -599,7 +599,7 @@ pub fn route(app: &mut FilmcraftApp, ctx: &egui::Context, id: &str, params: &Val
     match id {
         "graphics.template.install" if params.get("path").is_none() => {
             let (id, ctx) = (id.to_string(), ctx.clone());
-            Some(app.pick(FileDialog::open_file(tl!("FilmCraft Graphics Template"), &["fcgt"]), move |app, paths| {
+            Some(app.pick(FileDialog::open_file(tl!("Vibe Studio Graphics Template"), &["fcgt"]), move |app, paths| {
                 let Some(path) = paths.into_iter().next() else { return Ok(Value::Null) };
                 let r = app.session.execute(&id, json!({"path": path})).map_err(|e| e.to_string());
                 // The Browse panel's Install… button calls this directly and drops the result
@@ -689,7 +689,7 @@ fn export_dialog(app: &mut FilmcraftApp, ctx: &egui::Context) {
                     });
                 }
             });
-            ui.label(egui::RichText::new(tl!("Saved as a FilmCraft graphics template (.fcgt) in your templates folder.")).weak().size(11.0));
+            ui.label(egui::RichText::new(tl!("Saved as a Vibe Studio graphics template (.fcgt) in your templates folder.")).weak().size(11.0));
             if !d.error.is_empty() {
                 ui.colored_label(Color32::from_rgb(0xff, 0x80, 0x80), &d.error);
             }

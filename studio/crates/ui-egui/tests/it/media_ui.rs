@@ -62,7 +62,7 @@ fn make_movie(path: &Path, scene: DemoScene, w: u32, h: u32, frames: i64) {
     filmcraft_engine::export::export(&Arc::new(p), seq, &settings, &provider, &Default::default()).unwrap();
 }
 
-/// `<root>/p.fcproj` with a sequence of `<root>/Media/{Harbour,Night}.mov`; the media folder is
+/// `<root>/p.vibeproj` with a sequence of `<root>/Media/{Harbour,Night}.mov`; the media folder is
 /// then moved to `<root>/Moved/Media`.
 fn moved_project(root: &Path) -> String {
     let media = root.join("Media");
@@ -88,7 +88,7 @@ fn moved_project(root: &Path) -> String {
         at += d;
     }
     s.project = Arc::new(p);
-    let path = root.join("p.fcproj").to_string_lossy().into_owned();
+    let path = root.join("p.vibeproj").to_string_lossy().into_owned();
     s.execute("file.save", json!({"path": path})).unwrap();
     drop(s); // Close decoder files before moving their directory on Windows.
     std::fs::create_dir_all(root.join("Moved")).unwrap();
@@ -519,7 +519,7 @@ fn locate_relinks_instead_of_importing() {
 }
 
 /// [`make_movie`]'s ProRes file with its sample entry retyped `icod`: an Apple Intermediate Codec
-/// movie as far as the demuxer can tell, which no FilmCraft decoder reads (#3646).
+/// movie as far as the demuxer can tell, which no Vibe Studio decoder reads (#3646).
 fn aic_movie(path: &Path) {
     make_movie(path, DemoScene::OceanSunset, 64, 32, 2);
     let mut b = std::fs::read(path).unwrap();
@@ -531,7 +531,7 @@ fn aic_movie(path: &Path) {
     std::fs::write(path, b).unwrap();
 }
 
-/// #3646: a movie in a codec FilmCraft cannot decode (Apple Intermediate Codec) imports under the
+/// #3646: a movie in a codec Vibe Studio cannot decode (Apple Intermediate Codec) imports under the
 /// codec's name, and its Unreadable badge says why on hover, in Icon view and in List view, where a
 /// name longer than the Name column is cut short with "…" to keep the badge in view and shows
 /// in full on hover.

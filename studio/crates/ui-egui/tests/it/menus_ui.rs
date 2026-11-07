@@ -356,8 +356,8 @@ fn reveal_in_finder_opens_an_imported_clip() {
 fn saved_projects_are_listed_in_home_and_open_recent() {
     let dir = std::env::temp_dir().join(format!("fc-ui-recent-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
-    let a = dir.join("first cut.fcproj").to_string_lossy().to_string();
-    let b = dir.join("second cut.fcproj").to_string_lossy().to_string();
+    let a = dir.join("first cut.vibeproj").to_string_lossy().to_string();
+    let b = dir.join("second cut.vibeproj").to_string_lossy().to_string();
     let mut d = Driver::new();
     d.exec("file.saveAs", json!({"path": a}));
     d.exec("file.newProject", json!({"name": "Second"}));
@@ -365,17 +365,17 @@ fn saved_projects_are_listed_in_home_and_open_recent() {
     let menus = d.ok("ui.menu.list", json!({}));
     let recent: Vec<&Value> = menus.as_array().unwrap().iter().filter(|m| m["path"] == json!(["File", "Open Recent"])).collect();
     let labels: Vec<&str> = recent.iter().map(|m| m["label"].as_str().unwrap()).collect();
-    assert_eq!(labels, ["second cut.fcproj", "first cut.fcproj", "Clear Recent Files"]);
+    assert_eq!(labels, ["second cut.vibeproj", "first cut.vibeproj", "Clear Recent Files"]);
     assert_eq!(recent[0]["id"], "file.openRecent.0");
     // File ▸ Open Recent reopens the older one, which moves to the top
     d.menu("file.openRecent.1");
     assert_eq!(d.app().session.path.as_deref(), Some(a.as_str()));
     assert_eq!(d.app().session.prefs.general.recent_projects, [a.clone(), b.clone()]);
-    // Home lists them too, newest first, and a click opens one
-    d.click("header.home");
+    // Home (Vibe Studio's Import page) lists them too, newest first, and a click opens one
+    d.click("header.page.import");
     let rows = d.ok("ui.elements", json!({"prefix": "import.recent."}));
     let rows: Vec<&str> = rows.as_array().unwrap().iter().map(|e| e["label"].as_str().unwrap()).collect();
-    assert_eq!(rows, ["first cut.fcproj", "second cut.fcproj"]);
+    assert_eq!(rows, ["first cut.vibeproj", "second cut.vibeproj"]);
     d.click("import.recent.1");
     assert_eq!(d.app().session.path.as_deref(), Some(b.as_str()));
     // Clear Recent Files empties both lists
@@ -394,7 +394,7 @@ fn saving_the_project_says_where_in_the_status_bar() {
     std::fs::create_dir_all(&dir).unwrap();
     let mut d = Driver::new();
     let status = |d: &mut Driver| d.app().ui.status.clone();
-    let first = dir.join("first.fcproj").to_string_lossy().to_string();
+    let first = dir.join("first.vibeproj").to_string_lossy().to_string();
     d.ok("ui.menu.invoke", json!({"id": "file.saveAs", "params": {"path": first}}));
     assert_eq!(status(&mut d), format!("Project saved to {first}"));
     d.app().ui.status.clear();
@@ -403,7 +403,7 @@ fn saving_the_project_says_where_in_the_status_bar() {
     d.app().ui.status.clear();
     d.menu("file.saveAll");
     assert_eq!(status(&mut d), format!("Project saved to {first}"));
-    let copy = dir.join("copy.fcproj").to_string_lossy().to_string();
+    let copy = dir.join("copy.vibeproj").to_string_lossy().to_string();
     d.ok("ui.menu.invoke", json!({"id": "file.saveCopy", "params": {"path": copy}}));
     assert_eq!(status(&mut d), format!("Copy of the project saved to {copy}"));
     let _ = std::fs::remove_dir_all(&dir);

@@ -3,7 +3,7 @@
 #
 #   lanes/vibe/open.sh <job-dir> [--fresh]
 #
-# The first open builds <job>/vibe/<slug>.fcproj from the pipeline's files (vibe.importJob); later
+# The first open builds <job>/vibe/<slug>.vibeproj from the pipeline's files (vibe.importJob); later
 # opens reuse it, so hand edits stay. --fresh rebuilds it from the files (hand edits are lost).
 # While the app is open, any Claude Code session in this folder (the Claude app, a terminal) reaches
 # it through the vibe-studio MCP server (.mcp.json, lanes/vibe/setup.sh), and its own Assistant panel

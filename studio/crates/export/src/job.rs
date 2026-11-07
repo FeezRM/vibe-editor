@@ -727,7 +727,7 @@ mod tests {
     }
 
     /// A factory that *fails* must not stop the walk: the next factory may be the one that can
-    /// take the export. For H.264 that is FilmCraft's own encoder, and for H.265 it is a second
+    /// take the export. For H.264 that is Vibe Studio's own encoder, and for H.265 it is a second
     /// hardware encoder, because there is no software H.265 encoder at all.
     #[test]
     fn a_failing_factory_does_not_stop_the_walk() {

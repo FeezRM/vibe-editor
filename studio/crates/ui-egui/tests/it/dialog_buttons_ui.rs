@@ -128,7 +128,7 @@ fn recovery_prompt_buttons_show_the_pointing_hand() {
 fn revert_confirmation_buttons_show_the_pointing_hand() {
     let data = temp_dir("revert");
     let mut s = demo();
-    s.execute("file.saveAs", json!({"path": data.join("film.fcproj").to_string_lossy()})).unwrap();
+    s.execute("file.saveAs", json!({"path": data.join("film.vibeproj").to_string_lossy()})).unwrap();
     s.execute("sequence.addEdit", json!({"seconds": 1.5})).unwrap();
     let mut d = Driver::new(s);
     d.menu("file.revert");

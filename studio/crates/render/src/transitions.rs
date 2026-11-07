@@ -1,6 +1,6 @@
 //! Video transitions: combine the outgoing (A) and incoming (B) layers at progress `p` ∈ [0,1].
 //!
-//! Every transition is procedural maths written for FilmCraft (no third-party artwork, no masks
+//! Every transition is procedural maths written for Vibe Studio (no third-party artwork, no masks
 //! or textures from other products). The folders follow Premiere 26's Effects panel (see
 //! `filmcraft_project::vtransition`). Shared building blocks:
 //!

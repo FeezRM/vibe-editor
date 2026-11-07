@@ -4,7 +4,7 @@ Caption files and caption burn-in for FilmCraft (layer L2: depends on `filmcraft
 `filmcraft-color`, `filmcraft-project`, `filmcraft-text` and `roxmltree` for TTML).
 
 The caption *model* (caption tracks in a sequence, captions, track style) lives in
-`filmcraft-project` (`caption.rs`) because it is part of the `.fcproj` document. This crate reads
+`filmcraft-project` (`caption.rs`) because it is part of the `.vibeproj` document. This crate reads
 and writes caption files, converts them to and from caption tracks, and draws captions.
 
 ## Formats

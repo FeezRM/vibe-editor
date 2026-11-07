@@ -209,7 +209,7 @@ fn check_ingest_collision(action: &str) {
         s.poll_persistence();
     }
     assert_eq!(std::fs::read(&existing).unwrap(), existing_bytes, "ingest must preserve existing destination files");
-    let project_path = root.join("ingested.fcproj");
+    let project_path = root.join("ingested.vibeproj");
     s.execute("file.save", json!({"path": project_path.to_string_lossy()})).unwrap();
     let mut reopened = Session::default();
     reopened.execute("file.open", json!({"path": project_path.to_string_lossy()})).unwrap();

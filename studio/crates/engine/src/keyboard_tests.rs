@@ -40,7 +40,7 @@ fn target_v1(s: &mut Session) {
 fn shortcut_tables_have_no_key_used_twice_in_one_scope() {
     let tables: [(&str, Vec<presets::Entry>); 4] = [
         ("Premiere", presets::premiere()),
-        ("FilmCraft panels", presets::FILMCRAFT_PANEL.iter().chain(presets::PREMIERE_PANEL).copied().collect()),
+        ("Vibe Studio panels", presets::FILMCRAFT_PANEL.iter().chain(presets::PREMIERE_PANEL).copied().collect()),
         ("Final Cut", presets::FINAL_CUT.to_vec()),
         ("Avid", presets::AVID.to_vec()),
     ];
@@ -53,7 +53,7 @@ fn shortcut_tables_have_no_key_used_twice_in_one_scope() {
             }
         }
     }
-    // the FilmCraft Default set (registry defaults + panel tables + the Premiere audit) has no
+    // the Vibe Studio Default set (registry defaults + panel tables + the Premiere audit) has no
     // same-context conflicts for the new commands either
     let s = Session::default();
     let new_ids: Vec<&str> = keyboard::commands().iter().map(|c| c.id).collect();

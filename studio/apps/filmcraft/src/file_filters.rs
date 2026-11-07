@@ -8,7 +8,7 @@
 //! dialogs keep their normal default suffix. macOS and Windows dialogs already ignore case
 //! and receive the plain list. The Open Project dialog also offers [`all_files`] beside the
 //! project filter, so a project stays openable where the system MIME database does not
-//! know `.fcproj` and the project filter matches nothing (#1644).
+//! know `.vibeproj` and the project filter matches nothing (#1644).
 
 pub fn extensions(exts: &[&str]) -> Vec<String> {
     let extensions: Vec<_> = exts.iter().map(|ext| (*ext).to_owned()).collect();
@@ -42,7 +42,7 @@ pub fn extensions(exts: &[&str]) -> Vec<String> {
 /// Extensions for an "All files" filter: a single `*` and nothing else. rfd's XDG portal
 /// backend special-cases `*` into the glob `*` (its GTK and Zenity backends build `*.*`),
 /// so every file shows — including a saved project on a system whose shared-mime-info
-/// package never registered `.fcproj`, where the "FilmCraft Project" filter hides them
+/// package never registered `.vibeproj`, where the "Vibe Studio Project" filter hides them
 /// all and the dialog offers no other way to reach the file (#1644).
 pub fn all_files() -> Vec<String> {
     extensions(&["*"])
@@ -57,8 +57,9 @@ mod tests {
     #[cfg(not(any(target_os = "windows", target_os = "macos")))]
     #[test]
     fn camera_files_are_visible_in_every_capitalization() {
-        let filters: Vec<_> = extensions(&["mp4", "mov", "m2ts", "wav", "fcproj"]).iter().map(|ext| glob::Pattern::new(&format!("*.{ext}")).unwrap()).collect();
-        for name in ["camera.mp4", "camera.MP4", "camera.Mp4", "clip.MOV", "clip.moV", "take.M2TS", "sound.WaV", "Edit.FCPROJ", "Edit.FcProj"] {
+        let filters: Vec<_> =
+            extensions(&["mp4", "mov", "m2ts", "wav", "vibeproj"]).iter().map(|ext| glob::Pattern::new(&format!("*.{ext}")).unwrap()).collect();
+        for name in ["camera.mp4", "camera.MP4", "camera.Mp4", "clip.MOV", "clip.moV", "take.M2TS", "sound.WaV", "Edit.VIBEPROJ", "Edit.VibeProj"] {
             assert!(filters.iter().any(|f| f.matches(name)), "the picker hides {name}");
         }
         for name in ["camera.mp4.bak", "camera.mp44", "camera.xmp4", "notes.txt", "mp4"] {
@@ -75,7 +76,7 @@ mod tests {
         assert_eq!(super::all_files(), ["*"]);
         let filters: Vec<_> =
             super::all_files().iter().map(|ext| if ext == "*" { ext.clone() } else { format!("*.{ext}") }).map(|g| glob::Pattern::new(&g).unwrap()).collect();
-        for name in ["project.fcproj", "Project.FCPROJ", "my film.filmcraft", "clip.mp4", "notes.txt", "noextension"] {
+        for name in ["project.vibeproj", "Project.VIBEPROJ", "my film.filmcraft", "clip.mp4", "notes.txt", "noextension"] {
             assert!(filters.iter().any(|f| f.matches(name)), "All files hides {name}");
         }
     }
@@ -90,6 +91,6 @@ mod tests {
     #[cfg(any(target_os = "windows", target_os = "macos"))]
     #[test]
     fn native_filters_receive_only_literal_extensions() {
-        assert_eq!(extensions(&["mp4", "mov", "fcproj"]), ["mp4", "mov", "fcproj"]);
+        assert_eq!(extensions(&["mp4", "mov", "vibeproj"]), ["mp4", "mov", "vibeproj"]);
     }
 }

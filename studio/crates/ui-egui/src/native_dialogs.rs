@@ -24,7 +24,7 @@
 //! A save dialog's answer always ends in one of the dialog's extensions: the first is added when
 //! the chosen name has none of them ([`with_save_extension`]). GTK's file chooser, which the XDG
 //! portal shows on GNOME and other GTK desktops, saves the name as typed, so `edit` would be
-//! written without `.fcproj` and File ▸ Open's filter would hide it (#1644). When the name with
+//! written without `.vibeproj` and File ▸ Open's filter would hide it (#1644). When the name with
 //! the extension added is a file that exists, the dialog's own replace prompt was about another
 //! name, so the app asks before the continuation runs (automation ids `overwrite.replace`,
 //! `overwrite.cancel`).
@@ -43,9 +43,9 @@ pub enum FileDialog {
     OpenFiles { exts: Vec<String> },
     /// Choose one file.
     OpenFile { filter: String, exts: Vec<String> },
-    /// Choose a FilmCraft project to open.
+    /// Choose a Vibe Studio project to open.
     OpenProject,
-    /// Save a FilmCraft project, suggesting `name`.
+    /// Save a Vibe Studio project, suggesting `name`.
     SaveProject { name: String },
     /// Save a file, suggesting `name`.
     SaveAs { filter: String, exts: Vec<String>, name: String, adds_ext: bool },
@@ -74,7 +74,7 @@ pub(crate) struct PendingOverwrite {
 }
 
 /// `path` ending in one of `exts`, compared without case: as chosen when it already does, else
-/// with the first added (`cut` → `cut.edl`, `a.filmcraft` → `a.filmcraft.fcproj`, `EDIT.FCPROJ`
+/// with the first added (`cut` → `cut.edl`, `a.filmcraft` → `a.filmcraft.vibeproj`, `EDIT.VIBEPROJ`
 /// stays). A trailing dot is dropped first (`cut.` → `cut.edl`).
 pub fn with_save_extension(path: &str, exts: &[String]) -> String {
     let wanted: Vec<&str> = exts.iter().map(String::as_str).filter(|e| !e.is_empty() && *e != "*").collect();
@@ -111,7 +111,7 @@ impl FileDialog {
     /// `None` for dialogs that don't save, or that accept any name.
     fn save_extensions(&self) -> Option<Vec<String>> {
         match self {
-            Self::SaveProject { .. } => Some(vec!["fcproj".to_string()]),
+            Self::SaveProject { .. } => Some(vec!["vibeproj".to_string()]),
             Self::SaveAs { exts, adds_ext: true, .. } if exts.iter().any(|e| !e.is_empty() && e != "*") => Some(exts.clone()),
             _ => None,
         }
@@ -255,7 +255,7 @@ pub(crate) const EXPORT_SAVE_DIALOGS: [(&str, &str, &str); 7] = [
     ("file.exportFcpxml", "FCPXML", "fcpxml"),
     ("file.exportOtio", "OpenTimelineIO", "otio"),
     ("file.exportAle", "Avid Log Exchange", "ale"),
-    ("file.exportSelectionProject", "FilmCraft Project", "fcproj"),
+    ("file.exportSelectionProject", "Vibe Studio Project", "vibeproj"),
 ];
 
 /// `then` for `dialog`: a save dialog's answer gets its extension ([`with_save_extension`]), and
@@ -283,12 +283,12 @@ mod tests {
 
     #[test]
     fn a_saved_name_gets_the_first_extension_unless_it_has_one_of_them() {
-        let project = exts(&["fcproj"]);
-        assert_eq!(with_save_extension("/edits/cut", &project), "/edits/cut.fcproj");
-        assert_eq!(with_save_extension("/edits/cut.", &project), "/edits/cut.fcproj");
-        assert_eq!(with_save_extension("/edits/a.filmcraft", &project), "/edits/a.filmcraft.fcproj");
-        assert_eq!(with_save_extension("/edits/v1.2 final", &project), "/edits/v1.2 final.fcproj");
-        for kept in ["/edits/cut.fcproj", "/edits/CUT.FCPROJ", "/edits/Cut.FcProj", r"C:\Edits\cut.fcproj"] {
+        let project = exts(&["vibeproj"]);
+        assert_eq!(with_save_extension("/edits/cut", &project), "/edits/cut.vibeproj");
+        assert_eq!(with_save_extension("/edits/cut.", &project), "/edits/cut.vibeproj");
+        assert_eq!(with_save_extension("/edits/a.filmcraft", &project), "/edits/a.filmcraft.vibeproj");
+        assert_eq!(with_save_extension("/edits/v1.2 final", &project), "/edits/v1.2 final.vibeproj");
+        for kept in ["/edits/cut.vibeproj", "/edits/CUT.VIBEPROJ", "/edits/Cut.VibeProj", r"C:\Edits\cut.vibeproj"] {
             assert_eq!(with_save_extension(kept, &project), kept);
         }
         // any of several extensions is kept; none gets the first
@@ -299,7 +299,7 @@ mod tests {
         assert_eq!(with_save_extension("/c/any", &[]), "/c/any");
         assert_eq!(with_save_extension("/c/any", &exts(&["*", ""])), "/c/any");
         // never panics on odd input
-        for odd in ["", ".", "/", "é.", "🦀", ".fcproj"] {
+        for odd in ["", ".", "/", "é.", "🦀", ".vibeproj"] {
             let _ = with_save_extension(odd, &project);
         }
     }

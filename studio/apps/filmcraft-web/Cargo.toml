@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft-web"
-description = "FilmCraft in the browser (wasm32): eframe web runner, WebGPU/WebGL2, Blob media, OPFS, WebAudio, WebCodecs"
+description = "Vibe Studio in the browser (wasm32): eframe web runner, WebGPU/WebGL2, Blob media, OPFS, WebAudio, WebCodecs"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

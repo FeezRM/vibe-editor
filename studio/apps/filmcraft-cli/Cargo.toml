@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft-cli"
-description = "FilmCraft headless CLI and MCP server"
+description = "Vibe Studio headless CLI and MCP server"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -9,7 +9,7 @@ license.workspace = true
 workspace = true
 
 [[bin]]
-name = "filmcraft-cli"
+name = "vibe-studio-cli"
 path = "src/main.rs"
 
 [features]

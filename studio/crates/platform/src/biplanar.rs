@@ -1,6 +1,6 @@
 //! Biplanar 4:2:0 pictures (NV12, and P010 with its 10-bit samples in the high bits of 16-bit
 //! words) as read back from a decoder surface, into the planar [`PixelData::Yuv8`] /
-//! [`PixelData::Yuv16`] frames the rest of FilmCraft uses. Safe code, tested on every target.
+//! [`PixelData::Yuv16`] frames the rest of Vibe Studio uses. Safe code, tested on every target.
 //!
 //! This is the one place the Windows backend copies pixels (surface to staging texture to these
 //! planes). A zero-copy path would replace it, not the decoder around it.

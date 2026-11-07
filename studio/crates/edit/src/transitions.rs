@@ -8,7 +8,7 @@
 //! only the end for Start at Cut and only the beginning for End at Cut. A one-sided transition (a
 //! fade from or to nothing) starts or ends at its clip's edge.
 //!
-//! Premiere limits a transition by the media its clips have beyond the cut (handles). FilmCraft
+//! Premiere limits a transition by the media its clips have beyond the cut (handles). Vibe Studio
 //! does not check handles when applying one, so here a transition may cover at most the clips it
 //! joins: from the outgoing clip's start to the incoming clip's end.
 

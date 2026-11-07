@@ -1,4 +1,4 @@
-//! Print FilmCraft's menu bar as it ships (English, default preferences) as JSON: one object per
+//! Print Vibe Studio's menu bar as it ships (English, default preferences) as JSON: one object per
 //! item with its `id`, `label` and menu `path`. `cargo xtask parity` reads this to measure menu
 //! coverage against a reference list.
 //!

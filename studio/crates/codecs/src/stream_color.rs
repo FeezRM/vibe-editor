@@ -94,7 +94,7 @@ pub fn resolve(width: u32, height: u32, sources: &[ColorCodes]) -> ColorInfo {
 }
 
 /// Which values [`resolve`] takes from its defaults for `sources`: those no source signals with a
-/// code point FilmCraft knows.
+/// code point Vibe Studio knows.
 pub fn assumed(sources: &[ColorCodes]) -> ColorAssumed {
     ColorAssumed {
         matrix: !sources.iter().any(|s| Matrix::from_code(s.matrix).is_some()),

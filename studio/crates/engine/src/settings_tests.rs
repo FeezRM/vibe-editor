@@ -267,14 +267,14 @@ fn prefs_set_validates_and_reset_works_per_category() {
     set(&mut s, "labels.defaults.movie", json!("Rose"));
     set(&mut s, "timeline.autoScroll", json!("smoothScroll"));
     set(&mut s, "general.showToolTips", json!(false));
-    s.prefs.general.recent_projects = vec!["/a.fcproj".into()];
+    s.prefs.general.recent_projects = vec!["/a.vibeproj".into()];
     // reset one category
     s.execute("prefs.reset", json!({"category": "timeline"})).unwrap();
     assert_eq!(s.prefs.timeline.auto_scroll, "pageScroll");
     assert_eq!(s.prefs.labels.defaults.movie, Label::Rose, "other categories keep their values");
     s.execute("prefs.reset", json!({"category": "general"})).unwrap();
     assert!(s.prefs.general.show_tool_tips);
-    assert_eq!(s.prefs.general.recent_projects, ["/a.fcproj"], "recent projects survive a reset");
+    assert_eq!(s.prefs.general.recent_projects, ["/a.vibeproj"], "recent projects survive a reset");
     assert!(s.execute("prefs.reset", json!({"category": "nope"})).is_err());
     s.execute("prefs.reset", json!({})).unwrap();
     assert_eq!(s.prefs, Preferences::default());
@@ -446,8 +446,8 @@ fn default_media_scaling() {
 fn recent_projects_are_remembered() {
     let dir = tmp_dir("prefs-recent");
     let mut s = demo();
-    let a = dir.join("a.fcproj").to_string_lossy().into_owned();
-    let b = dir.join("b.fcproj").to_string_lossy().into_owned();
+    let a = dir.join("a.vibeproj").to_string_lossy().into_owned();
+    let b = dir.join("b.vibeproj").to_string_lossy().into_owned();
     s.execute("file.saveAs", json!({"path": a})).unwrap();
     s.execute("file.saveAs", json!({"path": b})).unwrap();
     s.execute("file.open", json!({"path": a})).unwrap();
@@ -464,7 +464,7 @@ fn media_cache_location_policy_and_clean() {
     assert_eq!(cache, dir.join("data").join("Media Cache"));
     // unsaved projects keep their previews in the media cache
     assert!(s.previews.dir().unwrap().starts_with(cache.join("Previews")), "{:?}", s.previews.dir());
-    // a custom location moves them, into a folder of FilmCraft's own inside it
+    // a custom location moves them, into a folder of Vibe Studio's own inside it
     let location = dir.join("cache2");
     set(&mut s, "mediaCache.location", json!(location.to_string_lossy()));
     let custom = location.join(settings::CUSTOM_CACHE_FOLDER);
@@ -504,7 +504,7 @@ fn media_cache_location_policy_and_clean() {
 }
 
 /// #2772: a custom media cache location is a folder the user picked (the home folder, a footage
-/// folder), so the policy and "Delete…" work in a folder of FilmCraft's own inside it and leave
+/// folder), so the policy and "Delete…" work in a folder of Vibe Studio's own inside it and leave
 /// everything else alone; neither a symlink inside the cache nor one in place of it is followed.
 #[test]
 fn media_cache_cleaning_keeps_the_files_of_the_chosen_folder() {
@@ -828,7 +828,7 @@ fn auto_transcribe_sequence_clips_do_not_change_opened_documents() {
     let (mut s, _, calls) = sequence_transcription_session(&dir, "ok", 200);
     s.execute("source.insert", json!({})).unwrap();
     let saved = s.project.to_json();
-    let path = dir.join("project.fcproj");
+    let path = dir.join("project.vibeproj");
     std::fs::write(&path, &saved).unwrap();
     s.execute("file.newProject", json!({})).unwrap();
     set(&mut s, "mediaAnalysis.autoTranscribe", json!(true));

@@ -18,7 +18,7 @@ fn off_uses_the_software_decoder() {
 
     filmcraft_codecs::hw::set_hardware_decoding(false);
     let d = filmcraft_codecs::make_video_decoder(&s.entry).unwrap();
-    assert_eq!(d.name(), "FilmCraft HEVC");
+    assert_eq!(d.name(), "Vibe Studio HEVC");
     let bytes: std::sync::Arc<[u8]> = std::fs::read(&path).unwrap().into();
     let (g0, h0) = (filmcraft_codecs::gop_stats(), filmcraft_codecs::hw::hw_stats());
     let src = filmcraft_codecs::open_bytes("hevc_main.mp4", bytes.clone()).unwrap();
@@ -34,7 +34,7 @@ fn off_uses_the_software_decoder() {
     let hw = filmcraft_platform::hardware_decoder_for(&s.entry);
     if !hw {
         eprintln!("SKIPPED (Auto half): no hardware decoder ({available:?})");
-        assert_eq!(d.name(), "FilmCraft HEVC");
+        assert_eq!(d.name(), "Vibe Studio HEVC");
         return;
     }
     // Linux has two backends (NVDEC in front of VA-API): `register` reports the front one, but

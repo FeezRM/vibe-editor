@@ -10,7 +10,7 @@ fn fixture(name: &str) -> Vec<u8> {
 
 #[test]
 fn v1_minimal_loads() {
-    let l = decode(&fixture("v1-minimal.fcproj")).unwrap();
+    let l = decode(&fixture("v1-minimal.vibeproj")).unwrap();
     assert_eq!(l.schema_version, 1);
     assert!(l.migrated());
     assert_eq!(l.project.name, "Legacy Minimal");
@@ -21,17 +21,17 @@ fn v1_minimal_loads() {
 /// Main briefly wrote bare projects with `"version": 2` (caption tracks) before the envelope landed.
 #[test]
 fn bare_version_2_loads_as_schema_v1() {
-    let mut v: serde_json::Value = serde_json::from_slice(&fixture("v1-edit.fcproj")).unwrap();
+    let mut v: serde_json::Value = serde_json::from_slice(&fixture("v1-edit.vibeproj")).unwrap();
     v["version"] = 2.into();
     let l = decode(&serde_json::to_vec(&v).unwrap()).unwrap();
     assert_eq!(l.schema_version, 1);
     assert!(l.migrated());
-    assert_eq!(l.project.name, decode(&fixture("v1-edit.fcproj")).unwrap().project.name);
+    assert_eq!(l.project.name, decode(&fixture("v1-edit.vibeproj")).unwrap().project.name);
 }
 
 #[test]
 fn v1_edit_loads_with_defaults_for_later_fields() {
-    let l = decode(&fixture("v1-edit.fcproj")).unwrap();
+    let l = decode(&fixture("v1-edit.vibeproj")).unwrap();
     assert_eq!(l.schema_version, 1);
     let p = &l.project;
     assert_eq!(p.name, "Legacy Edit");
@@ -55,7 +55,7 @@ fn v1_edit_loads_with_defaults_for_later_fields() {
 
 #[test]
 fn legacy_audio_field_becomes_primary_stream_and_clip_defaults_to_zero() {
-    let p = decode(&fixture("v1-edit.fcproj")).unwrap().project;
+    let p = decode(&fixture("v1-edit.vibeproj")).unwrap().project;
     let media = p.item(ItemId(5)).unwrap().as_media().unwrap();
     assert_eq!(media.info.audio_streams.len(), 1);
     assert!(media.info.has_audio());
@@ -68,7 +68,7 @@ fn legacy_audio_field_becomes_primary_stream_and_clip_defaults_to_zero() {
 /// Out-of-range audio stream data is repaired on load, never a reason to refuse the project.
 #[test]
 fn hostile_audio_stream_counts_and_indices_are_repaired_not_rejected() {
-    let mut p = decode(&fixture("v1-edit.fcproj")).unwrap().project;
+    let mut p = decode(&fixture("v1-edit.vibeproj")).unwrap().project;
     let seq = ItemId(21);
     for bad in [filmcraft_media::MAX_AUDIO_STREAMS, usize::MAX] {
         p.sequence_mut(seq).unwrap().audio_tracks[0].items[0].audio_stream = bad;
@@ -89,7 +89,7 @@ fn hostile_audio_stream_counts_and_indices_are_repaired_not_rejected() {
 /// have the same bounded dimensions as a sequence before the project is opened.
 #[test]
 fn hostile_media_video_dimensions_are_rejected() {
-    let mut p = decode(&fixture("v1-edit.fcproj")).unwrap().project;
+    let mut p = decode(&fixture("v1-edit.vibeproj")).unwrap().project;
     let media = p.item_mut(ItemId(5)).unwrap().as_media_mut().unwrap();
     let video = media.info.video.as_mut().unwrap();
     video.width = u32::MAX;
@@ -103,7 +103,7 @@ fn hostile_media_video_dimensions_are_rejected() {
 /// on clips, no audio channel map, subclips without Restrict Trims.
 #[test]
 fn v8_subclip_loads_with_m3_10_defaults() {
-    let l = decode(&fixture("v8-subclip.fcproj")).unwrap();
+    let l = decode(&fixture("v8-subclip.vibeproj")).unwrap();
     assert_eq!(l.schema_version, 8);
     assert!(l.migrated());
     let p = &l.project;
@@ -121,7 +121,7 @@ fn v8_subclip_loads_with_m3_10_defaults() {
 
 #[test]
 fn upgraded_file_resaves_in_current_schema_losslessly() {
-    let old = decode(&fixture("v1-edit.fcproj")).unwrap().project;
+    let old = decode(&fixture("v1-edit.vibeproj")).unwrap().project;
     let bytes = encode(&old, true);
     let v: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
     assert_eq!(v["schema_version"], SCHEMA_VERSION);
@@ -132,17 +132,17 @@ fn upgraded_file_resaves_in_current_schema_losslessly() {
 
 #[test]
 fn future_schema_is_refused_with_a_clear_error() {
-    let mut v: serde_json::Value = serde_json::from_slice(&fixture("v1-minimal.fcproj")).unwrap();
+    let mut v: serde_json::Value = serde_json::from_slice(&fixture("v1-minimal.vibeproj")).unwrap();
     // A bare v1-shaped project claiming a future `version` is refused too.
     v["version"] = 99.into();
     let e = decode(&serde_json::to_vec(&v).unwrap()).unwrap_err();
     assert!(matches!(e, FormatError::TooNew { found: 99, .. }), "{e}");
-    assert!(e.to_string().contains("Update FilmCraft"));
+    assert!(e.to_string().contains("Update Vibe Studio"));
 }
 
 /// Build a project with `n` clips (half video, half linked audio) on 4+4 tracks.
 pub fn big_project(n: usize) -> Project {
-    let mut p = decode(&fixture("v1-edit.fcproj")).unwrap().project;
+    let mut p = decode(&fixture("v1-edit.vibeproj")).unwrap().project;
     let seq_id = ItemId(21);
     let mut next = 1_000_000u64;
     let seq = match &mut p.items.get_mut(&seq_id).unwrap().kind {
@@ -211,7 +211,7 @@ fn large_project_roundtrip_and_timing() {
     let t0 = std::time::Instant::now();
     let dir = std::env::temp_dir().join(format!("filmcraft-big-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
-    filmcraft_format::atomic_write(&dir.join("big.fcproj"), &compact).unwrap();
+    filmcraft_format::atomic_write(&dir.join("big.vibeproj"), &compact).unwrap();
     let write_ms = t0.elapsed().as_secs_f64() * 1000.0;
     std::fs::remove_dir_all(&dir).unwrap();
     println!(
@@ -223,7 +223,7 @@ fn large_project_roundtrip_and_timing() {
 
 #[test]
 fn v8_loads_without_transcripts_and_v9_roundtrips_them() {
-    let l = decode(&fixture("v8-minimal.fcproj")).unwrap();
+    let l = decode(&fixture("v8-minimal.vibeproj")).unwrap();
     assert_eq!(l.schema_version, 8);
     assert!(l.migrated());
     assert!(l.project.transcripts.is_empty());
@@ -245,7 +245,7 @@ fn v8_loads_without_transcripts_and_v9_roundtrips_them() {
 /// responsive data and layers without style runs or pins load with those empty.
 #[test]
 fn v11_minimal_loads_without_graphics_design_data() {
-    let l = decode(&fixture("v11-minimal.fcproj")).unwrap();
+    let l = decode(&fixture("v11-minimal.vibeproj")).unwrap();
     assert_eq!(l.schema_version, 11);
     assert!(l.migrated());
     let p = &l.project;
@@ -262,7 +262,7 @@ fn v11_minimal_loads_without_graphics_design_data() {
 /// the project settings.
 #[test]
 fn v10_minimal_loads_with_m3_11_defaults() {
-    let l = decode(&fixture("v10-minimal.fcproj")).unwrap();
+    let l = decode(&fixture("v10-minimal.vibeproj")).unwrap();
     assert_eq!(l.schema_version, 10);
     assert!(l.migrated());
     let p = &l.project;
@@ -288,7 +288,7 @@ fn next_id_is_raised_past_every_id_in_the_file() {
         Track, TrackId, TrackKind, TrackSend, Transition, TransitionId,
     };
     const BIG: u64 = 5_000_000;
-    let base = decode(&fixture("v1-edit.fcproj")).unwrap().project;
+    let base = decode(&fixture("v1-edit.vibeproj")).unwrap().project;
     let seq = ItemId(21);
     let marker = |id| Marker {
         url: String::new(),
@@ -443,7 +443,7 @@ fn next_id_is_raised_past_every_id_in_the_file() {
 /// after a save and a reload.
 #[test]
 fn a_new_item_never_replaces_one_from_a_file_with_a_stale_next_id() {
-    let mut p = decode(&fixture("v1-edit.fcproj")).unwrap().project;
+    let mut p = decode(&fixture("v1-edit.vibeproj")).unwrap().project;
     p.next_id = 5;
     let mut p = decode(&encode(&p, false)).unwrap().project;
     let before = p.items.len();
@@ -463,7 +463,7 @@ fn a_new_item_never_replaces_one_from_a_file_with_a_stale_next_id() {
 #[test]
 fn an_exhausted_id_space_is_refused_on_load() {
     use filmcraft_project::MarkerId;
-    let base = decode(&fixture("v1-edit.fcproj")).unwrap().project;
+    let base = decode(&fixture("v1-edit.vibeproj")).unwrap().project;
     let mut p = base.clone();
     p.sequence_mut(ItemId(21)).unwrap().markers[0].id = MarkerId(u64::MAX);
     let e = decode(&encode(&p, false)).unwrap_err();

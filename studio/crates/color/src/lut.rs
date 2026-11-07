@@ -426,7 +426,7 @@ impl Lut {
     pub fn to_3dl(&self) -> Result<String, String> {
         let cube = self.baked_cube(33)?;
         let n = cube.size;
-        let mut s = String::from("# written by FilmCraft\n");
+        let mut s = String::from("# written by Vibe Studio\n");
         if !self.title.is_empty() {
             let _ = writeln!(s, "# {}", self.title);
         }

@@ -10,7 +10,7 @@
 //! const {pngBase64} = await filmcraft.screenshot()         // the canvas as PNG (base64)
 //! await filmcraft.importUrl("/clip.mp4")                   // fetch + import (tests)
 //! await filmcraft.importFiles(input.files)                 // File / FileList / File[]
-//! await filmcraft.openProject(file)                        // .fcproj File or URL
+//! await filmcraft.openProject(file)                        // .vibeproj File or URL
 //! filmcraft.files(); await filmcraft.readFile("/exports/a.mp4"); filmcraft.info()
 //! ```
 //!
@@ -78,7 +78,7 @@ pub fn request(method: &str, params: Value) -> js_sys::Promise {
         if sent {
             WAITING.with(|w| w.borrow_mut().push((rx, resolve, reject)));
         } else {
-            let _ = reject.call1(&JsValue::NULL, &js_sys::Error::new("FilmCraft is not running yet"));
+            let _ = reject.call1(&JsValue::NULL, &js_sys::Error::new("Vibe Studio is not running yet"));
         }
     });
     crate::repaint();

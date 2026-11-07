@@ -91,7 +91,7 @@ const SAVED: [(&str, &str); 6] = [
     ("file.exportFcpxml", "fcpxml"),
     ("file.exportOtio", "otio"),
     ("file.exportAle", "ale"),
-    ("file.exportSelectionProject", "fcproj"),
+    ("file.exportSelectionProject", "vibeproj"),
 ];
 
 #[test]

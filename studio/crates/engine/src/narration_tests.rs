@@ -53,7 +53,7 @@ fn create_places_the_narration_at_the_playhead_as_one_undo_step() {
     assert!(t0 > Tick::ZERO);
     let before = all_clips(&s);
     let undo0 = s.history.undo.len();
-    let r = s.execute("tts.create", json!({"text": "Welcome to FilmCraft.", "voice": "basic-male", "pitch": "low", "pace": 1.2, "dir": dir})).unwrap();
+    let r = s.execute("tts.create", json!({"text": "Welcome to Vibe Studio.", "voice": "basic-male", "pitch": "low", "pace": 1.2, "dir": dir})).unwrap();
     let c = clip(&s, r["clip"].as_u64().unwrap());
     assert_eq!(c.start, t0);
     // the clip is exactly as long as the speech (sample-exact) and plays it from the start
@@ -62,7 +62,7 @@ fn create_places_the_narration_at_the_playhead_as_one_undo_step() {
     assert_eq!(c.source_in, Tick::ZERO);
     assert_eq!(r["speechDuration"], c.duration.0);
     let n = s.project.narrations.get(&ItemId(r["item"].as_u64().unwrap())).unwrap();
-    assert_eq!((n.text.as_str(), n.voice.as_str(), n.pitch, n.pace), ("Welcome to FilmCraft.", "basic-male", VocalPitch::Low, 1.2));
+    assert_eq!((n.text.as_str(), n.voice.as_str(), n.pitch, n.pace), ("Welcome to Vibe Studio.", "basic-male", VocalPitch::Low, 1.2));
     assert_eq!(n.speech_duration, c.duration);
     assert_eq!(s.state.selection, vec![c.id]);
     // nothing that was there before moved or changed

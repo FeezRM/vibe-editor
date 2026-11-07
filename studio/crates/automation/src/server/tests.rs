@@ -101,7 +101,7 @@ fn demo() -> Session {
 async fn tools_are_titled_and_annotated() {
     let mut c = Client::start(demo());
     let init = c.init().await;
-    assert_eq!(init["result"]["serverInfo"]["name"], "filmcraft");
+    assert_eq!(init["result"]["serverInfo"]["name"], "vibe-studio");
     let tools = c.ask(json!({"jsonrpc":"2.0","id":1,"method":"tools/list"})).await["result"]["tools"].as_array().cloned().unwrap();
     for t in &tools {
         assert!(t["title"].is_string(), "{} has no title", t["name"]);
@@ -153,7 +153,7 @@ async fn strict_arguments_and_parse_errors() {
     assert_eq!(r["result"]["content"][0]["type"], "image", "{r}");
 }
 
-/// `filmcraft://document` and `filmcraft://commands` are listed and readable as JSON.
+/// `vibe-studio://document` and `vibe-studio://commands` are listed and readable as JSON.
 #[tokio::test(flavor = "multi_thread")]
 async fn resources_document_and_commands() {
     let mut c = Client::start(demo());
@@ -169,7 +169,7 @@ async fn resources_document_and_commands() {
     assert!(v["project"].is_object() && v["sequence"].is_object(), "{v}");
     let r = c.ask(json!({"jsonrpc":"2.0","id":3,"method":"resources/read","params":{"uri":COMMANDS_URI}})).await;
     assert!(r["result"]["contents"][0]["text"].as_str().unwrap().contains("timeline.razor"), "{r}");
-    let r = c.ask(json!({"jsonrpc":"2.0","id":4,"method":"resources/read","params":{"uri":"filmcraft://nope"}})).await;
+    let r = c.ask(json!({"jsonrpc":"2.0","id":4,"method":"resources/read","params":{"uri":"vibe-studio://nope"}})).await;
     assert!(r["error"]["code"].is_i64(), "{r}");
 }
 

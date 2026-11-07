@@ -767,7 +767,7 @@ fn flac_is_lossless_against_wav() {
     let si = &fb[8..42];
     assert_eq!((u64::from(si[13] & 0x0F) << 32) | u64::from(u32::from_be_bytes(si[14..18].try_into().unwrap())), 72_000);
 
-    // the same samples through FilmCraft's own readers
+    // the same samples through Vibe Studio's own readers
     let decode = |name: &str, bytes: Vec<u8>| filmcraft_codecs::open_bytes(name, bytes.into()).unwrap().audio(0, 72_000, 48_000).unwrap();
     let (a, b) = (decode("a.wav", wb), decode("a.flac", fb));
     assert_eq!(a.channels.len(), 2);
@@ -820,7 +820,7 @@ fn flac_audio_in_mp4_and_mov() {
         assert!(si[4..10].iter().any(|&b| b != 0), "{name}: frame sizes");
         assert_eq!(u32::from_be_bytes(si[14..18].try_into().unwrap()), 72_000, "{name}: total samples");
         assert!(si[18..34].iter().any(|&b| b != 0), "{name}: MD5");
-        // FilmCraft's own importer reads the FLAC track back, sample-accurately long
+        // Vibe Studio's own importer reads the FLAC track back, sample-accurately long
         let src = filmcraft_codecs::open_bytes(name, bytes.into()).unwrap();
         let a = src.audio(0, 72_000, 48_000).unwrap();
         assert!(a.channels.iter().all(|c| c.len() == 72_000) && a.channels[0].iter().any(|v| v.abs() > 0.1), "{name}");
@@ -1130,7 +1130,7 @@ fn metadata_and_quicktime_multiplexer() {
     let dir = Scratch::new("meta");
     let path = dir.path("m.mov");
     let mut s = ExportSettings { format: Format::H264, path: path.clone(), multiplexer: Multiplexer::Mov, ..Default::default() };
-    s.metadata = ExportMetadata { title: "Test Title".into(), creator: "FilmCraft Tests".into(), copyright: "CC0".into(), ..Default::default() };
+    s.metadata = ExportMetadata { title: "Test Title".into(), creator: "Vibe Studio Tests".into(), copyright: "CC0".into(), ..Default::default() };
     s.audio.codec = AudioCodec::Pcm;
     s.audio.bits = 24;
     assert_eq!(s.extension(), "mov");
@@ -1466,7 +1466,7 @@ fn loudness_normalization_corrects_limiter_loss_and_bounds_impossible_targets() 
 }
 
 /// 32-bit integer and float audio in every container that takes them, read back by ffprobe (an
-/// external oracle) and, where FilmCraft imports the format, by FilmCraft's own readers.
+/// external oracle) and, where Vibe Studio imports the format, by Vibe Studio's own readers.
 #[test]
 fn thirty_two_bit_audio_in_every_container() {
     let (p, seq, m) = matte([0.0, 0.0, 0.0, 1.0], 64, 36, Some(-6.0));
@@ -1489,7 +1489,7 @@ fn thirty_two_bit_audio_in_every_container() {
         assert!(s.supports_sample_format(sf), "{name}");
         export(&p, seq, &s, &m, &Progress::default()).unwrap_or_else(|e| panic!("{name}: {e}"));
         let bytes = std::fs::read(&path).unwrap();
-        // FilmCraft's own importer: the -6 dB tone at a peak of 0.5
+        // Vibe Studio's own importer: the -6 dB tone at a peak of 0.5
         if !matches!(format, Format::MxfOp1a) {
             let src = filmcraft_codecs::open_bytes(name, bytes.into()).unwrap_or_else(|e| panic!("{name}: {e}"));
             let a = src.audio(0, 24_000, 48_000).unwrap();
@@ -1629,7 +1629,7 @@ fn sample_format_settings_round_trip_summary_and_estimate() {
     assert!(flac.starts_with("FLAC (lossless) 32-bit"), "{flac}");
 }
 
-/// FilmCraft imports its own 32-bit FLAC (symphonia rejected the frame header's 32-bit size code
+/// Vibe Studio imports its own 32-bit FLAC (symphonia rejected the frame header's 32-bit size code
 /// as reserved: "unsupported media"), at full scale and with noise, sample for sample.
 #[test]
 fn own_importer_reads_32_bit_flac_at_full_scale() {

@@ -1,4 +1,4 @@
-//! Class ids, property ids and definition ids of the AAF object model subset FilmCraft reads and
+//! Class ids, property ids and definition ids of the AAF object model subset Vibe Studio reads and
 //! writes (AAF Object Specification v1.1, AAF Edit Protocol). Class and data definition AUIDs are
 //! SMPTE labels (RP 224 / RP 210 registers) in AUID byte order; property ids are the AAF / ST 377-1
 //! local tags.
@@ -68,7 +68,7 @@ pub(crate) mod cls {
     pub const DESCRIPTIVE_MARKER: Auid = class(0x41);
     pub const PCM_DESCRIPTOR: Auid = class(0x48);
     pub const IMPORT_DESCRIPTOR: Auid = class(0x4A);
-    /// Classes with a `Locator` and media properties FilmCraft reads as file descriptors.
+    /// Classes with a `Locator` and media properties Vibe Studio reads as file descriptors.
     pub const WAVE_DESCRIPTOR: Auid = class(0x2C);
     pub const AIFC_DESCRIPTOR: Auid = class(0x26);
     pub const SOUND_DESCRIPTOR: Auid = class(0x42);
@@ -246,7 +246,7 @@ pub(crate) mod def {
     /// as in the SMPTE Labels register.
     pub const OP_EDIT_PROTOCOL: Auid = super::ul([0x06, 0x0E, 0x2B, 0x34, 0x04, 0x01, 0x01, 0x05, 0x0D, 0x01, 0x12, 0x01, 0x01, 0x00, 0x00, 0x00]);
     pub const USAGE_TOP_LEVEL: Auid = super::ul([0x06, 0x0E, 0x2B, 0x34, 0x04, 0x01, 0x01, 0x01, 0x0D, 0x01, 0x01, 0x02, 0x01, 0x01, 0x07, 0x00]);
-    /// The label FilmCraft 0.16 and earlier wrote as the top-level usage code (in no register).
+    /// The label Vibe Studio 0.16 and earlier wrote as the top-level usage code (in no register).
     /// Import reads it as top-level too.
     pub const USAGE_TOP_LEVEL_OLD: Auid = super::ul([0x06, 0x0E, 0x2B, 0x34, 0x04, 0x01, 0x01, 0x05, 0x0D, 0x01, 0x12, 0x01, 0x02, 0x03, 0x00, 0x00]);
 }

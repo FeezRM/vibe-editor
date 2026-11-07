@@ -362,7 +362,7 @@ fn gpu_effects_match_cpu_exactly() {
 }
 
 /// The same on DX12 with FXC, wgpu's shader compiler when `dxcompiler.dll` is not shipped (as in
-/// FilmCraft's builds). FXC aborted on the effect stage ("internal error: compilation aborted
+/// Vibe Studio's builds). FXC aborted on the effect stage ("internal error: compilation aborted
 /// unexpectedly"), so every Windows device on DX12 rendered effects, previews and exports on the
 /// CPU. WARP stands in when there is no GPU.
 #[cfg(windows)]

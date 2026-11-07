@@ -566,7 +566,7 @@ pub fn project(o: &Opts) -> Vec<Value> {
         clips += big_sequence(&mut s, item, &format!("Sequence {}", k + 1), 11 + k as u64).1;
     }
     let dir = tempfile::Builder::new().prefix("filmcraft-bench-project-").tempdir().expect("tmp dir");
-    let file = dir.path().join("big.fcproj");
+    let file = dir.path().join("big.vibeproj");
     let n = o.repeat.max(3);
     let (mut save, mut open) = (Vec::new(), Vec::new());
     for _ in 0..n {

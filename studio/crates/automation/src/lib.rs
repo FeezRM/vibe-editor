@@ -1,11 +1,11 @@
 //! # filmcraft-automation
 //!
-//! The FilmCraft MCP server (official `rmcp` SDK, stdio transport).
+//! The Vibe Studio MCP server (official `rmcp` SDK, stdio transport).
 //!
 //! * **Headless** mode drives an in-process [`filmcraft_engine::Session`]: every engine command,
 //!   project/sequence inspection and frame rendering (PNG) — no window needed.
 //! * **Bridge** mode forwards to a running desktop app over the JSON-lines control channel
-//!   (`filmcraft --control <port>`), so agents can also inspect, screenshot, click, drag, scroll
+//!   (`vibe-studio --control <port>`), so agents can also inspect, screenshot, click, drag, scroll
 //!   and type in the live UI — every menu, panel, timeline gesture and keystroke.
 
 #![cfg_attr(not(test), deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable))]

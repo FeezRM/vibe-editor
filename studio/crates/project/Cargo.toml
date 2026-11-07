@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft-project"
-description = "FilmCraft document model: projects, bins, clips, sequences, tracks, effects, keyframes, markers"
+description = "Vibe Studio document model: projects, bins, clips, sequences, tracks, effects, keyframes, markers"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

@@ -126,7 +126,7 @@ pub fn appearance_context_menu(app: &mut FilmcraftApp, ui: &mut Ui) {
 const APPEARANCE_KEYS: &[&str] =
     &["appearance.appearanceMode", "appearance.lightTheme", "appearance.darkTheme", "appearance.colorTheme", "appearance.favoriteThemes"];
 
-/// A small FilmCraft editor painted with `t`'s colours: the header with the Import / Edit / Export
+/// A small Vibe Studio editor painted with `t`'s colours: the header with the Import / Edit / Export
 /// tabs, the Source and Program monitors, the Project panel, the tools, the Timeline with video and
 /// audio clips and the playhead, and the audio meters (the Editing workspace).
 fn theme_preview(ui: &mut Ui, t: &Tokens, width: f32) {
@@ -759,7 +759,7 @@ fn custom(app: &mut FilmcraftApp, ui: &mut Ui, d: &mut SettingsDraft, name: &str
         "memoryInfo" => {
             let (used, budget) = app.frames.cache_usage();
             note(ui, &t, &tlf!("Decoded frames held for the monitors and thumbnails: {used} of {budget}.", used = mb(used as u64), budget = mb(budget as u64)));
-            note(ui, &t, tl!("FilmCraft keeps the rest of the RAM free for other applications."));
+            note(ui, &t, tl!("Vibe Studio keeps the rest of the RAM free for other applications."));
         }
         "mediaCacheInfo" => {
             if d.cache_info.is_null() {
@@ -916,7 +916,7 @@ pub fn show(app: &mut FilmcraftApp, ctx: &egui::Context) -> bool {
         ui.horizontal(|ui| {
             ui.add_space(20.0);
             if button(app, ui, "settings.help", tl!("Help"), false) {
-                crate::links::open(app, ctx, &format!("{}/blob/main/docs/project-files.md#settings", crate::links::GITHUB));
+                crate::links::open(app, ctx, &format!("{}/blob/main/studio/docs/project-files.md#settings", crate::links::GITHUB));
             }
             if button(app, ui, "settings.reset", tl!("Reset…"), false) {
                 // this category back to its defaults (OK applies it)
@@ -1062,7 +1062,7 @@ mod tests {
         app.apply_prefs(&ctx);
         assert_eq!(app.tokens.kind, ThemeKind::Light);
         assert!(!app.ui.dark);
-        assert_eq!(ctx.theme(), egui::Theme::Light, "egui's style follows FilmCraft's choice");
+        assert_eq!(ctx.theme(), egui::Theme::Light, "egui's style follows Vibe Studio's choice");
         system.store(1, Ordering::Relaxed);
         app.apply_prefs(&ctx);
         assert_eq!(app.tokens.kind, ThemeKind::Dark);

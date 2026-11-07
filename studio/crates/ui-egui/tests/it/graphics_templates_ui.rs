@@ -204,7 +204,7 @@ fn type_tool_selection_styles_characters() {
     assert_eq!(hist["undo"].as_array().unwrap().last().unwrap(), "Character Style");
 }
 
-/// #611: installing a file FilmCraft refuses (a ZIP — EffectCraft's template package renamed
+/// #611: installing a file Vibe Studio refuses (a ZIP — EffectCraft's template package renamed
 /// to .fcgt) from the Browse panel must say why on the status bar, not do nothing.
 #[test]
 fn install_refused_shows_the_reason_on_the_status_bar() {

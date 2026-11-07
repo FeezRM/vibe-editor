@@ -75,7 +75,7 @@ pub fn spec(name: &str) -> Option<Vec<String>> {
             ],
         ]),
         "prores_pcm.mkv" => cat(&[V, A, &["-t", "1", "-c:v", "prores_ks", "-profile:v", "2", "-c:a", "pcm_s24le"]]),
-        "mjpeg_ac3.mkv" => cat(&[V, A, &["-t", "1", "-c:v", "mjpeg", "-q:v", "5", "-c:a", "ac3", "-metadata", "title=FilmCraft test"]]),
+        "mjpeg_ac3.mkv" => cat(&[V, A, &["-t", "1", "-c:v", "mjpeg", "-q:v", "5", "-c:a", "ac3", "-metadata", "title=Vibe Studio test"]]),
         "av1.mkv" => cat(&[V, &["-t", "1", "-c:v", "libsvtav1", "-preset", "12", "-g", "10"]]),
         "live.mkv" => return None,
         _ => panic!("unknown fixture {name}"),

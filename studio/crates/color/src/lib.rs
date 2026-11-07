@@ -1,4 +1,4 @@
-//! Colour science for FilmCraft: YUV matrices, transfer functions, camera log curves, gamuts,
+//! Colour science for Vibe Studio: YUV matrices, transfer functions, camera log curves, gamuts,
 //! colour-managed input/output transforms (tone and gamut mapping), colour metadata and LUTs.
 //! See the crate README for the formulas and their sources.
 //!
@@ -132,7 +132,7 @@ impl HdrMetadata {
     }
 }
 
-/// Which values of a stream's [`ColorInfo`] FilmCraft assumed, because none of the tags it reads
+/// Which values of a stream's [`ColorInfo`] Vibe Studio assumed, because none of the tags it reads
 /// them from (a container colour box, the colour description of the codec configuration) gives
 /// one it knows: the matrix is then the default for the frame size, and the transfer and
 /// primaries are BT.709. Range is not listed: the bitstreams define a range they don't signal as

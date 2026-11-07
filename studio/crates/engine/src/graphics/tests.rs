@@ -265,7 +265,7 @@ fn graphic_renders_in_the_program_and_survives_save() {
     assert!(red > 200, "red text in the program: {red}");
     let dir = std::env::temp_dir().join(format!("fc-gfx-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
-    let path = dir.join("g.fcproj");
+    let path = dir.join("g.vibeproj");
     s.execute("file.saveAs", json!({"path": path.to_string_lossy()})).unwrap();
     let mut s2 = Session::default();
     s2.execute("file.open", json!({"path": path.to_string_lossy()})).unwrap();

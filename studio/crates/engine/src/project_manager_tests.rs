@@ -31,7 +31,7 @@ fn project(root: &std::path::Path) -> (Session, Vec<ItemId>, String) {
         }
     }
     s.project = std::sync::Arc::new(p);
-    let path = root.join("p.fcproj").to_string_lossy().into_owned();
+    let path = root.join("p.vibeproj").to_string_lossy().into_owned();
     s.execute("file.save", json!({"path": path})).unwrap();
     (s, items, path)
 }

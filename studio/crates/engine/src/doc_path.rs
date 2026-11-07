@@ -67,7 +67,7 @@ mod tests {
     #[test]
     fn relative_paths_are_taken_from_the_document_folder() {
         let dir = std::env::temp_dir().join("films");
-        let doc = dir.join("cut.fcproj");
+        let doc = dir.join("cut.vibeproj");
         assert_eq!(resolve("clip.mp4", Some(&doc)), Ok(dir.join("clip.mp4").to_string_lossy().into_owned()));
         assert_eq!(resolve("clip.mp4", None), Err(NotFollowed::NoDocumentFolder));
         assert_eq!(resolve(r"\\192.0.2.1\share\x.mp4", Some(&doc)), Err(NotFollowed::Refused(Refused::Network)));

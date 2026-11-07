@@ -1,4 +1,4 @@
-//! The lockfile must not resolve `accesskit_macos` below 0.27.2: 0.27.1 crashes FilmCraft on quit
+//! The lockfile must not resolve `accesskit_macos` below 0.27.2: 0.27.1 crashes Vibe Studio on quit
 //! on Macs with a Touch Bar.
 //!
 //! eframe's `accesskit` feature gives the window's `WinitView` an AccessKit subclass. When the
@@ -35,7 +35,7 @@ fn accesskit_macos_keeps_appkit_key_value_observers_on_quit() {
     let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../Cargo.lock");
     let lock = std::fs::read_to_string(path).expect("read the workspace Cargo.lock");
     let version = locked_version(&lock, "accesskit_macos").expect("accesskit_macos in Cargo.lock");
-    assert!(version >= (0, 27, 2), "accesskit_macos {version:?} resets the view's class on drop and crashes FilmCraft on quit; need 0.27.2 or later");
+    assert!(version >= (0, 27, 2), "accesskit_macos {version:?} resets the view's class on drop and crashes Vibe Studio on quit; need 0.27.2 or later");
 }
 
 #[test]

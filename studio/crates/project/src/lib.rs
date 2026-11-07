@@ -1,4 +1,4 @@
-//! The FilmCraft document model.
+//! The Vibe Studio document model.
 //!
 //! A [`Project`] owns a tree of bins and a flat map of [`ProjectItem`]s (media clips, sequences,
 //! synthetic items). A [`Sequence`] has video and audio [`Track`]s holding [`TrackItem`]s (clip

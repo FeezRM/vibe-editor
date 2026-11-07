@@ -306,7 +306,7 @@ fn disable_reasons_name_their_cause() {
 fn unauthenticated_save_as_closes_before_any_command_runs() {
     for token in [Value::Null, json!(false), json!(42), json!([]), json!({}), json!(""), json!("a".repeat(64)), json!(&TOKEN[..63]), json!(format!("{TOKEN}0"))]
     {
-        let mut request = json!({"id": 1, "method": "engine.execute", "params": {"command": "file.saveAs", "params": {"path": "/owner/project.fcproj"}}});
+        let mut request = json!({"id": 1, "method": "engine.execute", "params": {"command": "file.saveAs", "params": {"path": "/owner/project.vibeproj"}}});
         if !token.is_null() {
             request["token"] = token;
         }
@@ -339,7 +339,7 @@ fn tcp_authentication_happens_before_enqueueing() {
     });
     let mut c = TcpStream::connect(addr).unwrap();
     c.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
-    c.write_all(b"{\"method\":\"engine.execute\",\"params\":{\"command\":\"file.saveAs\",\"params\":{\"path\":\"/owner/project.fcproj\"}}}\n").unwrap();
+    c.write_all(b"{\"method\":\"engine.execute\",\"params\":{\"command\":\"file.saveAs\",\"params\":{\"path\":\"/owner/project.vibeproj\"}}}\n").unwrap();
     c.shutdown(std::net::Shutdown::Write).unwrap();
     let mut reply = String::new();
     c.read_to_string(&mut reply).unwrap();
@@ -357,7 +357,7 @@ fn authenticated_tcp_request_reaches_the_ui_queue() {
         let (s, _) = listener.accept().unwrap();
         serve(s, &tx, &egui::Context::default(), TOKEN, Arc::new(AtomicBool::new(true)));
     });
-    let params = json!({"command": "file.saveAs", "params": {"path": "/owner/project.fcproj"}});
+    let params = json!({"command": "file.saveAs", "params": {"path": "/owner/project.vibeproj"}});
     let mut c = TcpStream::connect(addr).unwrap();
     c.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
     writeln!(c, "{}", json!({"id": 7, "token": TOKEN, "method": "engine.execute", "params": params})).unwrap();

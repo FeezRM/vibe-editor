@@ -149,7 +149,7 @@ impl Session {
                 }
             }
         }
-        // A file that can't be opened (still being written, or not media FilmCraft reads) keeps its
+        // A file that can't be opened (still being written, or not media Vibe Studio reads) keeps its
         // new stamp: it is tried again once it changes again, not on every look.
         if fresh.is_empty() {
             return Ok(json!({"refreshed": []}));

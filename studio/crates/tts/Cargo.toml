@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft-tts"
-description = "FilmCraft text to speech: the Voice trait, the voice catalogue, script parsing (pause markers), the built-in formant voice and (feature kokoro) Kokoro-82M neural voices on candle"
+description = "Vibe Studio text to speech: the Voice trait, the voice catalogue, script parsing (pause markers), the built-in formant voice and (feature kokoro) Kokoro-82M neural voices on candle"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

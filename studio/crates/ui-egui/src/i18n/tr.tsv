@@ -10,9 +10,9 @@
 # Turkish video-editing vocabulary (iz, oynatma kafası, sekans, klasör, düzenleme/kesim,
 # anahtar kare, dışa aktarma, işleme…). No proprietary localisation resource, string table or
 # product UI was consulted or copied; add entries the same way. Product and technology names
-# (FilmCraft, ArtCraft, Lumetri, ProRes, LUFS, H.264…) keep their spelling.
+# (Vibe Studio, ArtCraft, Lumetri, ProRes, LUFS, H.264…) keep their spelling.
 
-	About FilmCraft	FilmCraft Hakkında
+	About Vibe Studio	Vibe Studio Hakkında
 	Add Audio Submix Track	Ses Alt Miksaj İzi Ekle
 	Add Caption at Playhead	Oynatma Kafasına Altyazı Ekle
 	Add Chapter Marker…	Bölüm İşaretçisi Ekle…
@@ -38,7 +38,6 @@
 	Apply Default Transitions to Selection	Seçime Varsayılan Geçişleri Uygula
 	Apply Video Transition	Video Geçişi Uygula
 	Arrange	Sırala
-	ArtCraft Website	ArtCraft Web Sitesi
 	Assembly	Birleştirme
 	Attach Proxies…	Proxy'leri İliştir…
 	Audio Channels…	Ses Kanalları…
@@ -131,9 +130,8 @@
 	File	Dosya
 	File…	Dosya…
 	Fill frame	Kareyi doldur
-	FilmCraft Help…	FilmCraft Yardımı…
-	FilmCraft on GitHub	GitHub'da FilmCraft
-	FilmCraft on getartcraft.com	getartcraft.com'da FilmCraft
+	Vibe Studio Help…	Vibe Studio Yardımı…
+	Vibe Studio on GitHub	GitHub'da Vibe Studio
 	Find Next	Sonrakini Bul
 	Find…	Bul…
 	Fit	Sığdır
@@ -177,7 +175,6 @@
 	Insert Frame Hold Segment	Kare Dondurma Segmenti Ekle
 	Install Motion Graphics Template…	Hareketli Grafik Şablonu Yükle…
 	Interpret Footage…	Çekimi Yorumla…
-	Join the ArtCraft Discord…	ArtCraft Discord'una Katıl…
 	Keyboard Shortcuts…	Klavye Kısayolları…
 	Label	Etiket
 	Labels…	Etiketler…
@@ -306,7 +303,7 @@
 	Select Previous Graphic	Önceki Grafiği Seç
 	Select Previous Layer	Önceki Katmanı Seç
 	Selection Follows Playhead	Seçim Oynatma Kafasını Takip Eder
-	Selection as FilmCraft Project…	FilmCraft Projesi Olarak Seçim…
+	Selection as Vibe Studio Project…	Vibe Studio Projesi Olarak Seçim…
 	Selection…	Seçim…
 	Send Backward	Bir Arkaya Gönder
 	Send to Back	En Arkaya Gönder
@@ -372,7 +369,6 @@
 	Master volume: use the Audio Track Mixer	Ana ses düzeyi: Ses İzi Karıştırıcısı'nı kullanın
 	Search	Ara
 	Quick Export	Hızlı Dışa Aktar
-	Join the ArtCraft Discord (discord.gg/artcraft)	ArtCraft Discord'una Katılın (discord.gg/artcraft)
 	Cancel	İptal
 	OK	Tamam
 	Interpret Footage	Görüntüyü Yorumla
@@ -415,8 +411,6 @@
 	Delete Caption Track	Altyazı İzini Sil
 	Delete Empty Caption Tracks	Boş Altyazı İzlerini Sil
 	Version {version}	Sürüm {version}
-	A clean-room, pure-Rust non-linear video editor. Part of the ArtCraft family.	Temiz oda prensibiyle geliştirilmiş, saf Rust doğrusal olmayan video düzenleyici. ArtCraft ailesinin bir parçası.
-	Join the ArtCraft Discord	ArtCraft Discord'una Katılın
 	Source code on GitHub	GitHub'daki kaynak kodu
 	Report an issue	Sorun bildir
 	MIT OR Apache-2.0. Fonts: Inter, Noto Serif and JetBrains Mono (SIL OFL 1.1).	MIT VEYA Apache-2.0. Yazı Tipleri: Inter, Noto Serif ve JetBrains Mono (SIL OFL 1.1).
@@ -436,7 +430,7 @@
 	No background jobs.	Arka plan işi yok.
 	Recover Unsaved Changes	Kaydedilmemiş Değişiklikleri Kurtar
 	Untitled	Başlıksız
-	FilmCraft was closed while “{name}” had unsaved changes.	“{name}” kaydedilmemiş değişiklikler içerirken FilmCraft kapatıldı.
+	Vibe Studio was closed while “{name}” had unsaved changes.	“{name}” kaydedilmemiş değişiklikler içerirken Vibe Studio kapatıldı.
 	Vibe Studio quit unexpectedly while “{name}” had unsaved changes.	“{name}” kaydedilmemiş değişiklikler içerirken Vibe Studio beklenmedik şekilde kapandı.
 	Recover unsaved changes from {when}?	{when} tarihli kaydedilmemiş değişiklikler kurtarılsın mı?
 	The project had not been saved yet.	Proje henüz kaydedilmemişti.
@@ -964,7 +958,7 @@
 	Font family	Yazı tipi ailesi
 	Label Colors	Etiket Renkleri
 	Decoded frames held for the monitors and thumbnails: {used} of {budget}.	Monitörler ve küçük resimler için bellekte tutulan kodu çözülmüş kareler: {used} / {budget}.
-	FilmCraft keeps the rest of the RAM free for other applications.	FilmCraft, RAM'in geri kalanını diğer uygulamalar için serbest tutar.
+	Vibe Studio keeps the rest of the RAM free for other applications.	Vibe Studio, RAM'in geri kalanını diğer uygulamalar için serbest tutar.
 	not available in this session	bu oturumda kullanılamaz
 	Currently: {loc} — {files} file(s), {size}	Şu anda: {loc} — {files} dosya, {size}
 	 ({ch} output channels)	 ({ch} çıkış kanalı)
@@ -1075,7 +1069,7 @@
 	Video Frame	Video Karesi
 	Pin To	Şuna Sabitle
 	Pinned Edges	Sabitlenmiş Kenarlar
-	FilmCraft Graphics Template	FilmCraft Grafik Şablonu
+	Vibe Studio Graphics Template	Vibe Studio Grafik Şablonu
 	{n} Font	{n} Yazı Tipi
 	{n} Size	{n} Boyut
 	{n} Color	{n} Renk
@@ -1085,7 +1079,7 @@
 	Export As Motion Graphics Template	Hareketli Grafik Şablonu Olarak Dışa Aktar
 	Category:	Kategori:
 	Editable properties:	Düzenlenebilir özellikler:
-	Saved as a FilmCraft graphics template (.fcgt) in your templates folder.	Şablonlar klasörünüze bir FilmCraft grafik şablonu (.fcgt) olarak kaydedildi.
+	Saved as a Vibe Studio graphics template (.fcgt) in your templates folder.	Şablonlar klasörünüze bir Vibe Studio grafik şablonu (.fcgt) olarak kaydedildi.
 	Exported graphics template to {path}	Grafik şablonu {path} konumuna dışa aktarıldı
 	Replace Fonts in Projects	Projelerdeki Yazı Tiplerini Değiştir
 	Fonts used in the project:	Projede kullanılan yazı tipleri:
@@ -1455,7 +1449,7 @@
 	Center of Sphere	Kürenin Merkezi
 	Cents	Sent
 	Change to Color	Renge Dönüştür
-	Changes are copied in the background a moment after each edit. If FilmCraft quits unexpectedly, they are offered the next time it starts.	Değişiklikler her düzenlemeden hemen sonra arka planda kopyalanır. FilmCraft beklenmedik şekilde kapanırsa sonraki başlatılışında sunulur.
+	Changes are copied in the background a moment after each edit. If Vibe Studio quits unexpectedly, they are offered the next time it starts.	Değişiklikler her düzenlemeden hemen sonra arka planda kopyalanır. Vibe Studio beklenmedik şekilde kapanırsa sonraki başlatılışında sunulur.
 	Channel	Kanal
 	Channel Blur	Kanal Bulanıklığı
 	Channel Mix	Kanal Karışımı
@@ -1828,13 +1822,13 @@
 	Hard Limiter	Sert Sınırlayıcı
 	Hard Mix	Sert Karışım
 	Hardware decoding	Donanım kod çözme
-	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and FilmCraft's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Donanım kod çözme: Otomatik seçeneği, desteklediği akışlar için sistemin video kod çözücüsünü (macOS'te VideoToolbox, Windows'ta Media Foundation, Linux'ta H.264 ve HEVC için VA-API veya NVDEC), diğer her şey için veya donanım başarısız olursa FilmCraft'ın kendi kod çözücüsünü kullanır. Halihazırda açık olan medya, yeniden açılana kadar kod çözücüsünü korur.
+	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API or NVDEC for H.264 and HEVC on Linux) for the streams it supports, and Vibe Studio's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Donanım kod çözme: Otomatik seçeneği, desteklediği akışlar için sistemin video kod çözücüsünü (macOS'te VideoToolbox, Windows'ta Media Foundation, Linux'ta H.264 ve HEVC için VA-API veya NVDEC), diğer her şey için veya donanım başarısız olursa Vibe Studio'ın kendi kod çözücüsünü kullanır. Halihazırda açık olan medya, yeniden açılana kadar kod çözücüsünü korur.
 	Head Size	Baş Boyutu
 	Heart	Kalp
 	Height	Yükseklik
 	Hexagon	Altıgen
 	Hide Back Face	Arka Yüzü Gizle
-	Hide FilmCraft	FilmCraft'ı Gizle
+	Hide Vibe Studio	Vibe Studio'ı Gizle
 	Hide Others	Diğerlerini Gizle
 	High	Yüksek
 	High Cutoff	Yüksek Kesme
@@ -2105,7 +2099,7 @@
 	Night	Gece
 	No Motion	Hareket Yok
 	No Scroll	Kaydırma Yok
-	No plugins are installed. Changes will take effect the next time you start FilmCraft.	Hiçbir eklenti yüklü değil. Değişiklikler FilmCraft'ı bir sonraki başlatışınızda geçerli olacaktır.
+	No plugins are installed. Changes will take effect the next time you start Vibe Studio.	Hiçbir eklenti yüklü değil. Değişiklikler Vibe Studio'ı bir sonraki başlatışınızda geçerli olacaktır.
 	Noise	Gürültü
 	Noise & Grain	Gürültü ve Gren
 	Noise (Legacy)	Gürültü (Eski)
@@ -2537,7 +2531,7 @@
 	Template Properties	Şablon Özellikleri
 	Text Animator	Metin Canlandırıcı
 	Text Color	Metin Rengi
-	The media cache holds render previews of unsaved projects and other files FilmCraft can recreate. Deleting them is always safe; FilmCraft rebuilds them as needed.	Medya önbelleği, kaydedilmemiş projelerin işleme önizlemelerini ve FilmCraft'ın yeniden oluşturabileceği diğer dosyaları tutar. Bunları silmek her zaman güvenlidir; FilmCraft gerektiğinde bunları yeniden oluşturur.
+	The media cache holds render previews of unsaved projects and other files Vibe Studio can recreate. Deleting them is always safe; Vibe Studio rebuilds them as needed.	Medya önbelleği, kaydedilmemiş projelerin işleme önizlemelerini ve Vibe Studio'ın yeniden oluşturabileceği diğer dosyaları tutar. Bunları silmek her zaman güvenlidir; Vibe Studio gerektiğinde bunları yeniden oluşturur.
 	Thickness	Kalınlık
 	Tile Gradient	Döşeme Gradyanı
 	Tilt	Eğim
@@ -2747,8 +2741,8 @@
 	System Compatibility Report	Sistem Uyumluluk Raporu
 	no GPU adapter: the CPU compositor is used	GPU bağdaştırıcısı yok: CPU kompozitörü kullanılıyor
 	Avid Log Exchange	Avid Log Exchange
-	FilmCraft Project	FilmCraft Projesi
-	{name} Selection.fcproj	{name} Seçim.fcproj
+	Vibe Studio Project	Vibe Studio Projesi
+	{name} Selection.vibeproj	{name} Seçim.vibeproj
 	{name} (Simplified)	{name} (Basitleştirilmiş)
 	Find in:	Şurada bul:
 	Find:	Bul:
@@ -2887,7 +2881,7 @@
 	Start Queue	Kuyruğu Başlat
 	Stop	Durdur
 	Clear Finished	Tamamlananları Temizle
-	Not supported by FilmCraft's encoders yet	FilmCraft kodlayıcıları tarafından henüz desteklenmiyor
+	Not supported by Vibe Studio's encoders yet	Vibe Studio kodlayıcıları tarafından henüz desteklenmiyor
 	Sequence name	Sekans adı
 	Folder	Klasör
 	Preset	Hazır Ayar
@@ -2977,7 +2971,7 @@
 	Drag a clip to slide it between its neighbours.	Bir klibi komşuları arasında ötelemek için sürükleyin.
 	Drag to scroll the timeline.	Zaman çizgisini kaydırmak için sürükleyin.
 	Click to zoom in; Opt-click to zoom out.	Yakınlaştırmak için tıklayın; uzaklaştırmak için Opt ile tıklayın.
-	FilmCraft hit an error	FilmCraft bir hatayla karşılaştı
+	Vibe Studio hit an error	Vibe Studio bir hatayla karşılaştı
 	Details: {path}	Ayrıntılar: {path}
 	Opened {url}	{url} açıldı
 	(empty)	(boş)
@@ -3237,7 +3231,7 @@
 	QuickTime, ProRes 4444 (4:4:4) with alpha channel, 24-bit 48 kHz PCM	QuickTime, alfa kanallı ProRes 4444 (4:4:4), 24 bit 48 kHz PCM
 	QuickTime, ProRes 4444 XQ (4:4:4), 24-bit 48 kHz PCM	QuickTime, ProRes 4444 XQ (4:4:4), 24 bit 48 kHz PCM
 	QuickTime, ProRes 422, 24-bit 48 kHz PCM	QuickTime, ProRes 422, 24 bit 48 kHz PCM
-	Quit FilmCraft	FilmCraft'tan Çık
+	Quit Vibe Studio	Vibe Studio'tan Çık
 	Rate Stretch Tool	Oran Uzatma Aracı
 	Razor Tool	Jilet Aracı
 	Rectangle Tool	Dikdörtgen Aracı
@@ -3538,8 +3532,8 @@
 	Composite in Linear Color	Doğrusal Renkte Kompozitle
 	Auto Tone Map Media (HDR and log into SDR)	Medyayı Otomatik Ton Eşle (HDR ve log'dan SDR'ye)
 	Configure…	Yapılandır…
-	Not supported in FilmCraft yet	Henüz FilmCraft tarafından desteklenmiyor
-	FilmCraft always composites in linear light	FilmCraft her zaman doğrusal ışıkta kompozit oluşturur
+	Not supported in Vibe Studio yet	Henüz Vibe Studio tarafından desteklenmiyor
+	Vibe Studio always composites in linear light	Vibe Studio her zaman doğrusal ışıkta kompozit oluşturur
 	Loop marked range	İşaretli aralığı döngüye al
 	Play Source	Kaynağı Oynat
 	Source Play/Stop	Kaynak Oynat/Durdur
@@ -3599,7 +3593,7 @@
 	Opens in your web browser: {url}	Web tarayıcınızda açılır: {url}
 	Saves this session's log and shows it in your file manager.	Bu oturumun günlüğünü kaydeder ve dosya yöneticinizde gösterir.
 	Shows a report on this computer.	Bu bilgisayar hakkında bir rapor gösterir.
-	Shows the version, community links and credits in a FilmCraft window.	Sürümü, topluluk bağlantılarını ve jeneriği bir FilmCraft penceresinde gösterir.
+	Shows the version, community links and credits in a Vibe Studio window.	Sürümü, topluluk bağlantılarını ve jeneriği bir Vibe Studio penceresinde gösterir.
 	Couldn't open your web browser	Web tarayıcınız açılamadı
 	Open this address in your browser yourself:	Bu adresi tarayıcınızda kendiniz açın:
 
@@ -3622,7 +3616,7 @@
 	Open a sequence to search its graphics	Grafiklerinde arama yapmak için bir sekans açın
 	No text graphics in this sequence. Add text with the Type tool.	Bu sekansta metin grafiği yok. Yazım aracıyla metin ekleyin.
 	No matching text.	Eşleşen metin yok.
-	H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and FilmCraft has no software H.265 encoder yet. Choose H.264 or ProRes instead.	H.265 (HEVC) bir donanım kodlayıcısı gerektirir (NVIDIA GPU'larda NVENC, macOS'ta VideoToolbox); bu makinede hiçbiri bulunamadı ve FilmCraft henüz yazılımsal H.265 kodlayıcıya sahip değil. Bunun yerine H.264 veya ProRes seçin.
-	AV1 needs a hardware encoder; none was found on this machine, and FilmCraft has no software AV1 encoder yet.	AV1 bir donanım kodlayıcısı gerektirir; bu makinede hiçbiri bulunamadı ve FilmCraft henüz yazılımsal AV1 kodlayıcıya sahip değil.
-	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API for H.264 and HEVC on Linux) for the streams it supports, and FilmCraft's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Donanım kod çözme: Otomatik, desteklediği akışlar için sistemin video kod çözücüsünü (macOS'ta VideoToolbox, Windows'ta Media Foundation, Linux'ta H.264 ve HEVC için VA-API), diğer her şey veya donanım başarısız olduğunda ise FilmCraft'ın kendi kod çözücüsünü kullanır. Zaten açık olan medya yeniden açılana kadar kod çözücüsünü korur.
+	H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and Vibe Studio has no software H.265 encoder yet. Choose H.264 or ProRes instead.	H.265 (HEVC) bir donanım kodlayıcısı gerektirir (NVIDIA GPU'larda NVENC, macOS'ta VideoToolbox); bu makinede hiçbiri bulunamadı ve Vibe Studio henüz yazılımsal H.265 kodlayıcıya sahip değil. Bunun yerine H.264 veya ProRes seçin.
+	AV1 needs a hardware encoder; none was found on this machine, and Vibe Studio has no software AV1 encoder yet.	AV1 bir donanım kodlayıcısı gerektirir; bu makinede hiçbiri bulunamadı ve Vibe Studio henüz yazılımsal AV1 kodlayıcıya sahip değil.
+	Hardware decoding: Auto uses the system's video decoder (VideoToolbox on macOS, Media Foundation on Windows, VA-API for H.264 and HEVC on Linux) for the streams it supports, and Vibe Studio's own decoder for everything else or if the hardware fails. Media that is already open keeps its decoder until it is reopened.	Donanım kod çözme: Otomatik, desteklediği akışlar için sistemin video kod çözücüsünü (macOS'ta VideoToolbox, Windows'ta Media Foundation, Linux'ta H.264 ve HEVC için VA-API), diğer her şey veya donanım başarısız olduğunda ise Vibe Studio'ın kendi kod çözücüsünü kullanır. Zaten açık olan medya yeniden açılana kadar kod çözücüsünü korur.
 	The control server is disabled: FILMCRAFT_CONTROL_TOKEN must contain 64 random hex characters (see docs/control-protocol.md)	Denetim sunucusu devre dışı: FILMCRAFT_CONTROL_TOKEN 64 rastgele onaltılık karakter içermelidir (bkz. docs/control-protocol.md)

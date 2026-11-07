@@ -74,7 +74,7 @@ fn a_saved_project_reopens_with_its_tabs_and_their_views() {
     s.state.timeline_views.insert(main, view(12.5, 3.0));
     s.state.timeline_views.insert(b, view(400.0, 0.25));
     let dir = temp_dir("reopen");
-    let path = dir.join("tabs.fcproj").to_string_lossy().to_string();
+    let path = dir.join("tabs.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
 
     let mut t = Session::default();
@@ -121,7 +121,7 @@ fn each_sequence_reopens_with_its_playhead_where_it_was_left() {
     assert_eq!(s.playhead(), b_at);
     assert_eq!(s.project_view().playheads.get(&c), None, "a playhead that never moved is not written");
     let dir = temp_dir("playheads");
-    let path = dir.join("tabs.fcproj").to_string_lossy().to_string();
+    let path = dir.join("tabs.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
 
     let mut t = Session::default();
@@ -161,7 +161,7 @@ fn a_damaged_view_in_a_project_file_is_cleaned_up_or_ignored() {
     let (mut s, [main, b, c]) = three_tabs();
     let footage = s.project.sequence(main).unwrap().video_tracks[0].items[0].item;
     let dir = temp_dir("damaged");
-    let path = dir.join("tabs.fcproj").to_string_lossy().to_string();
+    let path = dir.join("tabs.vibeproj").to_string_lossy().to_string();
     s.execute("file.saveAs", json!({"path": path})).unwrap();
     let saved: serde_json::Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
     let with_view = |view: serde_json::Value| {

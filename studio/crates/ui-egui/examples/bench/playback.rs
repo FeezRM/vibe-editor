@@ -769,7 +769,7 @@ pub fn cli_main() {
     let args = parse_args();
     let cores = std::thread::available_parallelism().map(|n| n.get()).unwrap_or(1);
     println!(
-        "FilmCraft playback bench: {} path, {} frame workers, {} cores, refresh {} Hz, {} s per play; load avg {}",
+        "Vibe Studio playback bench: {} path, {} frame workers, {} cores, refresh {} Hz, {} s per play; load avg {}",
         if args.gpu { "GPU" } else { "CPU" },
         args.workers,
         cores,

@@ -1,5 +1,5 @@
 //! Nonblocking macOS custom-color selection through safe AppKit bindings.
-//! The panel edits a draft; FilmCraft's Add/Save/Cancel buttons commit or discard it.
+//! The panel edits a draft; Vibe Studio's Add/Save/Cancel buttons commit or discard it.
 use filmcraft_ui_egui::widgets::color_picker::{NativeColorPicker, NativeColorSession, NativeColorState};
 use objc2::{MainThreadMarker, rc::Retained};
 use objc2_app_kit::{NSColor, NSColorPanel, NSColorSpace};
@@ -29,7 +29,7 @@ impl Drop for ColorSession {
         // NSColorPanel is shared. An older draft must never close a newer draft's panel.
         if self.owns_panel() {
             if let Err(error) = (self.text_menu)(false) {
-                log::warn!("Cannot restore FilmCraft Edit menu: {error}");
+                log::warn!("Cannot restore Vibe Studio Edit menu: {error}");
             }
             self.panel.orderOut(None);
         }

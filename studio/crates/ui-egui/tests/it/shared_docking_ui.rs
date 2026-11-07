@@ -1,4 +1,4 @@
-//! Shared docking preserves FilmCraft document state and legacy workspace files.
+//! Shared docking preserves Vibe Studio document state and legacy workspace files.
 
 use craft_ui::docking::{Action, DockArea, Hit, Node, Placement, ResizeEdge, Zone};
 use craft_ui::layout::{SplitAxis, SplitSize};
@@ -128,7 +128,7 @@ fn legacy_effects_workspace_drops_only_the_known_inactive_duplicate() {
     assert_eq!(dock::saved_docking(&prefs, "Historical Effects"), expected);
 }
 
-/// The frame tree as FilmCraft wrote it before its workspaces were craft-ui workspaces.
+/// The frame tree as Vibe Studio wrote it before its workspaces were craft-ui workspaces.
 fn legacy(node: &Node<PanelKind>) -> serde_json::Value {
     match node {
         Node::Tabs { panels, active } => json!({"Tabs": {"panels": panels, "active": active}}),
@@ -674,7 +674,7 @@ fn a_panel_closed_while_floating_reopens_floating_where_it_was() {
     assert!(app.ui.closed_floating.iter().any(|(p, r)| *p == PanelKind::Info && *r == rect), "{:?}", app.ui.closed_floating);
 }
 
-/// craft-ui's `window.panel.*` commands and FilmCraft's own docking commands share one path.
+/// craft-ui's `window.panel.*` commands and Vibe Studio's own docking commands share one path.
 #[test]
 fn shared_dock_commands_and_filmcraft_names_move_panels() {
     let mut app = FilmcraftApp::new(Session::default());
@@ -882,7 +882,7 @@ fn tab_menu(h: &mut Harness<'_, FilmcraftApp>, tab: &str, item: &str) {
     click_at(h, item, PointerButton::Primary);
 }
 
-/// A Timeline tab's context menu carries FilmCraft's Timeline items, and its Close Panel closes
+/// A Timeline tab's context menu carries Vibe Studio's Timeline items, and its Close Panel closes
 /// the active sequence: the Timeline stays.
 #[test]
 fn close_panel_on_the_timeline_tab_closes_the_sequence() {

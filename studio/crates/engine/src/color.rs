@@ -341,7 +341,7 @@ fn interpret(s: &mut Session, p: &Value) -> Result<Value> {
     }))
 }
 
-/// `[num, den]` as a pixel aspect ratio FilmCraft can use ([`filmcraft_project::checked_par`]).
+/// `[num, den]` as a pixel aspect ratio Vibe Studio can use ([`filmcraft_project::checked_par`]).
 fn pixel_aspect_p(v: &Value) -> Option<(u32, u32)> {
     let [n, d] = v.as_array()?.as_slice() else { return None };
     let (n, d) = (u32::try_from(n.as_u64()?).ok()?, u32::try_from(d.as_u64()?).ok()?);
@@ -366,7 +366,7 @@ fn color_info(s: &mut Session, p: &Value) -> Result<Value> {
         "detected": detected.map(|c| c.id()),
         "detectedLabel": detected.map(|c| c.label()),
         "metadata": m.info.video.as_ref().map(|v| json!({"transfer": format!("{:?}", v.color.transfer), "primaries": format!("{:?}", v.color.primaries), "matrix": format!("{:?}", v.color.matrix), "range": format!("{:?}", v.color.range)})),
-        // which `metadata` values no tag in the file gave (FilmCraft's defaults); null when unknown
+        // which `metadata` values no tag in the file gave (Vibe Studio's defaults); null when unknown
         "assumed": m.info.video.as_ref().and_then(|v| v.color_assumed),
         "override": m.interpret.color_space.map(|c| c.id()),
         "effective": effective.map(|c| c.id()),

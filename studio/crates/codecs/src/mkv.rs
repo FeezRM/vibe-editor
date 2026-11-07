@@ -526,7 +526,7 @@ impl MkvSource {
                 extra.extend_from_slice(&headers[2]);
                 PacketDecoder::new(CODEC_TYPE_VORBIS, rate, Some(extra))
             }
-            other => Err(CodecError::Unsupported(format!("{} audio (FilmCraft has no decoder for it)", codec_label(other)))),
+            other => Err(CodecError::Unsupported(format!("{} audio (Vibe Studio has no decoder for it)", codec_label(other)))),
         }
     }
 

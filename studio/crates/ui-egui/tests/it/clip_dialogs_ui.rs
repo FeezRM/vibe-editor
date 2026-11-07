@@ -473,7 +473,7 @@ fn native_menu_quit_with_unsaved_changes_asks_to_save() {
 
 #[test]
 fn quit_save_on_a_new_project_uses_the_save_dialog_and_scripted_quit_does_not_ask() {
-    let path = std::env::temp_dir().join(format!("fc-quit-save-{}.fcproj", std::process::id()));
+    let path = std::env::temp_dir().join(format!("fc-quit-save-{}.vibeproj", std::process::id()));
     let _ = std::fs::remove_file(&path);
     let mut d = Driver::new();
     d.app().session.path = None;
@@ -678,7 +678,7 @@ fn close_all_projects_asks_to_save() {
     assert!(d.app().ui.clip_dialog.is_none());
     // nothing unsaved: no question
     d.exec("file.openDemoProject", json!({}));
-    let path = std::env::temp_dir().join(format!("fc-close-all-{}.fcproj", std::process::id()));
+    let path = std::env::temp_dir().join(format!("fc-close-all-{}.vibeproj", std::process::id()));
     d.exec("file.saveAs", json!({"path": path.to_string_lossy()}));
     assert!(!d.app().session.is_dirty());
     d.menu("file.closeAllProjects");
@@ -833,7 +833,7 @@ impl Driver {
 fn a_dropped_project_file_opens_and_asks_about_unsaved_changes() {
     let tmp = tempfile::tempdir().unwrap();
     let dir = tmp.path();
-    let (a, b) = (dir.join("A.fcproj"), dir.join("B.FCPROJ"));
+    let (a, b) = (dir.join("A.vibeproj"), dir.join("B.VIBEPROJ"));
     let mut d = Driver::new();
     d.exec("file.saveCopy", json!({"path": b.to_string_lossy()}));
     d.exec("file.saveAs", json!({"path": a.to_string_lossy()}));
@@ -841,7 +841,7 @@ fn a_dropped_project_file_opens_and_asks_about_unsaved_changes() {
     let items = d.app().session.project.items.len();
 
     // Save on a never-saved project: Save As first, then the dropped project opens
-    let saved = dir.join("saved-from-prompt.fcproj");
+    let saved = dir.join("saved-from-prompt.vibeproj");
     let saved_path = saved.to_string_lossy().into_owned();
     let mut fresh = Driver::new();
     fresh.app().session.path = None;
@@ -850,7 +850,7 @@ fn a_dropped_project_file_opens_and_asks_about_unsaved_changes() {
     fresh.drop_files(&[&b]);
     fresh.click("openProject.save");
     assert!(saved.exists(), "saved to the chosen file");
-    assert!(fresh.path().is_some_and(|p| p.ends_with("B.FCPROJ")), "opened {:?}", fresh.path());
+    assert!(fresh.path().is_some_and(|p| p.ends_with("B.VIBEPROJ")), "opened {:?}", fresh.path());
     assert!(!fresh.app().session.is_dirty());
 
     // unsaved changes: the prompt, and Cancel keeps the project and its changes
@@ -864,7 +864,7 @@ fn a_dropped_project_file_opens_and_asks_about_unsaved_changes() {
     // Don't Save: the dropped project opens; nothing was imported into either project
     d.drop_files(&[&b]);
     d.click("openProject.dontSave");
-    assert!(d.path().is_some_and(|p| p.ends_with("B.FCPROJ")), "opened {:?}", d.path());
+    assert!(d.path().is_some_and(|p| p.ends_with("B.VIBEPROJ")), "opened {:?}", d.path());
     assert!(!d.app().session.is_dirty());
     assert_eq!(d.app().session.project.items.len(), items, "the project file was not imported as media");
 
@@ -877,14 +877,14 @@ fn a_dropped_project_file_opens_and_asks_about_unsaved_changes() {
     assert_eq!(d.app().session.project.items.len(), items);
 
     // a project file that fails to open: Don't Save keeps the open project and its changes
-    let broken = dir.join("broken.fcproj");
+    let broken = dir.join("broken.vibeproj");
     std::fs::write(&broken, "not a project").unwrap();
     d.edit();
     d.drop_files(&[&broken]);
     d.click("openProject.dontSave");
     assert_eq!(d.path().as_deref(), Some(a_path.as_str()), "still the open project");
     assert!(d.app().session.is_dirty(), "its changes are kept");
-    assert!(d.app().ui.status.contains("broken.fcproj"), "the reason is shown: {}", d.app().ui.status);
+    assert!(d.app().ui.status.contains("broken.vibeproj"), "the reason is shown: {}", d.app().ui.status);
 
     // Open Recent and File ▸ Open ask the same question
     assert_eq!(d.menu("file.openRecent.1")["dialog"], "openProject");
@@ -895,5 +895,5 @@ fn a_dropped_project_file_opens_and_asks_about_unsaved_changes() {
     d.menu("file.open");
     assert!(d.has("openProject.dontSave"), "File ▸ Open asks too");
     d.click("openProject.dontSave");
-    assert!(d.path().is_some_and(|p| p.ends_with("B.FCPROJ")));
+    assert!(d.path().is_some_and(|p| p.ends_with("B.VIBEPROJ")));
 }

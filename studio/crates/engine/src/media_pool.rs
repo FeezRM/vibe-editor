@@ -5,7 +5,7 @@
 //!   relink, Make Offline or their undo picks up the right file on the next frame.
 //! - Media that can't be opened (missing, unreadable) or was made offline renders the offline
 //!   slate ([`filmcraft_render::offline`]) instead of failing; the reason is kept for the UI. So
-//!   do the frames of a file that opens but whose picture FilmCraft cannot decode (a codec or
+//!   do the frames of a file that opens but whose picture Vibe Studio cannot decode (a codec or
 //!   profile without a decoder).
 //! - With proxies enabled ([`MediaPool::set_use_proxies`]) items with an attached proxy are read
 //!   from it. Proxy frames are smaller; the source still reports the full-resolution size, and the
@@ -850,7 +850,7 @@ mod tests {
         std::fs::remove_dir_all(&dir).unwrap();
     }
 
-    /// A file whose first frame decodes and whose later frames need a decoder FilmCraft lacks.
+    /// A file whose first frame decodes and whose later frames need a decoder Vibe Studio lacks.
     struct PartlyDecodable(MediaInfo);
     impl MediaSource for PartlyDecodable {
         fn info(&self) -> &MediaInfo {
@@ -1011,7 +1011,7 @@ mod tests {
         }
     }
 
-    /// #626 end to end: an H.264 profile FilmCraft does not decode yet (4:4:4) imports and shows
+    /// #626 end to end: an H.264 profile Vibe Studio does not decode yet (4:4:4) imports and shows
     /// the unreadable slate with the decoder's reason, instead of a black picture.
     #[test]
     fn ffmpeg_unsupported_h264_profile_shows_the_unreadable_slate() {

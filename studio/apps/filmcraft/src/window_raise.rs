@@ -3,7 +3,7 @@
 //! Occluded macOS windows stop running egui's `ui` pass, so UI-level control requests (synthetic
 //! input, screenshots) need the window on screen. Activating the app for that
 //! (`ViewportCommand::Focus`) steals keyboard focus from whatever the user is typing in, and their
-//! keystrokes then land in FilmCraft as shortcuts. `orderFrontRegardless` orders the window to the
+//! keystrokes then land in Vibe Studio as shortcuts. `orderFrontRegardless` orders the window to the
 //! front without activating the app, so the key window (and the user's focus) stays where it is.
 
 /// Order the app's windows to the front without activating the app (macOS). Returns whether it

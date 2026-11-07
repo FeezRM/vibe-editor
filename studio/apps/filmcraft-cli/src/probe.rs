@@ -1,4 +1,4 @@
-//! `filmcraft-cli probe`: media info as JSON, plus container details for MPEG TS / PS (program,
+//! `vibe-studio-cli probe`: media info as JSON, plus container details for MPEG TS / PS (program,
 //! streams with their codecs, access units, picture types and timestamp ranges), MXF (operational
 //! pattern, tracks, index, timecode), Ogg (logical streams, pre-skip, granules), Broadcast WAV
 //! (time reference) and image sequences (frames, missing numbers).

@@ -48,7 +48,7 @@ pub struct AudioDevices {
 pub struct HostHooks {
     /// Vibe Studio: starts the user's agent (Claude Code) for the Assistant panel (native hosts only).
     pub agent: Option<crate::assistant::AgentLauncher>,
-    /// Optional native custom-color editor; presets and project palette stay in FilmCraft.
+    /// Optional native custom-color editor; presets and project palette stay in Vibe Studio.
     pub pick_color: Option<crate::widgets::color_picker::NativeColorPicker>,
     pub pick_files: Option<Box<dyn FnMut(&[&str]) -> Vec<String>>>,
     /// The cursor in physical screen pixels. Where the windowing layer reports no pointer while files are dragged in from the OS (Windows), a drop is placed where this says it landed.
@@ -96,7 +96,7 @@ pub struct HostHooks {
     /// uses `egui::Context::system_theme`.
     pub system_theme: Option<SystemThemeFn>,
     /// Files or an image on the system clipboard, for Paste in the Timeline and the Project panel
-    /// (#611). Without it Paste only pastes clips copied in FilmCraft.
+    /// (#611). Without it Paste only pastes clips copied in Vibe Studio.
     pub clipboard_media: Option<Box<dyn FnMut() -> Option<ClipboardMedia>>>,
 }
 

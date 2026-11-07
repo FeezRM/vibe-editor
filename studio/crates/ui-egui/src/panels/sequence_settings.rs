@@ -10,12 +10,12 @@
 //! non-drop-frame timecode for the NTSC rates, audio Channel Format and Sample Rate, Maximum Render
 //! Quality, and the Color Management tab (working colour space, wide gamut, auto tone map).
 //!
-//! Premiere settings FilmCraft has no equivalent for yet are shown greyed out with their current
+//! Premiere settings Vibe Studio has no equivalent for yet are shown greyed out with their current
 //! value and a "not supported yet" hint, rather than editable and silently ignored: Editing Mode,
 //! Pixel Aspect Ratio (rendered, and set by New Sequence From Clip, but not editable here yet), Fields, the Frames and Feet + Frames display
 //! formats, Number of Channels, audio Display Format, the Video Previews format, codec and size,
 //! Maximum Bit Depth, and the VR Properties tab. Composite in Linear Color is shown on and greyed:
-//! FilmCraft always composites in linear light.
+//! Vibe Studio always composites in linear light.
 //!
 //! Automation ids (`sequenceSettings.` + …): `tab.general`, `tab.color`, `tab.vr`; General:
 //! `name`, `editingMode`, `timebase` (+ `timebase.option.<num>/<den>` while open), `width`, `height`,
@@ -35,8 +35,8 @@ use crate::FilmcraftApp;
 use crate::i18n::t;
 use crate::state::SequenceSettingsDraft;
 
-const NOT_YET: &str = "Not supported in FilmCraft yet";
-const LINEAR: &str = "FilmCraft always composites in linear light";
+const NOT_YET: &str = "Not supported in Vibe Studio yet";
+const LINEAR: &str = "Vibe Studio always composites in linear light";
 
 /// The Timebase list (frames per second as num/den), Premiere's common rates.
 const TIMEBASES: [(i64, i64); 15] = [

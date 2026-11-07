@@ -109,6 +109,8 @@ fn the_monitor_wrench_stays_open_for_toggles_and_closes_on_a_display_choice() {
 fn a_resolution_choice_and_clear_guides_close_each_monitors_wrench() {
     for monitor in ["program", "source"] {
         let mut d = Driver::demo();
+        // both monitors side by side, as in Premiere's Editing workspace (Vibe tabs Source behind Program)
+        d.ok("ui.set", json!({"workspace": "Editing"}));
         d.ok("ui.menu.invoke", json!({"id": "source.open", "params": {"item": 5}}));
         let view = |d: &Driver| {
             let ui = &d.harness.state().ui;

@@ -46,7 +46,7 @@ fn sniff_and_container() {
             assert_eq!((info.raw_width, info.raw_height, info.width, info.height, info.bits), (16, 8, 16, 8, 12));
             assert!(info.cfa);
             assert_eq!(info.dng_version, [1, 4, 0, 0]);
-            assert_eq!(info.camera.as_deref(), Some("FilmCraft Synthetic"));
+            assert_eq!(info.camera.as_deref(), Some("Vibe Studio Synthetic"));
             assert_eq!(d.raw().unwrap().data, px, "be {be} preview {preview}");
         }
     }

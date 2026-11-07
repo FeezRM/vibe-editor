@@ -77,12 +77,16 @@ matrix of what is scripted, manual, unvalidated, or a gap.
 
 ## Vibe Studio (the editor)
 
-`studio/` is **Vibe Studio**, a Premiere-style editor in pure Rust built on
-[FilmCraft](https://github.com/storytold/filmcraft) (MIT/Apache-2.0). It opens any job as a fully editable
-timeline (takes, camera and zoom keyframes, captions, graphics, SFX), runs your Claude Code session inside the editor
-(same skills, samples and permissions, no API key) so you watch it edit and step in by hand, and exports. `lanes/vibe/setup.sh` builds it and registers it
-for Claude Code sessions in this folder (the Claude app or a terminal: your usual flow, now able to open and edit what's
-in the editor); `lanes/vibe/open.sh projects/my-reel` opens a job. See `studio/VIBE-STUDIO.md`.
+`studio/` is **Vibe Studio**, vibe-editor's own video editor (Premiere-style, pure Rust). It opens any job
+as a fully editable timeline (takes, camera and zoom keyframes, captions in your look, graphics, b-roll,
+SFX), runs your Claude Code session inside the editor (same skills, samples and permissions, no API key)
+so you watch it edit and step in by hand, and exports. A Claude Code session in the Claude app or a
+terminal can open the editor and work on what's in it too. `lanes/vibe/setup.sh` builds it and registers
+it; `lanes/vibe/open.sh projects/my-reel` opens a job. See `studio/README.md`.
+
+Vibe Studio is built on [FilmCraft](https://github.com/storytold/filmcraft) by the ArtCraft team, an
+open-source pure-Rust non-linear editor (MIT OR Apache-2.0). Its engine, codecs, renderer and editing
+tools are FilmCraft's; thank you to its contributors.
 
 ## Make it yours
 

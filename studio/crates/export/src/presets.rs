@@ -1,4 +1,4 @@
-//! Built-in export presets. These are FilmCraft's own functional definitions (names, sizes and
+//! Built-in export presets. These are Vibe Studio's own functional definitions (names, sizes and
 //! bitrates chosen by us for common delivery targets); no preset files from any other product are
 //! used. User presets live in the engine (`<data dir>/export-presets.json`).
 

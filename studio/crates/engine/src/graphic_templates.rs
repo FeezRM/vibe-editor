@@ -1,7 +1,7 @@
 //! Graphics templates, responsive design, per-character styles, source graphics and font
 //! replacement (M10.7).
 //!
-//! - **Templates** (`graphics.template.*`): FilmCraft's own `.fcgt` format
+//! - **Templates** (`graphics.template.*`): Vibe Studio's own `.fcgt` format
 //!   ([`filmcraft_project::gtemplate`]). Built-in templates are original designs in code; user
 //!   templates live in `<data dir>/Graphics Templates/*.fcgt`. Export As Motion Graphics Template
 //!   makes one from a graphic clip with chosen editable properties; Install copies a `.fcgt` into
@@ -97,7 +97,7 @@ fn is_mogrt(path: &str) -> bool {
     path.to_ascii_lowercase().ends_with(".mogrt")
 }
 
-const MOGRT: &str = "FilmCraft does not open Adobe .mogrt files (or other applications' template packages); it reads only its own .fcgt graphics templates";
+const MOGRT: &str = "Vibe Studio does not open Adobe .mogrt files (or other applications' template packages); it reads only its own .fcgt graphics templates";
 
 /// Find a template by id, name (case-insensitive) or `.fcgt` path.
 pub fn find_template(s: &Session, key: &str) -> Result<LibraryEntry> {

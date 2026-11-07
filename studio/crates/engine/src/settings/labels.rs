@@ -121,7 +121,7 @@ impl LabelPrefs {
     }
 }
 
-/// The label colour preset FilmCraft ships with: the labels' own names and colours.
+/// The label colour preset Vibe Studio ships with: the labels' own names and colours.
 pub const DEFAULT_LABEL_PRESET: &str = "Default";
 
 /// The folder of label colour presets, beside `preferences.json`.

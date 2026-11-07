@@ -94,7 +94,7 @@ fn stored_media_paths_open_only_on_this_computer_or_beside_the_project() {
     for (id, path) in items.iter().zip(&stored) {
         p.item_mut(*id).unwrap().as_media_mut().unwrap().media = MediaRef::File { path: path.clone() };
     }
-    let doc = project.join("p.fcproj").to_string_lossy().into_owned();
+    let doc = project.join("p.vibeproj").to_string_lossy().into_owned();
     s.execute("file.save", json!({"path": doc})).unwrap();
 
     let (mut t, seen) = recording_session();

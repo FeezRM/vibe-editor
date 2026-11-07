@@ -492,7 +492,7 @@ fn replacing_the_project_drops_pending_tracking_jobs() {
 #[test]
 fn every_project_replacing_path_drops_pending_tracking_jobs() {
     // the epoch check covers paths that never call `discard_jobs`: recover (`install_project`), demo, close, template
-    let tpl = std::env::temp_dir().join(format!("filmcraft-mask-epoch-{}.fcproj", std::process::id())).to_string_lossy().to_string();
+    let tpl = std::env::temp_dir().join(format!("filmcraft-mask-epoch-{}.vibeproj", std::process::id())).to_string_lossy().to_string();
     for path in ["recover", "demo", "close", "template"] {
         let (mut s, _) = tracking_session();
         s.execute("file.saveAsTemplate", json!({"path": tpl})).unwrap();

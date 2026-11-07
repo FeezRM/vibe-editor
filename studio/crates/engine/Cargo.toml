@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft-engine"
-description = "FilmCraft engine façade: session, command registry, history, media pool"
+description = "Vibe Studio engine façade: session, command registry, history, media pool"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

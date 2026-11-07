@@ -2,11 +2,11 @@
 //!
 //! **Auto Save** (Premiere behaviour, Preferences ▸ Auto Save): every *interval* minutes, if the
 //! project changed since the last auto-save, a copy is written to the `Auto-Save` folder next to the
-//! project as `<name>-YYYY-MM-DD_HH-MM-SS.fcproj`, keeping at most *Maximum Project Versions* files.
+//! project as `<name>-YYYY-MM-DD_HH-MM-SS.vibeproj`, keeping at most *Maximum Project Versions* files.
 //! Optionally the project file itself is saved too.
 //!
-//! **Recovery journal** (FilmCraft addition): while the project has unsaved changes, a snapshot is
-//! written to `<data dir>/Recovery/<session>/snapshot.fcproj` shortly after each change (debounced,
+//! **Recovery journal** (Vibe Studio addition): while the project has unsaved changes, a snapshot is
+//! written to `<data dir>/Recovery/<session>/snapshot.vibeproj` shortly after each change (debounced,
 //! and at least every *N* seconds while edits keep coming). Each running app holds an OS lock on
 //! `<session>/lock`; when the process dies (crash, `kill -9`, power cut) the lock is released, so on
 //! the next launch any session directory whose lock can be taken and that holds a snapshot is a
@@ -97,8 +97,8 @@ pub struct PlaybackPrefs {
     /// a paused frame. Off by default.
     pub draft_decode: bool,
     /// "Hardware decoding": `auto` (default: the system's hardware decoder for streams it
-    /// supports, e.g. VideoToolbox H.264 / HEVC on macOS, falling back to FilmCraft's own decoder)
-    /// or `off` (always FilmCraft's own decoders). Media already open keeps its decoder until it
+    /// supports, e.g. VideoToolbox H.264 / HEVC on macOS, falling back to Vibe Studio's own decoder)
+    /// or `off` (always Vibe Studio's own decoders). Media already open keeps its decoder until it
     /// is reopened.
     pub hardware_decoding: String,
 }
@@ -502,7 +502,7 @@ pub fn portable_data_dir(exe_dir: &Path) -> Option<PathBuf> {
 
 /// The data directory. `FILMCRAFT_DATA_DIR` overrides; a portable install ([`PORTABLE_MARKER`] next
 /// to the executable) uses `<exe dir>/data`; otherwise the per-user directory:
-/// macOS `~/Library/Application Support/FilmCraft`, Windows `%APPDATA%\FilmCraft`,
+/// macOS `~/Library/Application Support/Vibe Studio`, Windows `%APPDATA%\Vibe Studio`,
 /// elsewhere `$XDG_DATA_HOME/filmcraft` or `~/.local/share/filmcraft`.
 pub fn default_data_dir() -> Option<PathBuf> {
     let env = |k: &str| std::env::var_os(k).filter(|v| !v.is_empty()).map(PathBuf::from);
@@ -513,10 +513,10 @@ pub fn default_data_dir() -> Option<PathBuf> {
         return Some(d);
     }
     if cfg!(target_os = "macos") {
-        return env("HOME").map(|h| h.join("Library/Application Support/FilmCraft"));
+        return env("HOME").map(|h| h.join("Library/Application Support/Vibe Studio"));
     }
     if cfg!(windows) {
-        return env("APPDATA").map(|h| h.join("FilmCraft"));
+        return env("APPDATA").map(|h| h.join("Vibe Studio"));
     }
     env("XDG_DATA_HOME").map(|d| d.join("filmcraft")).or_else(|| env("HOME").map(|h| h.join(".local/share/filmcraft")))
 }
@@ -527,7 +527,7 @@ pub fn unix_now() -> i64 {
 
 // ------------------------------------------------------------------ recovery candidates
 
-/// Snapshot meta written next to `snapshot.fcproj`.
+/// Snapshot meta written next to `snapshot.vibeproj`.
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct JournalMeta {
@@ -555,7 +555,7 @@ pub struct RecoveryCandidate {
     pub meta: JournalMeta,
 }
 
-const SNAPSHOT: &str = "snapshot.fcproj";
+const SNAPSHOT: &str = "snapshot.vibeproj";
 const META: &str = "session.json";
 const LOCK: &str = "lock";
 
@@ -1184,7 +1184,7 @@ mod worker_failure_tests {
         s.poll_persistence();
         s.poll_persistence();
         assert_eq!(failure_toasts(s), 0, "later handoffs must not repeat the failure");
-        let path = dir.join("manual.fcproj");
+        let path = dir.join("manual.vibeproj");
         s.execute("file.saveAs", json!({"path": path.to_string_lossy()})).unwrap();
         assert!(!s.is_dirty());
         let loaded = filmcraft_format::decode(&fs::read(&path).unwrap()).unwrap();
@@ -1221,7 +1221,7 @@ mod worker_failure_tests {
                 s.execute("sequence.addEdit", json!({"seconds": 2.0})).unwrap();
             }
             "clean" => {
-                s.execute("file.saveAs", json!({"path": dir.join("initial.fcproj").to_string_lossy()})).unwrap();
+                s.execute("file.saveAs", json!({"path": dir.join("initial.vibeproj").to_string_lossy()})).unwrap();
             }
             "prefs" => {
                 s.execute("prefs.set", json!({"key": "autoSave.maxVersions", "value": 3})).unwrap();

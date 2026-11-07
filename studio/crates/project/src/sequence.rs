@@ -171,7 +171,7 @@ pub struct Sequence {
     pub split: SplitMarks,
     /// Magnetic timeline (Vibe Studio; CapCut's main-track magnet): a ripple edit that closes time
     /// trims whatever crosses the closing stretch on a sync-locked track (a caption, a graphic, an
-    /// SFX) instead of refusing the edit. Off in FilmCraft's own sequences.
+    /// SFX) instead of refusing the edit. Off by default; Vibe jobs turn it on.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub magnetic: bool,
 }

@@ -818,7 +818,7 @@ pub fn commands() -> Vec<CommandSpec> {
         spec("graphics.nudgeUp5", "Nudge Selected Object up by five", None, "{}", has_graphic_or_selection, |s, _| nudge_object(s, 0.0, -5.0)),
         spec("graphics.nudgeDown5", "Nudge Selected Object down by five", None, "{}", has_graphic_or_selection, |s, _| nudge_object(s, 0.0, 5.0)),
         // ---- export frame, poster frame
-        // Shift+E is Clip > Enable in FilmCraft Default; the Premiere preset moves it here
+        // Shift+E is Clip > Enable in Vibe Studio Default; the Premiere preset moves it here
         spec(
             "file.exportFrame",
             "Export Frame",

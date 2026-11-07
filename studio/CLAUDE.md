@@ -1,4 +1,6 @@
-# FilmCraft — instructions for agents
+# Vibe Studio — instructions for agents
+
+Vibe Studio is the vibe-editor's editor, built on FilmCraft (README.md ▸ Credits). The engine rules below come from FilmCraft and still apply; what Vibe Studio adds is in VIBE-STUDIO.md.
 
 FilmCraft is a clean-room, open-source, pure-Rust non-linear video editor targeting Adobe Premiere Pro parity (and beyond). Native on macOS, Windows, Linux; web via WASM. Sibling of `../photocraft` (Photoshop), `../pdfcraft` (Acrobat) and `../vectorcraft` (Illustrator; formerly DrawCraft), with the same conventions.
 

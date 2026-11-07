@@ -5139,8 +5139,8 @@ pub fn secs(s: f64) -> Tick {
 /// Serialize the project in the current schema and write it (atomically) to `path`. `adopt` =
 /// Save / Save As (the file becomes the project's path and the project is clean); otherwise Save a
 /// Copy. The first save over a file upgraded from an older schema keeps the original as
-/// `<name> (schema vN backup).fcproj`.
-/// A project is named after its file (as in Premiere): `/a/b/Trailer v2.fcproj` → `Trailer v2`.
+/// `<name> (schema vN backup).vibeproj`.
+/// A project is named after its file (as in Premiere): `/a/b/Trailer v2.vibeproj` → `Trailer v2`.
 fn project_name_for(path: &str) -> Option<String> {
     let stem = std::path::Path::new(path).file_stem()?.to_string_lossy().to_string();
     (!stem.is_empty()).then_some(stem)
@@ -5185,8 +5185,8 @@ fn write_project(s: &mut Session, path: &str, adopt: bool) -> Result<Value> {
 }
 
 fn schema_backup_path(path: &str, schema: u32) -> String {
-    let stem = path.strip_suffix(".fcproj").unwrap_or(path);
-    format!("{stem} (schema v{schema} backup).fcproj")
+    let stem = path.strip_suffix(".vibeproj").unwrap_or(path);
+    format!("{stem} (schema v{schema} backup).vibeproj")
 }
 
 /// Make `proj` the session's project (fresh history, media pool and editor state).

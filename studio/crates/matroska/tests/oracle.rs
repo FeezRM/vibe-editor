@@ -281,7 +281,7 @@ fn prores_pcm() {
 #[test]
 fn mjpeg_ac3() {
     let Some((_, f, _)) = run("mjpeg_ac3.mkv") else { return };
-    assert_eq!(f.info.title.as_deref(), Some("FilmCraft test"));
+    assert_eq!(f.info.title.as_deref(), Some("Vibe Studio test"));
     assert!(f.info.muxing_app.starts_with("Lavf"));
     assert!(f.tags.iter().flat_map(|t| &t.simple).any(|s| s.name == "ENCODER"));
 }

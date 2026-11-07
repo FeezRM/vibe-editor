@@ -1,4 +1,4 @@
-//! Standalone ADTS `.aac` files (#1291): File ▸ Import offers them, and FilmCraft's own AAC export
+//! Standalone ADTS `.aac` files (#1291): File ▸ Import offers them, and Vibe Studio's own AAC export
 //! writes them (#814), so they must open as audio. The streams are made with our AAC encoder, which
 //! prefixes each access unit with an ADTS header (ISO/IEC 13818-7 §6.2).
 

@@ -1,5 +1,5 @@
 //! Workflow acceptance tests (docs/gaps.md G6): real editing jobs done end to end the way an agent
-//! does them, through the headless MCP server of the `filmcraft-cli` binary (`filmcraft-cli mcp`,
+//! does them, through the headless MCP server of the `vibe-studio-cli` binary (`vibe-studio-cli mcp`,
 //! JSON-RPC over stdio) and the CLI itself, on media that looks like what people shoot:
 //!
 //! - a phone clip: H.264 + AAC in MP4 with a variable frame rate (dropped frames);
@@ -87,7 +87,7 @@ impl Drop for Scratch {
 }
 
 // ---------------------------------------------------------------------------------------------
-// A minimal MCP client for `filmcraft-cli mcp` (newline-delimited JSON-RPC over stdio)
+// A minimal MCP client for `vibe-studio-cli mcp` (newline-delimited JSON-RPC over stdio)
 
 struct Mcp {
     child: Child,
@@ -100,13 +100,13 @@ impl Mcp {
     /// Start the headless server (an empty project) and initialise the session. `data_dir` keeps
     /// user presets away from the real data directory.
     fn start(data_dir: &str) -> Self {
-        let mut child = Command::new(env!("CARGO_BIN_EXE_filmcraft-cli"))
+        let mut child = Command::new(env!("CARGO_BIN_EXE_vibe-studio-cli"))
             .args(["--data-dir", data_dir, "mcp"])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::null())
             .spawn()
-            .expect("spawn filmcraft-cli mcp");
+            .expect("spawn vibe-studio-cli mcp");
         let stdin = child.stdin.take().unwrap();
         let stdout = BufReader::new(child.stdout.take().unwrap());
         let mut m = Mcp { child, stdin, stdout, next_id: 1 };
@@ -379,7 +379,7 @@ fn verify_phone_export(ffmpeg: &Path, ffprobe: &Path, src: &str, out: &str) {
 /// Camera footage: import a long-GOP H.264 Matroska file with two audio tracks through MCP, make
 /// a sequence (both tracks land on A1 and A2), ripple-trim 2.6 s off the head (decoding starts at
 /// the only keyframe) and 15 frames off the tail, add a red colour matte with a centred cross
-/// dissolve, save the project; then a new `filmcraft-cli` process opens it and exports ProRes.
+/// dissolve, save the project; then a new `vibe-studio-cli` process opens it and exports ProRes.
 /// The first exported frame is source frame 65, the dissolve mixes the two pictures, both audio
 /// tracks are in the mix at their own level and stop where the clip does.
 #[test]
@@ -391,7 +391,7 @@ fn camera_long_gop_two_audio_tracks_trim_dissolve_to_prores() {
     let src = src.to_string_lossy().into_owned();
     let dir = Scratch::new("camera");
     let data = dir.path("data");
-    let project = dir.path("camera.fcproj");
+    let project = dir.path("camera.vibeproj");
     {
         let mut m = Mcp::start(&data);
         let imported = m.tool("media_import", json!({"paths": [src]}));
@@ -428,7 +428,7 @@ fn camera_long_gop_two_audio_tracks_trim_dissolve_to_prores() {
 
     // a fresh process opens the saved project and renders it
     let out = dir.path("camera_edit.mov");
-    let o = Command::new(env!("CARGO_BIN_EXE_filmcraft-cli")).args(["--data-dir", &data, "--project", &project, "export", &out]).output().unwrap();
+    let o = Command::new(env!("CARGO_BIN_EXE_vibe-studio-cli")).args(["--data-dir", &data, "--project", &project, "export", &out]).output().unwrap();
     assert!(o.status.success(), "export: {}", String::from_utf8_lossy(&o.stderr));
     let r: Value = serde_json::from_slice(&o.stdout).unwrap();
     let total = 71 + 50;
@@ -484,9 +484,9 @@ fn camera_long_gop_two_audio_tracks_trim_dissolve_to_prores() {
 }
 
 /// `endFrame` of the first clip on V1 of the saved project's active sequence, read back through
-/// `filmcraft-cli --project … inspect sequence`.
+/// `vibe-studio-cli --project … inspect sequence`.
 fn end_frame_of(project: &str) -> Option<u64> {
-    let o = Command::new(env!("CARGO_BIN_EXE_filmcraft-cli")).args(["--project", project, "inspect", "sequence"]).output().ok()?;
+    let o = Command::new(env!("CARGO_BIN_EXE_vibe-studio-cli")).args(["--project", project, "inspect", "sequence"]).output().ok()?;
     let v: Value = serde_json::from_slice(&o.stdout).ok()?;
     v["video"][0]["items"][0]["endFrame"].as_u64()
 }

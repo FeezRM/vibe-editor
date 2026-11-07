@@ -1,4 +1,4 @@
-//! Text to speech for FilmCraft's Text to Speech panel (narrations).
+//! Text to speech for Vibe Studio's Text to Speech panel (narrations).
 //!
 //! - [`Voice`]: the trait every voice implements: a script in, mono samples out.
 //! - [`voices`] / [`voice`]: the voice catalogue (id, name, language, gender, engine, licence).
@@ -125,7 +125,7 @@ pub trait Voice: Send + Sync {
 /// Languages offered (English only for now).
 pub const LANGUAGES: &[(&str, &str)] = &[("en-US", "English (United States)")];
 
-/// Every voice FilmCraft knows: the built-in voices, then the neural voices (installed when their
+/// Every voice Vibe Studio knows: the built-in voices, then the neural voices (installed when their
 /// package is downloaded into `models_dir`).
 pub fn voices_in(models_dir: Option<&std::path::Path>) -> Vec<VoiceInfo> {
     let installed = models_dir.is_some_and(catalog::installed) && cfg!(feature = "kokoro");

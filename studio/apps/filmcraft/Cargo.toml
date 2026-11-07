@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft"
-description = "Vibe Studio desktop app (FilmCraft-based)"
+description = "Vibe Studio desktop app"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

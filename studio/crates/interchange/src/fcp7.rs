@@ -1150,7 +1150,7 @@ impl Exp<'_, '_> {
                 return;
             }
             other => {
-                self.report.info(format!("generator \"{}\" is written with a FilmCraft effect id", other.label()));
+                self.report.info(format!("generator \"{}\" is written with a Vibe Studio effect id", other.label()));
                 self.w.text("name", other.label());
                 self.w.text("effectid", format!("filmcraft:{}", serde_json::to_string(other).unwrap_or_default()));
             }

@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft-captions"
-description = "FilmCraft captions: SRT, WebVTT, SCC, MCC, EBU STL and TTML/IMSC1/DFXP import/export, caption layout and burn-in rasterisation"
+description = "Vibe Studio captions: SRT, WebVTT, SCC, MCC, EBU STL and TTML/IMSC1/DFXP import/export, caption layout and burn-in rasterisation"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

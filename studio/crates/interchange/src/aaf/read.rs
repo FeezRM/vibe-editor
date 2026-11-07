@@ -110,7 +110,7 @@ pub(crate) fn read(bytes: &[u8], report: &mut Report) -> Result<Document> {
     // Top-level compositions: those no other composition uses, among the ones tagged top-level
     // when any are. (Premiere Pro tags a nested sequence's composition top-level too; it is still
     // only a nested sequence.) Compositions that only use each other in a circle all count. The
-    // label older FilmCraft versions wrote for top-level counts as top-level too.
+    // label older Vibe Studio versions wrote for top-level counts as top-level too.
     let comps: Vec<&Obj> = content.objs(pid::MOBS).iter().filter(|m| m.class == cls::COMPOSITION_MOB).collect();
     let mut referenced = HashSet::new();
     for c in &comps {
@@ -166,10 +166,10 @@ impl R<'_> {
         let rate = FrameRate::new(pic_rate.0, pic_rate.1);
         let tags = tagged_values(c, pid::MOB_USER_COMMENTS);
         let tag = |n: &str| tags.iter().find(|(k, _)| k == n).map(|(_, v)| v.clone());
-        let (mut width, mut height) = tag("FilmCraft Frame Size")
+        let (mut width, mut height) = tag("Vibe Studio Frame Size")
             .and_then(|s| s.split_once('x').and_then(|(a, b)| Some((a.trim().parse().ok()?, b.trim().parse().ok()?))))
             .unwrap_or((0, 0));
-        let mut sample_rate = tag("FilmCraft Audio Sample Rate").and_then(|s| s.parse().ok()).unwrap_or(0u32);
+        let mut sample_rate = tag("Vibe Studio Audio Sample Rate").and_then(|s| s.parse().ok()).unwrap_or(0u32);
         let mut comp =
             Composition { name, rate, sample_rate: 48_000, width: 1920, height: 1080, start_tc: 0, drop: false, tracks: Vec::new(), markers: Vec::new() };
         let (mut nv, mut na) = (0, 0);
@@ -284,7 +284,7 @@ impl R<'_> {
                 let cut = units_to_ticks(c.i64(pid::CUT_POINT).unwrap_or(0), rate.0, rate.1);
                 let og = c.strong(pid::OPERATION_GROUP);
                 let effect = og
-                    .and_then(|o| tagged_values(o, pid::COMPONENT_USER_COMMENTS).into_iter().find(|(k, _)| k == "FilmCraft Effect").map(|(_, v)| v))
+                    .and_then(|o| tagged_values(o, pid::COMPONENT_USER_COMMENTS).into_iter().find(|(k, _)| k == "Vibe Studio Effect").map(|(_, v)| v))
                     .unwrap_or_else(|| {
                         let op = og.and_then(|o| o.weak_key(pid::OPERATION)).and_then(|k| <Auid>::try_from(k).ok());
                         match (kind, op) {

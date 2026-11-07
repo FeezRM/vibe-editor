@@ -21,7 +21,7 @@ fn row<R>(ui: &mut egui::Ui, t: &Tokens, label: &str, add: impl FnOnce(&mut egui
 
 /// A combo box over `options` (label, enabled); returns the chosen index.
 pub(super) fn combo(ui: &mut egui::Ui, reg: &mut Reg, id: &str, selected: &str, options: &[(String, bool)], width: f32) -> Option<usize> {
-    let why = tl!("Not supported by FilmCraft's encoders yet");
+    let why = tl!("Not supported by Vibe Studio's encoders yet");
     let options: Vec<(String, Option<&str>)> = options.iter().map(|(l, on)| (l.clone(), (!on).then_some(why))).collect();
     combo_why(ui, reg, id, selected, &options, width)
 }
@@ -58,10 +58,10 @@ fn unavailable_why(format: Format) -> Option<&'static str> {
     }
     Some(match format {
         Format::Hevc => tl!(
-            "H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and FilmCraft has no software H.265 encoder yet. Choose H.264 or ProRes instead."
+            "H.265 (HEVC) needs a hardware encoder (NVENC on NVIDIA GPUs, VideoToolbox on macOS); none was found on this machine, and Vibe Studio has no software H.265 encoder yet. Choose H.264 or ProRes instead."
         ),
-        Format::Av1 => tl!("AV1 needs a hardware encoder; none was found on this machine, and FilmCraft has no software AV1 encoder yet."),
-        _ => tl!("Not supported by FilmCraft's encoders yet"),
+        Format::Av1 => tl!("AV1 needs a hardware encoder; none was found on this machine, and Vibe Studio has no software AV1 encoder yet."),
+        _ => tl!("Not supported by Vibe Studio's encoders yet"),
     })
 }
 
@@ -714,7 +714,7 @@ fn audio_section(ui: &mut egui::Ui, reg: &mut Reg, s: &mut ExportSettings, t: &T
                 (true, _) => None,
                 (false, AudioCodec::Flac) => Some(tl!("FLAC stores whole-number samples only")),
                 (false, _) if s.format.is_mxf() => Some(tl!("MXF export writes integer PCM only")),
-                (false, _) => Some(tl!("Not supported by FilmCraft's encoders yet")),
+                (false, _) => Some(tl!("Not supported by Vibe Studio's encoders yet")),
             };
             let labels: Vec<(String, Option<&str>)> = SampleFormat::ALL.iter().zip(sizes).map(|(&f, l)| (l.to_string(), why(f))).collect();
             let cur = SampleFormat::ALL.iter().position(|&f| f == s.audio.sample_format()).and_then(|i| sizes.get(i).copied()).unwrap_or(sizes[0]);

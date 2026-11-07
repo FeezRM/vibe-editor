@@ -126,7 +126,7 @@ planning only.
 - Build FilmCraft's engine and CLI on Linux (this container) and macOS (the creator's machine). Record
   build time, binary size and warm-start time. *(Building third-party code needs your go-ahead in this
   session; see §9.)*
-- Import `samples/baseline/` source media through `filmcraft-cli`, then place, render and export a 10 s
+- Import `samples/baseline/` source media through `vibe-studio-cli`, then place, render and export a 10 s
   vertical clip. Probe it with ffprobe.
 - Decode check on real creator media: iPhone HEVC 10-bit 4K, an Android H.264, a screen recording.
 - **Gate:** headless render of a 1080×1920 H.264 that ffprobe accepts; decode works or falls back to
@@ -134,7 +134,7 @@ planning only.
 
 ### M1. Headless bridge: a job becomes a project (≈ 30–50 h)
 - `vibe-job`: serde types and loaders, tested against the Python writers' real output (job 9278).
-- `vibe-bridge import`: the full §4 mapping → `.fcproj` (one undo step, read back with `sequence.inspect`).
+- `vibe-bridge import`: the full §4 mapping → `.vibeproj` (one undo step, read back with `sequence.inspect`).
 - `vibe-cli render <job>`: final render through the engine.
 - **Gate (parity with the ffmpeg lane on the 9278 baseline):** duration equal to the EDL to the frame;
   per-frame PSNR ≥ 38 dB against `outputs/9278.final.mp4` on spine frames; captions and graphics on within

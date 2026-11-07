@@ -1,6 +1,6 @@
 [package]
 name = "filmcraft-text"
-description = "FilmCraft text engine: font database (bundled + system), shaping, bidi, line breaking, paragraph layout and anti-aliased glyph/path rasterisation"
+description = "Vibe Studio text engine: font database (bundled + system), shaping, bidi, line breaking, paragraph layout and anti-aliased glyph/path rasterisation"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

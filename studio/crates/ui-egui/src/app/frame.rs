@@ -220,13 +220,13 @@ impl FilmcraftApp {
 }
 
 impl FilmcraftApp {
-    /// The "FilmCraft hit an error" window after a caught UI panic. Automation ids:
+    /// The "Vibe Studio hit an error" window after a caught UI panic. Automation ids:
     /// `error.dismiss`, `error.save`.
     pub(super) fn error_window(&mut self, ctx: &egui::Context) {
         let Some(msg) = self.ui_error.clone() else { return };
         let mut close = false;
-        egui::Window::new(tl!("FilmCraft hit an error"))
-            .id(egui::Id::unique("FilmCraft hit an error"))
+        egui::Window::new(tl!("Vibe Studio hit an error"))
+            .id(egui::Id::unique("Vibe Studio hit an error"))
             .collapsible(false)
             .resizable(false)
             .pivot(egui::Align2::CENTER_CENTER)
